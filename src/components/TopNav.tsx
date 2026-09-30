@@ -1,10 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import {
+  DRAWER_SECTIONS,
+  DRAWER_SECTIONS_STORAGE_KEY,
+  drawerSectionHasActive,
   hashForView,
   MORE_NAV,
   moreNavActive,
   navActive,
   PRIMARY_NAV,
+  type DrawerSectionId,
   type ViewId,
 } from '../lib/nav'
 import { getSubscription } from '../lib/subscription'
@@ -16,11 +20,177 @@ type Props = {
   onNavigate: (id: ViewId, projectId?: string) => void
 }
 
+type SectionOpenState = Record<DrawerSectionId, boolean>
+
+function defaultSectionOpen(): SectionOpenState {
+  return Object.fromEntries(
+    DRAWER_SECTIONS.map((s) => [s.id, s.defaultOpen]),
+  ) as SectionOpenState
+}
+
+function loadSectionOpen(): SectionOpenState {
+  const defaults = defaultSectionOpen()
+  try {
+    const raw = localStorage.getItem(DRAWER_SECTIONS_STORAGE_KEY)
+    if (!raw) return defaults
+    const parsed = JSON.parse(raw) as Partial<SectionOpenState>
+    return { ...defaults, ...parsed }
+  } catch {
+    return defaults
+  }
+}
+
+function persistSectionOpen(next: SectionOpenState) {
+  try {
+    localStorage.setItem(DRAWER_SECTIONS_STORAGE_KEY, JSON.stringify(next))
+  } catch {
+    /* ignore quota / private mode */
+  }
+}
+
+/** Compact stroke icons — no lucide dependency; accent inherits currentColor. */
+function NavIcon({ name }: { name: string }) {
+  const common = {
+    width: 16,
+    height: 16,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 2,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    'aria-hidden': true,
+    className: 'nav-drawer-icon-svg',
+  }
+  const paths: Record<string, ReactNode> = {
+    trade: (
+      <>
+        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+        <polyline points="16 7 22 7 22 13" />
+      </>
+    ),
+    autotrade: (
+      <>
+        <path d="M17 1l4 4-4 4" />
+        <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+        <path d="M7 23l-4-4 4-4" />
+        <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+      </>
+    ),
+    status: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 2" />
+      </>
+    ),
+    skills: (
+      <>
+        <polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9" />
+      </>
+    ),
+    terminal: (
+      <>
+        <polyline points="4 17 10 11 4 5" />
+        <line x1="12" y1="19" x2="20" y2="19" />
+      </>
+    ),
+    rewards: (
+      <>
+        <circle cx="12" cy="8" r="6" />
+        <path d="M8.2 13.5 7 22l5-3 5 3-1.2-8.5" />
+      </>
+    ),
+    blog: (
+      <>
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+      </>
+    ),
+    nfts: (
+      <>
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <circle cx="9" cy="9" r="2" />
+        <path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21" />
+      </>
+    ),
+    hood: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M8 12h8" />
+        <path d="M12 8v8" />
+      </>
+    ),
+    lore: (
+      <>
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        <path d="M8 7h8" />
+        <path d="M8 11h6" />
+      </>
+    ),
+    account: (
+      <>
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </>
+    ),
+    projects: (
+      <>
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+      </>
+    ),
+    create: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 8v8" />
+        <path d="M8 12h8" />
+      </>
+    ),
+    ops: (
+      <>
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" />
+      </>
+    ),
+    revenue: (
+      <>
+        <line x1="12" y1="1" x2="12" y2="23" />
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+      </>
+    ),
+  }
+  return <svg {...common}>{paths[name] ?? paths.trade}</svg>
+}
+
+function Chevron({ open }: { open: boolean }) {
+  return (
+    <svg
+      className={`nav-drawer-chevron${open ? ' is-open' : ''}`}
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  )
+}
+
 export function TopNav({ view, onNavigate }: Props) {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
+  const [sectionOpen, setSectionOpen] = useState<SectionOpenState>(defaultSectionOpen)
   const [subLabel, setSubLabel] = useState(() => getSubscription().label)
   const moreRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setSectionOpen(loadSectionOpen())
+  }, [])
 
   useEffect(() => {
     setSubLabel(getSubscription().label)
@@ -55,6 +225,14 @@ export function TopNav({ view, onNavigate }: Props) {
     setDrawerOpen(false)
     setMoreOpen(false)
     onNavigate(id)
+  }
+
+  const toggleSection = (id: DrawerSectionId) => {
+    setSectionOpen((prev) => {
+      const next = { ...prev, [id]: !prev[id] }
+      persistSectionOpen(next)
+      return next
+    })
   }
 
   const moreIsActive = moreNavActive(view)
@@ -166,37 +344,61 @@ export function TopNav({ view, onNavigate }: Props) {
         <div className="top-nav-drawer">
           <div className="top-nav-drawer-sheen" aria-hidden />
           <nav className="top-nav-mobile" aria-label="Mobile primary">
-            <p className="top-nav-drawer-label">Navigate</p>
-            {PRIMARY_NAV.map((v) => (
-              <a
-                key={v.id}
-                href={hashForView(v.id)}
-                className={`nav-link${navActive(view, v.id) ? ' active' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault()
-                  go(v.id)
-                }}
-              >
-                <span className="nav-link-label">{v.label}</span>
-                {navActive(view, v.id) && <span className="nav-link-pip" aria-hidden />}
-              </a>
-            ))}
-            <div className="top-nav-drawer-divider" />
-            <p className="top-nav-drawer-label">More</p>
-            {MORE_NAV.map((v) => (
-              <a
-                key={v.id}
-                href={hashForView(v.id)}
-                className={`nav-link${navActive(view, v.id) ? ' active' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault()
-                  go(v.id)
-                }}
-              >
-                <span className="nav-link-label">{v.label}</span>
-                {navActive(view, v.id) && <span className="nav-link-pip" aria-hidden />}
-              </a>
-            ))}
+            {DRAWER_SECTIONS.map((section) => {
+              const open = sectionOpen[section.id]
+              const sectionActive = drawerSectionHasActive(view, section)
+              return (
+                <div
+                  key={section.id}
+                  className={`nav-drawer-section${open ? ' is-open' : ''}${sectionActive ? ' has-active' : ''}`}
+                >
+                  <button
+                    type="button"
+                    className="nav-drawer-section-header"
+                    aria-expanded={open}
+                    aria-controls={`drawer-section-${section.id}`}
+                    id={`drawer-section-btn-${section.id}`}
+                    onClick={() => toggleSection(section.id)}
+                  >
+                    <span className="nav-drawer-section-title">{section.label}</span>
+                    <span className="nav-drawer-section-meta">
+                      <span className="nav-drawer-section-count">{section.items.length}</span>
+                      <Chevron open={open} />
+                    </span>
+                  </button>
+                  <div
+                    id={`drawer-section-${section.id}`}
+                    role="region"
+                    aria-labelledby={`drawer-section-btn-${section.id}`}
+                    className="nav-drawer-section-body"
+                    hidden={!open}
+                  >
+                    {section.items.map((v) => {
+                      const active = navActive(view, v.id)
+                      return (
+                        <a
+                          key={v.id}
+                          href={hashForView(v.id)}
+                          className={`nav-link nav-drawer-link${active ? ' active' : ''}`}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            go(v.id)
+                          }}
+                        >
+                          <span className="nav-drawer-link-main">
+                            <span className="nav-drawer-icon">
+                              <NavIcon name={v.icon} />
+                            </span>
+                            <span className="nav-link-label">{v.label}</span>
+                          </span>
+                          {active && <span className="nav-link-pip" aria-hidden />}
+                        </a>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
             <a
               href={hashForView('subscribe')}
               className="nav-cta nav-cta-drawer"

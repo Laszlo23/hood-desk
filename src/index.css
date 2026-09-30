@@ -3056,7 +3056,7 @@ a:hover {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   padding: 0;
   border-top: none;
   margin-top: 0;
@@ -3083,24 +3083,162 @@ a:hover {
   );
 }
 
-.top-nav-mobile .nav-link {
-  width: 100%;
-  justify-content: space-between;
-  padding: 12px 14px;
+/* Collapsible AGENT / EXPLORE / BUILD sections */
+.nav-drawer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   border-radius: 12px;
-  font-size: 0.88rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
 }
 
-.top-nav-mobile .nav-link::after {
+.nav-drawer-section.has-active {
+  border-color: rgba(204, 255, 0, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(204, 255, 0, 0.04);
+}
+
+.nav-drawer-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  margin: 0;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: rgba(204, 255, 0, 0.72);
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-drawer-section-header:hover,
+.nav-drawer-section-header:focus-visible {
+  background: rgba(204, 255, 0, 0.06);
+  color: var(--accent);
+  outline: none;
+}
+
+.nav-drawer-section.is-open .nav-drawer-section-header {
+  color: var(--accent);
+  text-shadow: 0 0 12px rgba(204, 255, 0, 0.25);
+}
+
+.nav-drawer-section-title {
+  flex: 1;
+  text-align: left;
+}
+
+.nav-drawer-section-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.nav-drawer-section-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+  color: rgba(204, 255, 0, 0.7);
+  background: rgba(204, 255, 0, 0.08);
+  border: 1px solid rgba(204, 255, 0, 0.16);
+}
+
+.nav-drawer-chevron {
+  color: rgba(204, 255, 0, 0.55);
+  transition: transform 0.18s ease;
+  flex-shrink: 0;
+}
+
+.nav-drawer-chevron.is-open {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+.nav-drawer-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 6px 6px;
+}
+
+.nav-drawer-section-body[hidden] {
+  display: none !important;
+}
+
+.top-nav-mobile .nav-link,
+.top-nav-mobile .nav-drawer-link {
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  min-height: 42px;
+}
+
+.nav-drawer-link-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.nav-drawer-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  color: rgba(204, 255, 0, 0.75);
+  background: rgba(204, 255, 0, 0.07);
+  border: 1px solid rgba(204, 255, 0, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.nav-drawer-icon-svg {
+  display: block;
+}
+
+.top-nav-mobile .nav-link::after,
+.top-nav-mobile .nav-drawer-link::after {
   display: none;
 }
 
-.top-nav-mobile .nav-link.active {
+.top-nav-mobile .nav-link.active,
+.top-nav-mobile .nav-drawer-link.active {
   background: rgba(204, 255, 0, 0.12);
   border-color: rgba(204, 255, 0, 0.28);
   box-shadow: 0 0 20px rgba(204, 255, 0, 0.1);
+}
+
+.top-nav-mobile .nav-drawer-link.active .nav-drawer-icon {
+  color: #050505;
+  background: var(--accent);
+  border-color: rgba(204, 255, 0, 0.85);
+  box-shadow: 0 0 12px rgba(204, 255, 0, 0.45);
 }
 
 .nav-link-pip {
@@ -3113,11 +3251,12 @@ a:hover {
 }
 
 .nav-cta-drawer {
-  margin-top: 6px;
+  margin-top: 4px;
   justify-content: center;
   width: 100%;
   padding: 12px 14px;
   font-size: 0.8rem;
+  min-height: 44px;
 }
 
 @media (min-width: 1080px) {

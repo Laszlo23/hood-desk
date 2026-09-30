@@ -46,7 +46,7 @@ export const PRIMARY_NAV: { id: ViewId; label: string; hash: string }[] = [
   { id: 'skills', label: 'Skills', hash: '#/skills' },
 ]
 
-/** Secondary links — live under the More dropdown / mobile drawer. */
+/** Secondary links — desktop More dropdown only (mobile uses DRAWER_SECTIONS). */
 export const MORE_NAV: { id: ViewId; label: string; hash: string }[] = [
   { id: 'rewards', label: 'Rewards', hash: '#/rewards' },
   { id: 'blog', label: 'Blog', hash: '#/blog' },
@@ -60,6 +60,65 @@ export const MORE_NAV: { id: ViewId; label: string; hash: string }[] = [
   { id: 'account', label: 'Account / Wallet', hash: '#/account' },
   { id: 'lore', label: 'The Legend', hash: '#/lore' },
 ]
+
+export type DrawerSectionId = 'agent' | 'explore' | 'build'
+
+export type DrawerNavItem = {
+  id: ViewId
+  label: string
+  hash: string
+  /** Lightweight icon key rendered as inline SVG in the mobile drawer. */
+  icon: string
+}
+
+export type DrawerSection = {
+  id: DrawerSectionId
+  label: string
+  defaultOpen: boolean
+  items: DrawerNavItem[]
+}
+
+/** Mobile drawer accordion: Agent open by default; Explore & Build collapsed. */
+export const DRAWER_SECTIONS: DrawerSection[] = [
+  {
+    id: 'agent',
+    label: 'Agent',
+    defaultOpen: true,
+    items: [
+      { id: 'trade', label: 'Trade', hash: '#/trade', icon: 'trade' },
+      { id: 'community', label: 'Auto-Trade', hash: '#/community', icon: 'autotrade' },
+      { id: 'status', label: 'Status', hash: '#/status', icon: 'status' },
+      { id: 'skills', label: 'Skills', hash: '#/skills', icon: 'skills' },
+      { id: 'terminal', label: 'Terminal', hash: '#/terminal', icon: 'terminal' },
+    ],
+  },
+  {
+    id: 'explore',
+    label: 'Explore',
+    defaultOpen: false,
+    items: [
+      { id: 'rewards', label: 'Rewards', hash: '#/rewards', icon: 'rewards' },
+      { id: 'blog', label: 'Blog', hash: '#/blog', icon: 'blog' },
+      { id: 'nfts', label: 'NFTs · DogiHood', hash: '#/nfts', icon: 'nfts' },
+      { id: 'hood', label: '$HOOD', hash: '#/hood', icon: 'hood' },
+      { id: 'lore', label: 'The Legend', hash: '#/lore', icon: 'lore' },
+      { id: 'account', label: 'Account / Wallet', hash: '#/account', icon: 'account' },
+    ],
+  },
+  {
+    id: 'build',
+    label: 'Build',
+    defaultOpen: false,
+    items: [
+      { id: 'projects', label: 'Projects', hash: '#/projects', icon: 'projects' },
+      { id: 'create', label: 'Create', hash: '#/create', icon: 'create' },
+      { id: 'ops', label: 'Ops', hash: '#/ops', icon: 'ops' },
+      { id: 'revenue', label: 'Revenue', hash: '#/revenue', icon: 'revenue' },
+    ],
+  },
+]
+
+export const DRAWER_SECTIONS_STORAGE_KEY = 'hood-desk:drawer:sections'
 
 export type RouteState = {
   view: ViewId
@@ -135,4 +194,8 @@ export function navActive(view: ViewId, chipId: ViewId): boolean {
 /** True when the current view lives under the More menu. */
 export function moreNavActive(view: ViewId): boolean {
   return MORE_NAV.some((item) => navActive(view, item.id))
+}
+
+export function drawerSectionHasActive(view: ViewId, section: DrawerSection): boolean {
+  return section.items.some((item) => navActive(view, item.id))
 }

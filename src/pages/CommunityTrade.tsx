@@ -135,7 +135,7 @@ export function CommunityTrade({ onNavigate }: Props) {
       </div>
       <div className="demo-banner community-honesty" role="note">
         <strong>SIMULATED / demo.</strong> Community vault & agent actions live in{' '}
-        <code className="inline-code">localStorage</code> only — not on-chain. $HOOD not deployed.
+        <code className="inline-code">localStorage</code> only — not on-chain. $HOOD is live on-chain; auto-trade fills stay SIM until a RH DEX router is wired.
         No invented DEX router. WalletConnect not required.
       </div>
 

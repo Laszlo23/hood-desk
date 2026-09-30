@@ -65,7 +65,7 @@ export function Revenue({ onNavigate }: Props) {
     {
       label: '$HOOD',
       value: HOOD_TOKEN_DEPLOYED ? 'Env set' : 'Not deployed',
-      note: 'Needs VITE_HOOD_TOKEN + PRIVATE_KEY ceremony',
+      note: 'Live on RH 4663 — transparent mint-once',
     },
   ]
 

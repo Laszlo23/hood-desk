@@ -38,7 +38,7 @@ export function Landing({ onNavigate }: Props) {
         <p className="hero-pitch">
           Flagship AI desk on <strong>Robinhood Chain 4663</strong>. HOOD is the star agent —
           community auto-trade, fair launches, Skill Market. <strong>{skillCount()} skills</strong>{' '}
-          ready. <strong>$HOOD</strong> is the companion coin (not deployed yet).
+          ready. <strong>$HOOD</strong> is live on RH 4663 — transparent fixed supply.
         </p>
 
         <div className="status-badges" aria-label="Quick tags">
@@ -53,7 +53,7 @@ export function Landing({ onNavigate }: Props) {
 
         <div className="demo-banner landing-honesty" role="note">
           <strong>Honest desk.</strong> Trade fills are <em>simulated</em> (<code className="inline-code">local_ord_*</code>).
-          $HOOD not deployed until env + key ceremony. Green check = Blockscout-verified only.
+          $HOOD is deployed (transparent ERC-20). Green check = Blockscout-verified only — explorer verify may lag behind Cloudflare.
           Featured hash stays labeled <em>not found on RH</em>.
         </div>
 
@@ -227,7 +227,7 @@ export function Landing({ onNavigate }: Props) {
         <article className="card mini-card">
           <h3>$HOOD</h3>
           <p className="muted">
-            1B mint-once ERC-20. Not deployed until <code className="inline-code">VITE_HOOD_TOKEN</code>.
+            1B mint-once ERC-20 — live via <code className="inline-code">VITE_HOOD_TOKEN</code>.
             DEX fees → treasury.
           </p>
           <button type="button" className="btn btn-sm btn-ghost mt" onClick={() => onNavigate('hood')}>

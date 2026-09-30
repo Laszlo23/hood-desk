@@ -2,6 +2,7 @@ import { HoodMark } from '../components/HoodMark'
 import { HoodSeal } from '../components/HoodSeal'
 import { HoodAgentBadge } from '../components/HoodAgentBadge'
 import { DogiHoodCard } from '../components/DogiHoodCard'
+import { CCFF00_STORY, CCFF00_OPENSEA, ccff00ItemUrl, shortAddr } from '../lib/nfts/stories'
 import { StatusStrip } from '../components/status/StatusStrip'
 import { FeaturedTxRow } from '../components/status/FeaturedTxRow'
 import { skillCount } from '../lib/agent/skills'
@@ -139,13 +140,44 @@ export function Landing({ onNavigate }: Props) {
         </div>
       </section>
 
-      <div className="featured-nft-strip" aria-label="Featured NFT">
-        <p className="rail-label">Featured pack · DogiHood</p>
+      <div className="featured-nft-strip" aria-label="Featured NFTs">
+        <div className="row-between" style={{ alignItems: 'baseline' }}>
+          <p className="rail-label">Featured pack · DogiHood · CCFF00</p>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('nfts')}>
+            Stories + gallery →
+          </button>
+        </div>
         <DogiHoodCard
           variant="strip"
           showHolderToggle={false}
           onOpenNfts={() => onNavigate('nfts')}
         />
+        <article className="card nft-landing-ccff00">
+          <div className="nft-landing-ccff00-inner">
+            <div className="nft-story-cover-wrap nft-landing-neon" aria-hidden>
+              <img src={CCFF00_STORY.coverImage} alt="" loading="lazy" />
+            </div>
+            <div>
+              <p className="eyebrow">HoodStreet · Proof of Neon</p>
+              <h3 className="section-title" style={{ margin: '4px 0 6px' }}>
+                {CCFF00_STORY.name}
+              </h3>
+              <p className="muted tiny">{CCFF00_STORY.tagline}</p>
+              <p className="tiny muted mono mt">{shortAddr(CCFF00_STORY.contract)}</p>
+              <div className="cta-row mt">
+                <a className="btn btn-primary btn-sm" href={CCFF00_OPENSEA} target="_blank" rel="noreferrer">
+                  OpenSea →
+                </a>
+                <a className="btn btn-ghost btn-sm" href={ccff00ItemUrl(1)} target="_blank" rel="noreferrer">
+                  Sample #1
+                </a>
+                <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('nfts')}>
+                  Full stories →
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
       </div>
 
       <div className="landing-grid">
@@ -216,7 +248,7 @@ export function Landing({ onNavigate }: Props) {
           </button>
         </article>
         <article className="card mini-card">
-          <h3>DogiHood NFTs</h3>
+          <h3>NFT stories</h3>
           <p className="muted">
             Featured pack on RH 4663 — sample #445, Dogiflow+ label. OpenSea + Blockscout links on NFTs.
           </p>

@@ -53,7 +53,7 @@ export const MORE_NAV: { id: ViewId; label: string; hash: string }[] = [
   { id: 'projects', label: 'Projects', hash: '#/projects' },
   { id: 'create', label: 'Create', hash: '#/create' },
   { id: 'terminal', label: 'Terminal', hash: '#/terminal' },
-  { id: 'nfts', label: 'NFTs · DogiHood', hash: '#/nfts' },
+  { id: 'nfts', label: 'NFTs · Stories', hash: '#/nfts' },
   { id: 'hood', label: '$HOOD', hash: '#/hood' },
   { id: 'ops', label: 'Ops', hash: '#/ops' },
   { id: 'revenue', label: 'Revenue', hash: '#/revenue' },
@@ -99,7 +99,7 @@ export const DRAWER_SECTIONS: DrawerSection[] = [
     items: [
       { id: 'rewards', label: 'Rewards', hash: '#/rewards', icon: 'rewards' },
       { id: 'blog', label: 'Blog', hash: '#/blog', icon: 'blog' },
-      { id: 'nfts', label: 'NFTs · DogiHood', hash: '#/nfts', icon: 'nfts' },
+      { id: 'nfts', label: 'NFTs · Stories', hash: '#/nfts', icon: 'nfts' },
       { id: 'hood', label: '$HOOD', hash: '#/hood', icon: 'hood' },
       { id: 'lore', label: 'The Legend', hash: '#/lore', icon: 'lore' },
       { id: 'account', label: 'Account / Wallet', hash: '#/account', icon: 'account' },
@@ -158,7 +158,14 @@ export function routeFromHash(hash: string): RouteState {
   if (parts[0] === 'account' || parts[0] === 'wallet' || parts[0] === 'profile') {
     return { view: 'account' }
   }
-  if (parts[0] === 'nfts' || parts[0] === 'nft' || parts[0] === 'dogihood') {
+  if (
+    parts[0] === 'nfts' ||
+    parts[0] === 'nft' ||
+    parts[0] === 'dogihood' ||
+    parts[0] === 'stories' ||
+    parts[0] === 'ccff00' ||
+    parts[0] === 'gallery'
+  ) {
     return { view: 'nfts' }
   }
   if (parts[0] === 'lore' || parts[0] === 'legend' || parts[0] === 'story') {

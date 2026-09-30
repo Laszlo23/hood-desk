@@ -52,16 +52,18 @@ export default function App() {
 
   const tradeMode = view === 'trade'
   const showShellBanner =
-    view === 'landing' || view === 'status' || view === 'skills' || view === 'rewards' || view === 'subscribe' || view === 'community' || view === 'lore'
+    view === 'landing' || view === 'status' || view === 'skills' || view === 'rewards' || view === 'subscribe' || view === 'community' || view === 'lore' || view === 'nfts'
 
   const loreVariant =
     view === 'landing' || view === 'lore'
       ? 'forest'
-      : view === 'community' || view === 'status'
-        ? 'council'
-        : tradeMode
-          ? 'mist'
-          : null
+      : view === 'nfts'
+        ? 'mist'
+        : view === 'community' || view === 'status'
+          ? 'council'
+          : tradeMode
+            ? 'mist'
+            : null
 
   return (
     <div className={`app-shell${tradeMode ? ' trade-shell' : ''}${loreVariant ? ` lore-shell lore-shell-${loreVariant}` : ''}`}>

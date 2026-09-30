@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="DogiHood">
+  <rect width="128" height="128" fill="#0a0a0a"/>
+  <rect x="4" y="4" width="120" height="120" fill="none" stroke="#CCFF00" stroke-width="4"/>
+  <!-- pixel shiba silhouette -->
+  <rect x="36" y="28" width="16" height="12" fill="#CCFF00"/>
+  <rect x="76" y="28" width="16" height="12" fill="#CCFF00"/>
+  <rect x="40" y="40" width="48" height="36" fill="#CCFF00"/>
+  <rect x="48" y="52" width="8" height="8" fill="#0a0a0a"/>
+  <rect x="72" y="52" width="8" height="8" fill="#0a0a0a"/>
+  <rect x="56" y="64" width="16" height="6" fill="#0a0a0a"/>
+  <rect x="44" y="76" width="40" height="20" fill="#CCFF00"/>
+  <text x="64" y="116" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" fill="#CCFF00">DOGIHOOD</text>
+</svg>

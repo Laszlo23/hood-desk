@@ -1,0 +1,199 @@
+import { HoodMark } from '../components/HoodMark'
+import { HoodAgentBadge } from '../components/HoodAgentBadge'
+import { DogiHoodCard } from '../components/DogiHoodCard'
+import { StatusStrip } from '../components/status/StatusStrip'
+import { FeaturedTxRow } from '../components/status/FeaturedTxRow'
+import { skillCount } from '../lib/agent/skills'
+import type { ViewId } from '../lib/nav'
+
+type Props = { onNavigate: (id: ViewId, projectId?: string) => void }
+
+export function Landing({ onNavigate }: Props) {
+  return (
+    <section className="page landing-page">
+      <div className="hero card">
+        <div className="hero-top row-gap">
+          <HoodMark size={88} variant="photo" bounce className="hero-mascot" />
+          <div>
+            <p className="eyebrow">Hood Street · HOOD agent online</p>
+            <h1 className="hero-title">Hood Desk</h1>
+            <p className="hero-tagline">
+              HOOD runs the desk. Robinhood Chain. Community auto-trade. No humans required for ops.
+            </p>
+            <HoodAgentBadge className="landing-hood-badge" />
+          </div>
+        </div>
+
+        <blockquote className="hood-agent-voice landing-hood-voice">
+          <span className="hood-agent-voice-label">HOOD</span>
+          HOOD here — scanning RH 4663 for the community. Auto-trade strategies on for the pack. SIM
+          labeled. Pack first.
+        </blockquote>
+
+        <p className="hero-pitch">
+          Flagship AI desk on <strong>Robinhood Chain 4663</strong>. HOOD is the star agent —
+          community auto-trade, fair launches, Skill Market. <strong>{skillCount()} skills</strong>{' '}
+          ready. <strong>$HOOD</strong> is the companion coin (not deployed yet).
+        </p>
+
+        <div className="status-badges" aria-label="Quick tags">
+          <span className="badge">HOOD agent</span>
+          <span className="badge">Community Auto-Trade</span>
+          <span className="badge">AI-operated</span>
+          <span className="badge">{skillCount()} skills</span>
+        </div>
+
+        <StatusStrip onNavigate={onNavigate} />
+        <FeaturedTxRow compact className="landing-featured-tx" />
+
+        <div className="demo-banner landing-honesty" role="note">
+          <strong>Honest desk.</strong> Trade fills are <em>simulated</em> (<code className="inline-code">local_ord_*</code>).
+          $HOOD not deployed until env + key ceremony. Green check = Blockscout-verified only.
+          Featured hash stays labeled <em>not found on RH</em>.
+        </div>
+
+        <div className="cta-row landing-cta-primary">
+          <button type="button" className="btn btn-primary" onClick={() => onNavigate('community')}>
+            Community Auto-Trade
+          </button>
+          <button type="button" className="btn btn-primary" onClick={() => onNavigate('trade')}>
+            Trade
+          </button>
+          <button type="button" className="btn btn-primary" onClick={() => onNavigate('status')}>
+            Status
+          </button>
+          <button type="button" className="btn btn-primary" onClick={() => onNavigate('skills')}>
+            Skills
+          </button>
+          <button type="button" className="btn btn-primary" onClick={() => onNavigate('rewards')}>
+            Rewards
+          </button>
+          <button type="button" className="btn btn-primary" onClick={() => onNavigate('blog')}>
+            Blog
+          </button>
+          <button type="button" className="btn btn-primary" onClick={() => onNavigate('subscribe')}>
+            Subscribe
+          </button>
+        </div>
+
+        <div className="cta-row">
+          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('create')}>
+            Create project
+          </button>
+          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('projects')}>
+            Projects
+          </button>
+          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('terminal')}>
+            Open Terminal
+          </button>
+          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('nfts')}>
+            DogiHood NFTs
+          </button>
+          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('hood')}>
+            View $HOOD
+          </button>
+          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('ops')}>
+            Ops loop
+          </button>
+        </div>
+      </div>
+
+      <div className="featured-nft-strip" aria-label="Featured NFT">
+        <p className="rail-label">Featured pack · DogiHood</p>
+        <DogiHoodCard
+          variant="strip"
+          showHolderToggle={false}
+          onOpenNfts={() => onNavigate('nfts')}
+        />
+      </div>
+
+      <div className="landing-grid">
+        <article className="card mini-card">
+          <h3>Create → Trade → Rewards</h3>
+          <p className="muted">
+            Creators earn when people trade your token (simulated). One-click path on Rewards.
+          </p>
+          <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('rewards')}>
+            Earnings →
+          </button>
+        </article>
+        <article className="card mini-card">
+          <h3>Create project</h3>
+          <p className="muted">
+            Name, ticker, socials, logo/emoji, agent persona. Persist per wallet in localStorage.
+          </p>
+          <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('create')}>
+            Create →
+          </button>
+        </article>
+        <article className="card mini-card">
+          <h3>Projects + fair launch</h3>
+          <p className="muted">
+            List & detail with social chips. Launch fair token wizard — mint-once, no team mint, no
+            tax.
+          </p>
+          <button type="button" className="btn btn-sm btn-ghost mt" onClick={() => onNavigate('projects')}>
+            Browse →
+          </button>
+        </article>
+        <article className="card mini-card community-mini-card">
+          <h3>Community Auto-Trade</h3>
+          <p className="muted">
+            HOOD runs DCA, momentum scout, risk-off, and DogiHood pride for the pack — paper / SIM
+            vault. Agent is the face.
+          </p>
+          <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('community')}>
+            Open desk →
+          </button>
+        </article>
+        <article className="card mini-card">
+          <h3>Skill Market</h3>
+          <p className="muted">
+            Follow trading bots / skill packs. Creators earn demo follow + usage credits — no fake mainnet fees.
+          </p>
+          <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('skills')}>
+            Browse →
+          </button>
+        </article>
+        <article className="card mini-card">
+          <h3>Blog</h3>
+          <p className="muted">
+            Hood Street posts — edit locally. Weekly banner motivates builders on RH.
+          </p>
+          <button type="button" className="btn btn-sm btn-ghost mt" onClick={() => onNavigate('blog')}>
+            Read →
+          </button>
+        </article>
+        <article className="card mini-card">
+          <h3>Subscribe</h3>
+          <p className="muted">
+            Starter $4.99 / Desk $9.99 / Desk+ $19.99 — trading + deployer agents, social growth, 6mo updates. Demo or Stripe; subs
+            feed treasury.
+          </p>
+          <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('subscribe')}>
+            Plans →
+          </button>
+        </article>
+        <article className="card mini-card">
+          <h3>DogiHood NFTs</h3>
+          <p className="muted">
+            Featured pack on RH 4663 — sample #445, Dogiflow+ label. OpenSea + Blockscout links on NFTs.
+          </p>
+          <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('nfts')}>
+            Pack pride →
+          </button>
+        </article>
+        <article className="card mini-card">
+          <h3>$HOOD</h3>
+          <p className="muted">
+            1B mint-once ERC-20. Not deployed until <code className="inline-code">VITE_HOOD_TOKEN</code>.
+            DEX fees → treasury.
+          </p>
+          <button type="button" className="btn btn-sm btn-ghost mt" onClick={() => onNavigate('hood')}>
+            Token card →
+          </button>
+        </article>
+      </div>
+    </section>
+  )
+}

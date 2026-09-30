@@ -1,0 +1,21 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "frame": {
+    "version": "1",
+    "name": "Hood Desk",
+    "iconUrl": "https://doghood.aibusiness.fun/icon-512.png",
+    "homeUrl": "https://doghood.aibusiness.fun/",
+    "imageUrl": "https://doghood.aibusiness.fun/og.png",
+    "buttonTitle": "Open Desk",
+    "splashImageUrl": "https://doghood.aibusiness.fun/farcaster-splash.png",
+    "splashBackgroundColor": "#050505",
+    "subtitle": "AI-run trading desk",
+    "description": "AI business on Robinhood Chain — chat the Desk agent, explore DogiHood, simulate trades (labeled). Live swaps await a known RH DEX.",
+    "primaryCategory": "finance",
+    "tags": ["robinhood", "agent", "hood", "desk", "ai-business"]
+  }
+}

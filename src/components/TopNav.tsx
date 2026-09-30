@@ -1,5 +1,12 @@
-import { useEffect, useState } from 'react'
-import { hashForView, MORE_NAV, navActive, PRIMARY_NAV, type ViewId } from '../lib/nav'
+import { useEffect, useRef, useState } from 'react'
+import {
+  hashForView,
+  MORE_NAV,
+  moreNavActive,
+  navActive,
+  PRIMARY_NAV,
+  type ViewId,
+} from '../lib/nav'
 import { getSubscription } from '../lib/subscription'
 import { ConnectButton } from './ConnectButton'
 import { HoodMark } from './HoodMark'
@@ -10,30 +17,50 @@ type Props = {
 }
 
 export function TopNav({ view, onNavigate }: Props) {
-  const [open, setOpen] = useState(false)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
   const [subLabel, setSubLabel] = useState(() => getSubscription().label)
+  const moreRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setSubLabel(getSubscription().label)
-    setOpen(false)
+    setDrawerOpen(false)
+    setMoreOpen(false)
   }, [view])
 
   useEffect(() => {
-    if (!open) return
+    if (!drawerOpen && !moreOpen) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false)
+      if (e.key === 'Escape') {
+        setDrawerOpen(false)
+        setMoreOpen(false)
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [open])
+  }, [drawerOpen, moreOpen])
+
+  useEffect(() => {
+    if (!moreOpen) return
+    const onPointer = (e: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setMoreOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', onPointer)
+    return () => document.removeEventListener('mousedown', onPointer)
+  }, [moreOpen])
 
   const go = (id: ViewId) => {
-    setOpen(false)
+    setDrawerOpen(false)
+    setMoreOpen(false)
     onNavigate(id)
   }
 
+  const moreIsActive = moreNavActive(view)
+
   return (
-    <header className={`top-bar${open ? ' top-bar-open' : ''}`}>
+    <header className={`top-bar${drawerOpen ? ' top-bar-open' : ''}`}>
       <div className="top-bar-glow" aria-hidden />
       <div className="top-bar-inner">
         <div className="top-bar-left">
@@ -68,22 +95,42 @@ export function TopNav({ view, onNavigate }: Props) {
                 <span className="nav-link-label">{v.label}</span>
               </a>
             ))}
+
+            <div className="nav-more" ref={moreRef}>
+              <button
+                type="button"
+                className={`nav-link nav-more-trigger${moreIsActive ? ' active' : ''}${moreOpen ? ' is-open' : ''}`}
+                aria-expanded={moreOpen}
+                aria-haspopup="menu"
+                onClick={() => setMoreOpen((o) => !o)}
+              >
+                <span className="nav-link-label">More</span>
+                <span className="nav-more-caret" aria-hidden />
+              </button>
+              {moreOpen && (
+                <div className="nav-more-menu" role="menu" aria-label="More pages">
+                  {MORE_NAV.map((v) => (
+                    <a
+                      key={v.id}
+                      role="menuitem"
+                      href={hashForView(v.id)}
+                      className={`nav-more-item${navActive(view, v.id) ? ' active' : ''}`}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        go(v.id)
+                      }}
+                    >
+                      <span>{v.label}</span>
+                      {navActive(view, v.id) && <span className="nav-link-pip" aria-hidden />}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
           </nav>
         </div>
 
         <div className="top-bar-right">
-          <a
-            href={hashForView('status')}
-            className={`nav-status-pill${view === 'status' ? ' active' : ''}`}
-            onClick={(e) => {
-              e.preventDefault()
-              go('status')
-            }}
-            title="Desk status"
-          >
-            <span className="nav-status-dot" aria-hidden />
-            Status
-          </a>
           <a
             href={hashForView('subscribe')}
             className="nav-cta"
@@ -100,10 +147,13 @@ export function TopNav({ view, onNavigate }: Props) {
           </div>
           <button
             type="button"
-            className={`nav-burger${open ? ' is-open' : ''}`}
-            aria-label={open ? 'Close menu' : 'Open menu'}
-            aria-expanded={open}
-            onClick={() => setOpen((o) => !o)}
+            className={`nav-burger${drawerOpen ? ' is-open' : ''}`}
+            aria-label={drawerOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={drawerOpen}
+            onClick={() => {
+              setMoreOpen(false)
+              setDrawerOpen((o) => !o)
+            }}
           >
             <span />
             <span />
@@ -112,7 +162,7 @@ export function TopNav({ view, onNavigate }: Props) {
         </div>
       </div>
 
-      {open && (
+      {drawerOpen && (
         <div className="top-nav-drawer">
           <div className="top-nav-drawer-sheen" aria-hidden />
           <nav className="top-nav-mobile" aria-label="Mobile primary">
@@ -133,7 +183,7 @@ export function TopNav({ view, onNavigate }: Props) {
             ))}
             <div className="top-nav-drawer-divider" />
             <p className="top-nav-drawer-label">More</p>
-            {MORE_NAV.filter((v) => !PRIMARY_NAV.some((p) => p.id === v.id)).map((v) => (
+            {MORE_NAV.map((v) => (
               <a
                 key={v.id}
                 href={hashForView(v.id)}

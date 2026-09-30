@@ -2710,16 +2710,16 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
+  gap: 10px;
   width: 100%;
-  min-height: 56px;
-  padding: 8px 14px;
+  min-height: 54px;
+  padding: 7px 12px;
 }
 
 .top-bar-left {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 14px;
   min-width: 0;
   flex: 1;
 }
@@ -2805,16 +2805,17 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 7px 13px;
+  gap: 6px;
+  padding: 6px 11px;
   border-radius: 999px;
   color: var(--muted);
   text-decoration: none !important;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   border: 1px solid transparent;
   background: transparent;
+  cursor: pointer;
   transition:
     color 0.15s ease,
     background 0.15s ease,
@@ -2869,8 +2870,9 @@ a:hover {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   flex-shrink: 0;
+  z-index: 3;
 }
 
 /* Distinctive Subscribe CTA */
@@ -3118,7 +3120,7 @@ a:hover {
   font-size: 0.8rem;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 1080px) {
   .top-nav-desktop {
     display: flex;
   }
@@ -3130,9 +3132,94 @@ a:hover {
     display: none !important;
   }
   .top-bar-inner {
-    min-height: 58px;
-    padding: 8px 16px;
+    min-height: 56px;
+    padding: 7px 14px;
   }
+}
+
+/* Mid widths: keep Subscribe + wallet readable; hide wordy CTA label if needed */
+@media (max-width: 1079px) {
+  .top-bar-left {
+    gap: 10px;
+  }
+}
+
+/* === More dropdown (desktop) === */
+.nav-more {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-more-trigger {
+  font: inherit;
+  font-family: inherit;
+}
+
+.nav-more-caret {
+  width: 0;
+  height: 0;
+  margin-left: 1px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  opacity: 0.7;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.nav-more-trigger.is-open .nav-more-caret,
+.nav-more-trigger[aria-expanded="true"] .nav-more-caret {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+.nav-more-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 196px;
+  padding: 6px;
+  border-radius: 14px;
+  z-index: 40;
+  background:
+    linear-gradient(165deg, rgba(18, 22, 12, 0.98), rgba(6, 8, 4, 0.96));
+  border: 1px solid rgba(204, 255, 0, 0.22);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.55),
+    0 0 24px rgba(204, 255, 0, 0.08),
+    inset 0 1px 0 rgba(204, 255, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-more-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  color: var(--muted);
+  text-decoration: none !important;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.nav-more-item:hover {
+  color: var(--text);
+  background: rgba(204, 255, 0, 0.08);
+  border-color: rgba(204, 255, 0, 0.12);
+}
+
+.nav-more-item.active {
+  color: var(--accent);
+  background: rgba(204, 255, 0, 0.12);
+  border-color: rgba(204, 255, 0, 0.28);
+  text-shadow: 0 0 12px rgba(204, 255, 0, 0.3);
 }
 
 /* Wallet panel (account / sidebar — not navbar) */
@@ -3569,33 +3656,9 @@ a:hover {
 
 /* ── Status density (Bankr-ish pulse, Hood neon) ───────────────────────── */
 
+/* Status pill removed — Status lives in primary nav only */
 .nav-status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 5px 11px;
-  border-radius: 999px;
-  border: 1px solid rgba(204, 255, 0, 0.28);
-  background: rgba(204, 255, 0, 0.08);
-  color: var(--accent);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.nav-status-pill:hover {
-  text-decoration: none;
-  background: rgba(204, 255, 0, 0.16);
-  border-color: rgba(204, 255, 0, 0.55);
-  box-shadow: 0 0 18px rgba(204, 255, 0, 0.18);
-}
-
-.nav-status-pill.active {
-  background: rgba(204, 255, 0, 0.2);
-  border-color: rgba(204, 255, 0, 0.7);
+  display: none !important;
 }
 
 .nav-status-dot,
@@ -4027,10 +4090,6 @@ a:hover {
 }
 
 @media (max-width: 720px) {
-  .nav-status-pill {
-    display: none;
-  }
-
   .trade-status-hint {
     margin-left: 0;
     width: 100%;

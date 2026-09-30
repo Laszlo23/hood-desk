@@ -36,20 +36,20 @@ export const VIEWS: { id: ViewId; label: string; hash: string }[] = [
   { id: 'community', label: 'Auto-Trade', hash: '#/community' },
 ]
 
-/** Primary top-bar links — keep short so the navbar stays elegant. */
+/** Primary top-bar links — 4 core items so the navbar stays scannable. */
 export const PRIMARY_NAV: { id: ViewId; label: string; hash: string }[] = [
   { id: 'trade', label: 'Trade', hash: '#/trade' },
   { id: 'community', label: 'Auto-Trade', hash: '#/community' },
   { id: 'status', label: 'Status', hash: '#/status' },
   { id: 'skills', label: 'Skills', hash: '#/skills' },
+]
+
+/** Secondary links — live under the More dropdown / mobile drawer. */
+export const MORE_NAV: { id: ViewId; label: string; hash: string }[] = [
   { id: 'rewards', label: 'Rewards', hash: '#/rewards' },
   { id: 'blog', label: 'Blog', hash: '#/blog' },
   { id: 'projects', label: 'Projects', hash: '#/projects' },
   { id: 'create', label: 'Create', hash: '#/create' },
-]
-
-/** Secondary / drawer links — pages that exist but stay out of the slim top bar. */
-export const MORE_NAV: { id: ViewId; label: string; hash: string }[] = [
   { id: 'terminal', label: 'Terminal', hash: '#/terminal' },
   { id: 'nfts', label: 'NFTs · DogiHood', hash: '#/nfts' },
   { id: 'hood', label: '$HOOD', hash: '#/hood' },
@@ -124,4 +124,9 @@ export function navActive(view: ViewId, chipId: ViewId): boolean {
   if (chipId === 'projects') return view === 'projects' || view === 'project'
   if (chipId === 'create') return view === 'create'
   return view === chipId
+}
+
+/** True when the current view lives under the More menu. */
+export function moreNavActive(view: ViewId): boolean {
+  return MORE_NAV.some((item) => navActive(view, item.id))
 }

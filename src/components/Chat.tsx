@@ -5,6 +5,7 @@ import { robinhoodChain } from '../lib/chain'
 import { ActionsStrip } from './ActionsStrip'
 import { HoodMark } from './HoodMark'
 import { HoodAgentBadge } from './HoodAgentBadge'
+import { HoodSeal } from './HoodSeal'
 
 function renderMarkdownish(text: string) {
   return text.split('\n').map((line, i) => (
@@ -108,7 +109,8 @@ export function Chat({ onReady }: Props) {
         {messages.length <= 1 && (
           <div className="chat-empty-hood" aria-hidden>
             <HoodMark size={96} variant="photo" className="chat-empty-mascot" />
-            <p className="muted tiny">HOOD here — community desk standing by</p>
+            <HoodSeal size={36} decorative className="chat-empty-seal" />
+            <p className="muted tiny">HOOD here — community desk standing by · Sherwood mist</p>
           </div>
         )}
         {messages.map((m) => (

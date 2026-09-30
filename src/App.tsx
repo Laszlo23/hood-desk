@@ -19,6 +19,8 @@ import { Subscribe } from './pages/Subscribe'
 import { Terminal } from './pages/Terminal'
 import { Trade } from './pages/Trade'
 import { CommunityTrade } from './pages/CommunityTrade'
+import { Lore } from './pages/Lore'
+import { LoreBackdrop } from './components/LoreBackdrop'
 
 export default function App() {
   const initial = typeof window !== 'undefined' ? routeFromHash(window.location.hash) : { view: 'landing' as ViewId }
@@ -50,12 +52,22 @@ export default function App() {
 
   const tradeMode = view === 'trade'
   const showShellBanner =
-    view === 'landing' || view === 'status' || view === 'skills' || view === 'rewards' || view === 'subscribe' || view === 'community'
+    view === 'landing' || view === 'status' || view === 'skills' || view === 'rewards' || view === 'subscribe' || view === 'community' || view === 'lore'
+
+  const loreVariant =
+    view === 'landing' || view === 'lore'
+      ? 'forest'
+      : view === 'community' || view === 'status'
+        ? 'council'
+        : tradeMode
+          ? 'mist'
+          : null
 
   return (
-    <div className={`app-shell${tradeMode ? ' trade-shell' : ''}`}>
+    <div className={`app-shell${tradeMode ? ' trade-shell' : ''}${loreVariant ? ` lore-shell lore-shell-${loreVariant}` : ''}`}>
       <div className="grid-bg" />
       <div className="glow-orb" />
+      {loreVariant && <LoreBackdrop variant={loreVariant} />}
 
       <div className={`desk-layout${tradeMode ? ' desk-layout-trade' : ''}`}>
         {!tradeMode && <TopNav view={view} onNavigate={navigate} />}
@@ -83,6 +95,7 @@ export default function App() {
           {view === 'subscribe' && <Subscribe onNavigate={navigate} />}
           {view === 'account' && <Account onNavigate={navigate} />}
           {view === 'nfts' && <Nfts onNavigate={navigate} />}
+          {view === 'lore' && <Lore onNavigate={navigate} />}
         </main>
       </div>
     </div>

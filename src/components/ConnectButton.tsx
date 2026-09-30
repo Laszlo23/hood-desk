@@ -85,7 +85,14 @@ export function ConnectButton() {
       >
         {busy || isPending ? '…' : 'CONNECT'}
       </button>
-      {err && <p className="err-line">{err}</p>}
+      {err && (
+        <p className="err-line">
+          {err}
+          <span className="block tiny muted" style={{ marginTop: 4 }}>
+            Demo Trade &amp; Auto-Trade work without a wallet — Connect is optional for RH 4663.
+          </span>
+        </p>
+      )}
     </div>
   )
 }

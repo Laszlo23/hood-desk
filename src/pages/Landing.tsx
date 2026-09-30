@@ -1,4 +1,5 @@
 import { HoodMark } from '../components/HoodMark'
+import { HoodSeal } from '../components/HoodSeal'
 import { HoodAgentBadge } from '../components/HoodAgentBadge'
 import { DogiHoodCard } from '../components/DogiHoodCard'
 import { StatusStrip } from '../components/status/StatusStrip'
@@ -13,12 +14,16 @@ export function Landing({ onNavigate }: Props) {
     <section className="page landing-page">
       <div className="hero card">
         <div className="hero-top row-gap">
-          <HoodMark size={88} variant="photo" bounce className="hero-mascot" />
+          <div className="hero-mark-stack">
+            <HoodMark size={88} variant="photo" bounce className="hero-mascot" />
+            <HoodSeal size={36} decorative className="hero-seal" />
+          </div>
           <div>
-            <p className="eyebrow">Hood Street · HOOD agent online</p>
+            <p className="eyebrow">Hood Street · Sherwood reborn · HOOD agent online</p>
             <h1 className="hero-title">Hood Desk</h1>
             <p className="hero-tagline">
-              HOOD runs the desk. Robinhood Chain. Community auto-trade. No humans required for ops.
+              From the forest to Hood Street — HOOD runs the desk. Take from the rich (opacity &amp; fake
+              rails), feed the community auto-trade. Robinhood Chain. No humans required for ops.
             </p>
             <HoodAgentBadge className="landing-hood-badge" />
           </div>
@@ -97,6 +102,42 @@ export function Landing({ onNavigate }: Props) {
           </button>
         </div>
       </div>
+
+
+      <section className="lore-legend-strip card" aria-label="The Legend">
+        <div className="lore-legend-head row-between">
+          <div className="row-gap">
+            <HoodSeal size={44} className="lore-legend-seal" />
+            <div>
+              <p className="eyebrow">The Legend</p>
+              <h2 className="section-title">Sherwood → Hood Street</h2>
+            </div>
+          </div>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('lore')}>
+            Full legend →
+          </button>
+        </div>
+        <p className="muted lore-legend-copy">
+          Outlaws once stole from the rich so the pack could eat. Tonight the neon bow draws on RH
+          4663: HOOD keeps a <strong>community desk</strong> — paper auto-trade, honest SIM labels,
+          fair launches — until a real DEX answers. Mist behind the glass; DogiHood &amp; the agent
+          mark stay front.
+        </p>
+        <div className="lore-legend-thumbs">
+          <button type="button" className="lore-thumb" onClick={() => onNavigate('lore')} aria-label="Forest lore">
+            <img src="/lore/hood-forest.jpg" alt="" loading="lazy" />
+            <span>Forest</span>
+          </button>
+          <button type="button" className="lore-thumb" onClick={() => onNavigate('lore')} aria-label="Council lore">
+            <img src="/lore/hood-council.jpg" alt="" loading="lazy" />
+            <span>Council</span>
+          </button>
+          <button type="button" className="lore-thumb" onClick={() => onNavigate('lore')} aria-label="Seal lore">
+            <img src="/lore/hood-seal.jpg" alt="" loading="lazy" />
+            <span>Seal</span>
+          </button>
+        </div>
+      </section>
 
       <div className="featured-nft-strip" aria-label="Featured NFT">
         <p className="rail-label">Featured pack · DogiHood</p>
@@ -194,6 +235,17 @@ export function Landing({ onNavigate }: Props) {
           </button>
         </article>
       </div>
+
+      <footer className="landing-footer-lore">
+        <HoodSeal size={40} decorative className="landing-footer-seal" />
+        <p className="muted tiny">
+          Lore is atmosphere — DogiHood NFTs &amp; HOOD agent remain the brand face.{' '}
+          <button type="button" className="link-btn" onClick={() => onNavigate('lore')}>
+            The Legend
+          </button>
+        </p>
+      </footer>
     </section>
   )
 }
+

@@ -10,6 +10,7 @@ import { listProjects } from '../lib/projects'
 import { listSkillPacks } from '../lib/market/skillMarket'
 import { DOGIHOOD_NFT_ADDRESS } from '../lib/nfts/dogihood'
 import { shortHash } from '../lib/status/featured'
+import { HoodSeal } from '../components/HoodSeal'
 
 type Props = { onNavigate: (id: ViewId, projectId?: string) => void }
 type RankTab = 'top' | 'trending' | 'tokens'
@@ -84,11 +85,14 @@ export function Status({ onNavigate }: Props) {
   }, [rankTab])
 
   return (
-    <section className="page status-page">
+    <section className="page status-page lore-shell-page">
       <header className="status-page-hero card">
         <div className="status-page-hero-top">
           <div>
-            <p className="eyebrow">Hood Street · command desk</p>
+            <div className="row-gap status-lore-head">
+              <HoodSeal size={32} decorative className="status-lore-seal" />
+              <p className="eyebrow">Hood Street · command desk · mystic mist</p>
+            </div>
             <h1 className="hero-title status-title">Status</h1>
             <p className="muted status-lead">
               Bankr-ish density with Hood flow — KPI pulse, featured cards, ranked local tables.
@@ -154,6 +158,9 @@ export function Status({ onNavigate }: Props) {
           </button>
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('hood')}>
             $HOOD
+          </button>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('lore')}>
+            The Legend
           </button>
         </div>
       </header>
@@ -343,7 +350,8 @@ export function Status({ onNavigate }: Props) {
       </div>
 
       {rankedOrders.length === 0 && (
-        <div className="card status-empty-orders">
+        <div className="card status-empty-orders empty-card">
+          <HoodSeal size={48} decorative className="empty-seal" />
           <p className="rail-label">Simulated orders</p>
           <p className="muted">
             No local fills yet. Open Trade to place a <strong>simulated</strong> order (

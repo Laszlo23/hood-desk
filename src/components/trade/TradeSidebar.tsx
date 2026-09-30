@@ -30,6 +30,7 @@ const EXPLORE: NavItem[] = [
   { id: 'projects', label: 'Projects' },
   { id: 'revenue', label: 'Metrics' },
   { id: 'status', label: 'Top / Trending' },
+  { id: 'lore', label: 'The Legend' },
 ]
 
 const BUILD: NavItem[] = [

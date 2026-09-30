@@ -12,6 +12,7 @@ export type BannerOverride = {
 }
 
 const SEEDED: string[] = [
+  'Sherwood → Hood Street: take from the rich, feed the community desk. HOOD keeps the mist honest.',
   'Ship fair launches on RH 4663 — creators earn when the street trades.',
   'Follow a bot. Simulate a fill. Watch Rewards tick. Demo today, DEX tomorrow.',
   'Hood Street energy: dark + neon. Build the desk that stays online.',

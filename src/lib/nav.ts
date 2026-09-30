@@ -16,6 +16,7 @@ export type ViewId =
   | 'nfts'
   | 'status'
   | 'community'
+  | 'lore'
 
 export const VIEWS: { id: ViewId; label: string; hash: string }[] = [
   { id: 'landing', label: 'Desk', hash: '#/' },
@@ -34,6 +35,7 @@ export const VIEWS: { id: ViewId; label: string; hash: string }[] = [
   { id: 'nfts', label: 'NFTs', hash: '#/nfts' },
   { id: 'status', label: 'Status', hash: '#/status' },
   { id: 'community', label: 'Auto-Trade', hash: '#/community' },
+  { id: 'lore', label: 'The Legend', hash: '#/lore' },
 ]
 
 /** Primary top-bar links — 4 core items so the navbar stays scannable. */
@@ -56,6 +58,7 @@ export const MORE_NAV: { id: ViewId; label: string; hash: string }[] = [
   { id: 'ops', label: 'Ops', hash: '#/ops' },
   { id: 'revenue', label: 'Revenue', hash: '#/revenue' },
   { id: 'account', label: 'Account / Wallet', hash: '#/account' },
+  { id: 'lore', label: 'The Legend', hash: '#/lore' },
 ]
 
 export type RouteState = {
@@ -98,6 +101,9 @@ export function routeFromHash(hash: string): RouteState {
   }
   if (parts[0] === 'nfts' || parts[0] === 'nft' || parts[0] === 'dogihood') {
     return { view: 'nfts' }
+  }
+  if (parts[0] === 'lore' || parts[0] === 'legend' || parts[0] === 'story') {
+    return { view: 'lore' }
   }
   if (parts[0] === 'projects' || parts[0] === 'project') {
     if (origParts[1]) {

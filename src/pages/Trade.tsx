@@ -113,7 +113,7 @@ export function Trade({ onNavigate }: Props) {
   }
 
   return (
-    <section className="trade-page">
+    <section className="trade-page lore-shell-page">
       <TradeSidebar active="trade" onNavigate={onNavigate} />
 
       <div className="trade-center">

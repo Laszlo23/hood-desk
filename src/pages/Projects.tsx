@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { listProjects, socialChips, storageOwnerKey } from '../lib/projects'
 import { VerifiedBadge } from '../components/VerifiedBadge'
+import { HoodSeal } from '../components/HoodSeal'
 import type { ViewId } from '../lib/nav'
 
 type Props = {
@@ -34,6 +35,7 @@ export function Projects({ onNavigate }: Props) {
 
       {projects.length === 0 ? (
         <div className="card empty-card">
+          <HoodSeal size={56} decorative className="empty-seal" />
           <p className="eyebrow">Empty desk</p>
           <h2>No projects yet</h2>
           <p className="muted">

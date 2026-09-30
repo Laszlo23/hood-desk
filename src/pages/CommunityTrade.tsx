@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { HoodAgentHero } from '../components/HoodAgentHero'
 import { HoodAgentBadge } from '../components/HoodAgentBadge'
 import { HoodMark } from '../components/HoodMark'
+import { HoodSeal } from '../components/HoodSeal'
 import {
   STRATEGIES,
   type AgentAction,
@@ -128,6 +129,10 @@ export function CommunityTrade({ onNavigate }: Props) {
         </div>
       </HoodAgentHero>
 
+      <div className="community-lore-chip row-gap" aria-hidden>
+        <HoodSeal size={28} decorative className="community-lore-seal" />
+        <span className="tiny muted">Sherwood council · paper vault for the pack</span>
+      </div>
       <div className="demo-banner community-honesty" role="note">
         <strong>SIMULATED / demo.</strong> Community vault & agent actions live in{' '}
         <code className="inline-code">localStorage</code> only — not on-chain. $HOOD not deployed.

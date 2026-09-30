@@ -1,3 +1,4 @@
+import { HoodSeal } from '../HoodSeal'
 import type { SimulatedOrder } from '../../lib/trade/types'
 
 type Props = {
@@ -33,8 +34,9 @@ export function OrdersPanel({ orders, tab, onTab }: Props) {
 
       {rows.length === 0 ? (
         <div className="orders-empty">
+          <HoodSeal size={40} decorative className="empty-seal" />
           <p className="muted">No {tab === 'trades' ? 'trades' : 'orders'} yet</p>
-          <p className="tiny muted">Simulate a Market / Limit order in the right panel.</p>
+          <p className="tiny muted">SIMULATED desk — Market / Limit in the right panel. No live RH DEX.</p>
         </div>
       ) : (
         <div className="orders-table-wrap">

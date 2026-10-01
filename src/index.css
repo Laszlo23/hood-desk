@@ -3162,11 +3162,12 @@ a:hover {
     border-radius: 0;
     border: none;
     border-top: 1px solid rgba(204, 255, 0, 0.18);
-    max-height: calc(100vh - 50px);
-    max-height: calc(100dvh - 50px);
+    height: calc(100vh - 50px);
+    height: calc(100dvh - 50px);
+    min-height: 400px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    z-index: 95;
+    z-index: 999;
     animation: slideDown 0.25s ease;
   }
 

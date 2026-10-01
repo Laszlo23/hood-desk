@@ -24,6 +24,10 @@ type Props = {
   onNavigate: (id: ViewId, slugOrProject?: string) => void
 }
 
+function shareText(post: BlogPost): string {
+  return `${post.title}\n\nhttps://doghood.aibusiness.fun/#/blog/${post.slug}`
+}
+
 function formatDate(iso: string): string {
   try {
     return new Date(iso).toLocaleDateString(undefined, {
@@ -147,6 +151,31 @@ export function Blog({ slug, onNavigate }: Props) {
           <h1>{post.title}</h1>
         </div>
         <article className="card blog-article">{renderBody(post.body)}</article>
+        <div className="cta-row mt">
+          <a
+            className="btn btn-primary btn-sm"
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText(post))}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Post on X
+          </a>
+          <a
+            className="btn btn-ghost btn-sm"
+            href={`https://warpcast.com/~/compose?text=${encodeURIComponent(shareText(post))}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Cast
+          </a>
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={() => void navigator.clipboard.writeText(shareText(post))}
+          >
+            Copy
+          </button>
+        </div>
         <div className="cta-row mt">
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => startEdit(post)}>
             Edit post

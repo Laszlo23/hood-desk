@@ -1,0 +1,57 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="forest-bg-100" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a2818;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1a4d2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0a2818;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="neon-glow-100">
+      <stop offset="0%" style="stop-color:#CCFF00;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#CCFF00;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <rect width="400" height="400" fill="url(#forest-bg-100)"/>
+  
+  <circle cx="200" cy="200" r="140" fill="url(#neon-glow-100)"/>
+  
+  <g id="forest-scene">
+    <ellipse cx="100" cy="330" rx="60" ry="20" fill="#0a2818" opacity="0.5"/>
+    <ellipse cx="300" cy="330" rx="60" ry="20" fill="#0a2818" opacity="0.5"/>
+  </g>
+  
+  <g id="fox-face-100">
+    <ellipse cx="200" cy="200" rx="80" ry="90" fill="#d35400"/>
+    
+    <polygon points="130,150 118,100 145,130" fill="#d35400"/>
+    <polygon points="270,150 282,100 255,130" fill="#d35400"/>
+    <polygon points="132,148 122,105 145,132" fill="#CCFF00" opacity="0.3"/>
+    <polygon points="268,148 278,105 255,132" fill="#CCFF00" opacity="0.3"/>
+    
+    <ellipse cx="168" cy="188" rx="20" ry="22" fill="#2d3436"/>
+    <ellipse cx="232" cy="188" rx="20" ry="22" fill="#2d3436"/>
+    <circle cx="171" cy="184" r="7" fill="#CCFF00"/>
+    <circle cx="235" cy="184" r="7" fill="#CCFF00"/>
+    <circle cx="173" cy="186" r="3" fill="#fff"/>
+    <circle cx="237" cy="186" r="3" fill="#fff"/>
+    
+    <circle cx="200" cy="225" r="11" fill="#2d3436"/>
+    <path d="M 200 225 Q 178 248 160 255 M 200 225 Q 222 248 240 255" stroke="#2d3436" stroke-width="3" fill="none"/>
+    
+    <ellipse cx="200" cy="255" rx="45" ry="30" fill="#fff" opacity="0.95"/>
+    <path d="M 170 268 Q 200 282 230 268" fill="#2d3436"/>
+    <path d="M 195 278 L 205 278" stroke="#CCFF00" stroke-width="2"/>
+  </g>
+  
+  <g id="hood-crown">
+    <path d="M 135 135 Q 200 85 265 135" stroke="#CCFF00" stroke-width="4" fill="none"/>
+    <circle cx="200" cy="70" r="18" fill="#CCFF00"/>
+    <text x="200" y="77" font-family="monospace" font-size="14" font-weight="bold" fill="#0a2818" text-anchor="middle">$</text>
+  </g>
+  
+  <text x="200" y="330" font-family="monospace" font-size="16" font-weight="bold" fill="#CCFF00" text-anchor="middle">HOOD SEEDER #100</text>
+  <text x="200" y="355" font-family="monospace" font-size="12" fill="#CCFF00" text-anchor="middle" opacity="0.7">Legendary Seeder</text>
+  
+  <rect x="10" y="10" width="380" height="380" fill="none" stroke="#CCFF00" stroke-width="3" opacity="0.5" rx="10"/>
+  <rect x="18" y="18" width="364" height="364" fill="none" stroke="#CCFF00" stroke-width="1" opacity="0.3" rx="8"/>
+</svg>

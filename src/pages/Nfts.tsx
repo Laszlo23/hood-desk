@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { DogiHoodCard } from '../components/DogiHoodCard'
+import { HoodSeederCard } from '../components/HoodSeederCard'
 import {
   ALL_GALLERY_ITEMS,
   CCFF00_NFT_ADDRESS,
@@ -124,13 +125,14 @@ export function Nfts({ onNavigate }: Props) {
         <h1>Pack pride &amp; Proof of Neon</h1>
         <p className="muted">
           Real Hoodstreet / desk-supported collections on Robinhood Chain (4663).{' '}
-          <strong>DogiHood</strong> stays the flagship pack; <strong>CCFF00</strong> is
-          HoodStreet&apos;s founding ERC-6551 neon membership. No invented contracts, no fake
-          verified badges, no live-trading claims.
+          <strong>DogiHood</strong> stays the flagship pack; <strong>Hood Seeder</strong> honors
+          early supporters; <strong>CCFF00</strong> is HoodStreet&apos;s founding ERC-6551 neon
+          membership. No invented contracts, no fake verified badges, no live-trading claims.
         </p>
         <div className="demo-banner">
           <strong>Honest labels.</strong> Contracts shown were checked via OpenSea / official
-          HoodStreet pages / RH RPC. Sibling RH collections (e.g. DotHood) exist but are{' '}
+          HoodStreet pages / RH RPC. Hood Seeder is a desk community collection (deploy via
+          contracts/hood-seeder/). Sibling RH collections (e.g. DotHood) exist but are{' '}
           <em>not</em> claimed as Hoodstreet-supported here. $CCFF00 ERC-20 transfers may be
           disabled — culture &amp; membership first.
         </div>
@@ -149,8 +151,11 @@ export function Nfts({ onNavigate }: Props) {
       </div>
 
       <div id="dogihood-flagship" className="nfts-featured-list">
-        <p className="rail-label">Flagship card · DogiHood / Dogiflow+</p>
-        <DogiHoodCard variant="featured" showHolderToggle />
+        <p className="rail-label">Featured cards · DogiHood / Hood Seeder</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+          <DogiHoodCard variant="featured" showHolderToggle />
+          <HoodSeederCard variant="featured" showHolderToggle />
+        </div>
       </div>
 
       <article className="card mt nft-gallery-section">

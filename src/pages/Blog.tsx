@@ -29,6 +29,15 @@ function shareText(post: BlogPost): string {
   return `${post.title}\n\nhttps://doghood.aibusiness.fun/#/blog/${post.slug}`
 }
 
+function excerpt(body: string): string {
+  const plain = body
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/[*_`#>]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+  return plain.length > 148 ? `${plain.slice(0, 148).trim()}…` : plain
+}
+
 function formatDate(iso: string): string {
   try {
     return new Date(iso).toLocaleDateString(undefined, {
@@ -233,7 +242,7 @@ export function Blog({ slug, onNavigate }: Props) {
                 {p.title}
               </button>
             </h2>
-            <p className="muted">{p.body.slice(0, 140)}{p.body.length > 140 ? '…' : ''}</p>
+            <p className="muted blog-excerpt">{excerpt(p.body)}</p>
             <div className="cta-row mt">
               <button type="button" className="btn btn-primary btn-sm" onClick={() => onNavigate('blog', p.slug)}>
                 Read →

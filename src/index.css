@@ -2412,63 +2412,83 @@ a:hover {
   line-height: 1.45;
 }
 
+.street-today {
+  padding: 28px 26px 22px;
+  background:
+    linear-gradient(180deg, rgba(204, 255, 0, 0.07), transparent 32%),
+    #080a06;
+}
+
 .street-today h2 {
-  margin: 6px 0 10px;
-  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  margin: 8px 0 14px;
+  font-family: Palatino, 'Palatino Linotype', 'Iowan Old Style', Georgia, serif;
   font-weight: 500;
-  font-size: 1.8rem;
-  letter-spacing: -0.02em;
+  font-size: clamp(2.4rem, 6vw, 3.2rem);
+  letter-spacing: -0.035em;
+  line-height: 0.95;
 }
 
 .street-today-line {
-  margin: 0 0 10px;
-  max-width: 62ch;
-  line-height: 1.5;
+  margin: 0 0 12px;
+  max-width: 46ch;
+  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  font-size: 1.2rem;
+  line-height: 1.45;
+  color: var(--text-dim, var(--text));
+}
+
+.street-today .cta-row {
+  margin-top: 18px;
 }
 
 .street-bars-label {
-  margin: 18px 0 10px;
+  margin: 26px 0 14px;
 }
 
 .street-bars {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 16px 0 4px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  border-top: 1px solid rgba(204, 255, 0, 0.16);
 }
 
 .street-bars li {
   display: grid;
-  grid-template-columns: 7.5rem 1fr 1.5rem;
+  grid-template-columns: 7.2rem 1fr 1.6rem;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .street-bar-name {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
+  letter-spacing: 0.01em;
 }
 
 .street-bar-track {
-  height: 8px;
-  background: rgba(204, 255, 0, 0.12);
-  border-radius: 99px;
+  height: 11px;
+  background: rgba(204, 255, 0, 0.1);
   overflow: hidden;
 }
 
 .street-bar-fill {
   display: block;
   height: 100%;
+  background: linear-gradient(90deg, #9fcd00, var(--accent));
+}
+
+.street-bars li:first-child .street-bar-fill {
   background: var(--accent);
-  border-radius: 99px;
+  box-shadow: 0 0 16px rgba(204, 255, 0, 0.35);
 }
 
 .street-bar-count {
   font-variant-numeric: tabular-nums;
   text-align: right;
-  color: var(--muted);
-  font-size: 0.82rem;
+  color: var(--text);
+  font-size: 0.84rem;
 }
 
 .blog-list {
@@ -2480,17 +2500,29 @@ a:hover {
     grid-template-columns: 1fr 1fr;
   }
 }
-.blog-card .section-title {
-  margin-top: 4px;
+.blog-card {
+  padding: 18px 18px 16px;
 }
+
+.blog-card .section-title {
+  margin: 6px 0 8px;
+}
+
 .blog-title-btn {
-  font: inherit;
-  font-weight: 800;
+  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.28rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
   color: var(--text);
   text-align: left;
   background: none;
   border: none;
   padding: 0;
+}
+
+.blog-excerpt {
+  line-height: 1.45;
 }
 .blog-title-btn:hover {
   color: var(--accent);
@@ -2643,6 +2675,15 @@ a:hover {
 .section-title {
   letter-spacing: -0.03em;
   font-weight: 850;
+}
+
+.page-intro h1 {
+  font-family: Palatino, 'Palatino Linotype', 'Iowan Old Style', Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(2.6rem, 7vw, 3.6rem);
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+  margin: 10px 0 14px;
 }
 
 /* base top-bar surface superseded by Clean TopNav glass block below */

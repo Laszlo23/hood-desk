@@ -168,7 +168,7 @@ export function TradeChart({ token, timeframe, onTimeframe }: Props) {
             </p>
             <div className="cta-row mt">
               <a 
-                href={`https://app.uniswap.org/explore/tokens/chain/4663/${token.address}`}
+                href={`https://app.uniswap.org/swap?chain=robinhood&inputCurrency=ETH&outputCurrency=${token.address}`}
                 target="_blank" 
                 rel="noreferrer" 
                 className="btn btn-ghost btn-sm"

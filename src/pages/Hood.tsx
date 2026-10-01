@@ -63,7 +63,7 @@ export function Hood({ onNavigate }: Props) {
     : '$HOOD companion token for Hood Desk — coming soon to Robinhood Chain'
 
   const uniswapAddTokenUrl = HOOD_TOKEN_DEPLOYED
-    ? `https://app.uniswap.org/explore/tokens/chain/${CHAIN_ID}/${hoodAddr}`
+    ? `https://app.uniswap.org/swap?chain=robinhood&inputCurrency=ETH&outputCurrency=${hoodAddr}`
     : '#'
 
   const okuUrl = HOOD_TOKEN_DEPLOYED

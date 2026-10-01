@@ -14,7 +14,7 @@ import {
 } from '../lib/trade/demoTokens'
 import { HOOD_SWAP_SLIPPAGE_BPS, planHoodMarketSwap } from '../lib/trade/hoodSwap'
 import { listOrders, placeOnchainOrder, placeSimulatedOrder } from '../lib/trade/orders'
-import { hoodHasPool } from '../lib/trade/uniswap'
+import { hoodHasPool, uniswapSwapUrl } from '../lib/trade/uniswap'
 import { erc20Abi } from '../lib/hoodToken'
 import type {
   SimulatedOrder,
@@ -241,7 +241,7 @@ export function Trade({ onNavigate }: Props) {
   }
 
   const isHoodToken = HOOD_TOKEN_ADDRESS && token.address.toLowerCase() === HOOD_TOKEN_ADDRESS.toLowerCase()
-  const uniswapTokenUrl = `https://app.uniswap.org/explore/tokens/chain/4663/${token.address}`
+  const uniswapTokenUrl = uniswapSwapUrl(token.address)
   const okuTokenUrl = `https://oku.trade/token/4663:${token.address}`
 
   return (

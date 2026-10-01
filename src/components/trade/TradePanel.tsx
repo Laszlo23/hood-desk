@@ -322,7 +322,7 @@ export function TradePanel({
         {hasNoPool ? (
           <>
             <strong>${token.symbol} has no Uniswap pool.</strong> Create liquidity on{' '}
-            <a href={`https://app.uniswap.org/add/${token.address}`} target="_blank" rel="noreferrer">
+            <a href={`https://app.uniswap.org/swap?chain=robinhood&inputCurrency=ETH&outputCurrency=${token.address}`} target="_blank" rel="noreferrer">
               Uniswap
             </a>{' '}
             to enable trading.

@@ -19,6 +19,22 @@ export const WETH_ADDRESS: Address = '0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73
 export const USDG_ADDRESS: Address = '0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168'
 export const USDG_DECIMALS = 6
 
+/** $HOOD/WETH 1% pool created on Uniswap V3. */
+export const HOOD_WETH_POOL: Address = '0xf27827ca8600e5c79b371f5b30e5a0e889bc7c44'
+
+/** Swap URL selects the token by address. Explore pages stay empty until Uniswap indexes it. */
+export function uniswapSwapUrl(token: string): string {
+  return `https://app.uniswap.org/swap?chain=robinhood&inputCurrency=ETH&outputCurrency=${token}`
+}
+
+export function uniswapTokenUrl(token: string): string {
+  return `https://app.uniswap.org/explore/tokens/robinhood/${token}`
+}
+
+export function uniswapPoolUrl(pool: string = HOOD_WETH_POOL): string {
+  return `https://app.uniswap.org/explore/pools/robinhood/${pool}`
+}
+
 const FEE_TIERS = [100, 500, 3000, 10000] as const
 
 const FACTORY_ABI = [

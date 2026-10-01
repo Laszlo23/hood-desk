@@ -23,6 +23,11 @@ import {
   dogiHoodItemUrl,
   shortAddr,
 } from './dogihood'
+import {
+  HOOD_SEEDER,
+  HOOD_SEEDER_NFT_ADDRESS,
+  hoodSeederItemUrl,
+} from './hoodseeder'
 
 export type StoryConfidence = 'confirmed' | 'community-lore'
 
@@ -147,6 +152,38 @@ const DOGIHOOD_GALLERY: NftGalleryItem[] = [
   },
 ]
 
+const HOOD_SEEDER_GALLERY: NftGalleryItem[] = [
+  {
+    id: 'hood-seeder-1',
+    collectionId: 'hood-seeder',
+    label: 'Hood Seeder #1',
+    tokenId: 1,
+    image: '/nfts/hood-seeder/1.svg',
+    placeholder: '/nfts/hood-seeder/placeholder.svg',
+    openseaItemUrl: HOOD_SEEDER_NFT_ADDRESS ? hoodSeederItemUrl(1) : undefined,
+    note: 'Sample seeder pass — deploy contract to enable',
+  },
+  {
+    id: 'hood-seeder-42',
+    collectionId: 'hood-seeder',
+    label: 'Hood Seeder #42',
+    tokenId: 42,
+    image: '/nfts/hood-seeder/42.svg',
+    placeholder: '/nfts/hood-seeder/placeholder.svg',
+    openseaItemUrl: HOOD_SEEDER_NFT_ADDRESS ? hoodSeederItemUrl(42) : undefined,
+  },
+  {
+    id: 'hood-seeder-100',
+    collectionId: 'hood-seeder',
+    label: 'Hood Seeder #100',
+    tokenId: 100,
+    image: '/nfts/hood-seeder/100.svg',
+    placeholder: '/nfts/hood-seeder/placeholder.svg',
+    openseaItemUrl: HOOD_SEEDER_NFT_ADDRESS ? hoodSeederItemUrl(100) : undefined,
+    note: 'Legendary seeder',
+  },
+]
+
 export const CCFF00_STORY: NftProjectStory = {
   id: 'ccff00',
   name: 'CCFF00 · Proof of Neon',
@@ -212,11 +249,47 @@ export const DOGIHOOD_STORY: NftProjectStory = {
   ],
 }
 
+export const HOOD_SEEDER_STORY: NftProjectStory = {
+  id: 'hood-seeder',
+  name: HOOD_SEEDER.name,
+  tagline: HOOD_SEEDER.tagline,
+  story:
+    'Hood Seeder Pass honors early supporters who help seed $HOOD liquidity on Robinhood Chain. Robin Hood / forest / fox theme with #CCFF00 accent. On-chain lore: holder "seeded the desk". Future utility stub: optional $HOOD drip claim (off by default — owner must enable + fund separately). No fake promises, no invented verified status — deploy contract, mint pass, build liquidity together.',
+  confidence: 'community-lore',
+  confidenceNote:
+    HOOD_SEEDER_NFT_ADDRESS
+      ? `Hood Desk community collection. Contract deployed at ${shortAddr(HOOD_SEEDER_NFT_ADDRESS)} — see contracts/hood-seeder/ for deploy script.`
+      : 'Hood Desk community collection. Deploy contract via contracts/hood-seeder/ and set VITE_HOOD_SEEDER_NFT env var.',
+  badges: ['Seeder Pass', 'Forest Guardian', 'Early Supporter'],
+  standard: HOOD_SEEDER.standard,
+  chainId: HOOD_SEEDER.chainId,
+  contract: HOOD_SEEDER_NFT_ADDRESS,
+  erc20Note:
+    '$HOOD drip claim is a future utility stub — OFF by default. Owner must deploy + fund separate claim contract. Do not claim live airdrops without actual funding. Liquidity seeding (micro HOOD/WETH pool) is separate from the NFT contract.',
+  sampleTokenId: HOOD_SEEDER.sampleTokenId,
+  coverImage: '/nfts/hood-seeder/1.svg',
+  gallery: HOOD_SEEDER_GALLERY,
+  links: [
+    ...(HOOD_SEEDER_NFT_ADDRESS
+      ? [
+          { label: 'Sample #1', href: hoodSeederItemUrl(1) },
+          { label: 'Explorer', href: HOOD_SEEDER.explorerUrl || '#' },
+        ]
+      : []),
+    { label: 'Deploy guide', href: 'https://github.com/Laszlo23/hood-desk#hood-seeder-nft' },
+  ],
+  sources: [
+    'Hood Desk repo: contracts/hood-seeder/',
+    'Sample art: public/nfts/hood-seeder/*.svg',
+    HOOD_SEEDER_NFT_ADDRESS ? `Deployed @ ${HOOD_SEEDER_NFT_ADDRESS}` : 'Not yet deployed',
+  ],
+}
+
 /**
  * Ordered stories for the page. Only confirmed Hoodstreet / desk-supported packs.
  * DotHood and other RH collections exist but are NOT claimed as Hoodstreet-supported here.
  */
-export const NFT_PROJECT_STORIES: NftProjectStory[] = [DOGIHOOD_STORY, CCFF00_STORY]
+export const NFT_PROJECT_STORIES: NftProjectStory[] = [DOGIHOOD_STORY, HOOD_SEEDER_STORY, CCFF00_STORY]
 
 export const ALL_GALLERY_ITEMS: NftGalleryItem[] = NFT_PROJECT_STORIES.flatMap((s) => s.gallery)
 

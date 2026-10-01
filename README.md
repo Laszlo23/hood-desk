@@ -70,6 +70,156 @@ Contracts verified on RH 4663 Blockscout show a **green check** next to token sy
 
 ---
 
+## Hood Seeder NFT
+
+**Hood Seeder Pass** — early supporter NFT collection for Robinhood Chain 4663. This is NOT DogiHood and NOT CCFF00 — a new desk community collection.
+
+### Theme & Product Intent
+
+- **Name:** Hood Seeder (or Hood Seeder Pass)
+- **Theme:** Robin Hood / forest / fox / #CCFF00 accent
+- **Utility (v1):**
+  - ERC-721 on chain 4663 (max supply 3333)
+  - On-chain lore: holder "seeded the desk"
+  - Optional future claim stub for `$HOOD` drip (OFF by default)
+  - Holder badge in Desk UI when wallet connected
+
+### Deployment
+
+The contract lives in `contracts/hood-seeder/` — a minimal Foundry project with OpenZeppelin dependencies.
+
+**Prerequisites:**
+- Foundry installed (`curl -L https://foundry.paradigm.xyz | bash && foundryup`)
+- Private key with RH 4663 ETH for gas
+
+**Deploy steps:**
+
+```bash
+cd contracts/hood-seeder
+
+# Copy environment template and fill in values
+cp .env.example .env
+# Edit .env: set PRIVATE_KEY (NEVER commit real keys)
+# RPC_URL defaults to https://rpc.mainnet.chain.robinhood.com
+# BASE_URI: your metadata endpoint (e.g. https://nft.yoursite.com/hood-seeder/)
+
+# Deploy to Robinhood Chain 4663
+forge script script/DeployHoodSeeder.s.sol:DeployHoodSeeder \
+  --rpc-url $RPC_URL \
+  --private-key $PRIVATE_KEY \
+  --broadcast
+
+# Save the deployed contract address
+# Output will show: "HoodSeeder deployed at: 0x..."
+```
+
+**After deployment:**
+
+1. Copy the contract address
+2. Add to main project `.env`: `VITE_HOOD_SEEDER_NFT=0x<address>`
+3. Restart the dev server to see the featured card on `#/nfts`
+
+### Minting
+
+The contract owner can mint passes:
+
+```bash
+# Single mint
+cast send <CONTRACT_ADDRESS> \
+  "mint(address)" <RECIPIENT_ADDRESS> \
+  --rpc-url $RPC_URL \
+  --private-key $PRIVATE_KEY
+
+# Batch mint (10 passes to one address)
+cast send <CONTRACT_ADDRESS> \
+  "batchMint(address,uint256)" <RECIPIENT_ADDRESS> 10 \
+  --rpc-url $RPC_URL \
+  --private-key $PRIVATE_KEY
+```
+
+### Metadata & Art
+
+Sample SVG art lives in `public/nfts/hood-seeder/` (placeholder, #1, #42, #100). For production:
+
+1. Host metadata JSON at `<BASE_URI>/<tokenId>.json`
+2. Each JSON follows standard ERC-721 metadata:
+
+```json
+{
+  "name": "Hood Seeder #1",
+  "description": "Early supporter who seeded $HOOD liquidity",
+  "image": "https://yourcdn.com/hood-seeder/1.svg",
+  "attributes": [
+    { "trait_type": "Role", "value": "Seeder" },
+    { "trait_type": "Theme", "value": "Forest Guardian" }
+  ]
+}
+```
+
+3. Update contract `baseURI` if needed:
+
+```bash
+cast send <CONTRACT_ADDRESS> \
+  "setBaseURI(string)" "https://nft.yoursite.com/hood-seeder/" \
+  --rpc-url $RPC_URL \
+  --private-key $PRIVATE_KEY
+```
+
+### Claim Utility (Future)
+
+The contract includes a `claimEnabled` flag (default `false`). To implement `$HOOD` drip:
+
+1. Deploy a **separate** claim contract that:
+   - Checks Hood Seeder balance via `balanceOf`
+   - Rate-limits claims (e.g. once per week per holder)
+   - Transfers `$HOOD` from a funded treasury
+2. Enable claim flag (optional signal):
+
+```bash
+cast send <CONTRACT_ADDRESS> \
+  "setClaimEnabled(bool)" true \
+  --rpc-url $RPC_URL \
+  --private-key $PRIVATE_KEY
+```
+
+**Important:** The NFT contract does NOT distribute tokens directly. Claim logic + funding must be built separately. Never claim live airdrops without actual funding.
+
+### Liquidity Seeding
+
+The "seeder" theme honors early supporters who help bootstrap `$HOOD` liquidity. Liquidity pool creation is **separate** from the NFT contract:
+
+- Micro `$HOOD/WETH` pool on RH 4663 (when DEX is live)
+- No hardcoded pool creation in browser with private keys
+- Operator deploys pool manually or via Foundry script
+
+### Desk UI Integration
+
+Once deployed and `VITE_HOOD_SEEDER_NFT` is set:
+
+- Featured card appears on `#/nfts` alongside DogiHood
+- On-chain holder check via `balanceOf` (RPC)
+- Manual holder toggle when RPC unavailable
+- Holder badge shows in wallet rail when balance > 0
+
+### Hard Rules
+
+- No fake live balances without real deployment
+- No invented verified Blockscout status
+- No commit of private keys (`.env` is gitignored)
+- Keep DogiHood + CCFF00 stories intact
+
+### Contract Details
+
+- **Standard:** ERC-721 with ERC-721Enumerable + ERC-2981 (royalty)
+- **Max Supply:** 3333
+- **Owner Controls:** mint, batchMint, setBaseURI, setClaimEnabled, setDefaultRoyalty
+- **Default Royalty:** 5% (configurable at deploy)
+- **Tests:** `forge test` in `contracts/hood-seeder/`
+
+See `contracts/hood-seeder/src/HoodSeeder.sol` for full implementation.
+
+---
+
 ## Environment
 
 | Variable | Required | Description |

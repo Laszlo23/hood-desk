@@ -1,0 +1,3 @@
+[submodule "contracts/hood-seeder/lib/openzeppelin-contracts"]
+	path = contracts/hood-seeder/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts

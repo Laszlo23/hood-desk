@@ -6,3 +6,9 @@ dist
 node_modules/.tmp
 server/.env
 *.pem
+
+# Foundry
+contracts/hood-seeder/out/
+contracts/hood-seeder/cache/
+contracts/hood-seeder/broadcast/
+contracts/hood-seeder/.env

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { DogiHoodCard } from '../components/DogiHoodCard'
 import { HoodSeederCard } from '../components/HoodSeederCard'
 import { InnerCircleCard } from '../components/InnerCircleCard'
+import { INNER_CIRCLE_SBT_ADDRESS } from '../lib/nfts/innerCircle'
 import { TokenBoundPanel } from '../components/TokenBoundPanel'
 import {
   ALL_GALLERY_ITEMS,
@@ -209,7 +210,7 @@ export function Nfts({ onNavigate }: Props) {
           </li>
           <li>
             <span className="rail-label">Inner Circle</span>
-            <span className="tiny muted">Soulbound badge · shows a contract after deploy</span>
+            <span className="mono">{shortAddr(INNER_CIRCLE_SBT_ADDRESS)}</span>
           </li>
           <li>
             <span className="rail-label">Sources</span>

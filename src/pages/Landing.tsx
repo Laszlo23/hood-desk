@@ -120,8 +120,8 @@ export function Landing({ onNavigate }: Props) {
         </div>
         <p className="muted lore-legend-copy">
           Outlaws once stole from the rich so the pack could eat. Tonight the neon bow draws on RH
-          4663: HOOD keeps a <strong>community desk</strong> — paper auto-trade, honest SIM labels,
-          fair launches — until a real DEX answers. Mist behind the glass; DogiHood &amp; the agent
+          4663: HOOD keeps a <strong>community desk</strong> — $HOOD market swaps sign on Uniswap,
+          and paper auto-trade stays labeled. Mist behind the glass; DogiHood &amp; the agent
           mark stay front.
         </p>
         <div className="lore-legend-thumbs">

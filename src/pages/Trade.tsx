@@ -14,6 +14,7 @@ import {
 } from '../lib/trade/demoTokens'
 import { HOOD_SWAP_SLIPPAGE_BPS, planHoodMarketSwap } from '../lib/trade/hoodSwap'
 import { listOrders, placeOnchainOrder, placeSimulatedOrder } from '../lib/trade/orders'
+import { loadHoodPoolChart, type HoodPoolChart } from '../lib/trade/poolCandles'
 import { hoodHasPool, uniswapSwapUrl } from '../lib/trade/uniswap'
 import { erc20Abi } from '../lib/hoodToken'
 import type {
@@ -62,6 +63,7 @@ export function Trade({ onNavigate }: Props) {
   const [panelKey, setPanelKey] = useState(0)
   const [swapBusy, setSwapBusy] = useState(false)
   const [poolExists, setPoolExists] = useState<boolean | null>(null)
+  const [poolChart, setPoolChart] = useState<HoodPoolChart | null>(null)
 
   const refreshOrders = useCallback(() => {
     setOrders(listOrders())
@@ -88,6 +90,28 @@ export function Trade({ onNavigate }: Props) {
       cancelled = true
     }
   }, [])
+
+  const hoodAddress = HOOD_TOKEN_ADDRESS
+  const isHoodToken =
+    hoodAddress !== null && token.address.toLowerCase() === hoodAddress.toLowerCase()
+
+  useEffect(() => {
+    if (!isHoodToken || poolExists !== true) {
+      setPoolChart(null)
+      return
+    }
+    let cancelled = false
+    loadHoodPoolChart(timeframe)
+      .then((chart) => {
+        if (!cancelled) setPoolChart(chart)
+      })
+      .catch(() => {
+        if (!cancelled) setPoolChart(null)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [isHoodToken, poolExists, timeframe])
 
   // Keep selected token in sync if list refreshes with same address
   useEffect(() => {
@@ -240,7 +264,6 @@ export function Trade({ onNavigate }: Props) {
     setLastVet(null)
   }
 
-  const isHoodToken = HOOD_TOKEN_ADDRESS && token.address.toLowerCase() === HOOD_TOKEN_ADDRESS.toLowerCase()
   const uniswapTokenUrl = uniswapSwapUrl(token.address)
   const okuTokenUrl = `https://oku.trade/token/4663:${token.address}`
 
@@ -278,7 +301,7 @@ export function Trade({ onNavigate }: Props) {
           <div className="trade-pool-notice">
             <strong>$HOOD/WETH is live on Uniswap V3</strong>
             <p className="tiny muted">
-              Market buy and sell sign in your wallet. The pool holds 0.00015 WETH and 150,000 $HOOD at a 1% fee, so a large size will not fill. Limit, stop, TWAP, and DCA stay on this desk.
+              Market buy and sell sign in your wallet. The pool is thin, so a large size will not fill. Limit, stop, TWAP, and DCA stay on this desk.
             </p>
             <div className="cta-row">
               <a href={uniswapTokenUrl} target="_blank" rel="noreferrer" className="btn btn-primary btn-sm">
@@ -343,7 +366,13 @@ export function Trade({ onNavigate }: Props) {
           </div>
         </div>
 
-        <TradeChart token={token} timeframe={timeframe} onTimeframe={setTimeframe} />
+        <TradeChart
+          token={token}
+          timeframe={timeframe}
+          onTimeframe={setTimeframe}
+          poolCandles={isHoodToken && poolExists ? poolChart?.candles ?? null : undefined}
+          poolSwapCount={poolChart?.swapCount}
+        />
         <OrdersPanel orders={orders} tab={ordersTab} onTab={setOrdersTab} />
       </div>
 
@@ -357,6 +386,7 @@ export function Trade({ onNavigate }: Props) {
         }}
         busy={swapBusy}
         poolLive={Boolean(isHoodToken && poolExists)}
+        liveQuote={isHoodToken && poolChart ? poolChart : null}
         onRequestSimulate={onRequestSimulate}
       />
 

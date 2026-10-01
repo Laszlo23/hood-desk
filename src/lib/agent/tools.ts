@@ -256,7 +256,7 @@ export async function getPrice(_ctx: ToolContext): Promise<ToolResult> {
   const hoodPerEth = 1 / wethPerHood
   return {
     ok: true,
-    text: `**$HOOD / WETH**\n\nAbout **${hoodPerEth.toLocaleString(undefined, { maximumFractionDigits: 0 })} HOOD** per 1 ETH, from a tiny Uniswap quote. A real swap moves this because the pool is thin.\n\nMarket swaps sign on **#/trade**. Candles there are still a desk drawing.`,
+    text: `**$HOOD / WETH**\n\nAbout **${hoodPerEth.toLocaleString(undefined, { maximumFractionDigits: 0 })} HOOD** per 1 ETH, from a tiny Uniswap quote. A real swap moves this because the pool is thin.\n\nMarket swaps sign on **#/trade**. The chart there reads pool swaps.`,
   }
 }
 
@@ -515,10 +515,17 @@ export function tradeVetSkill(ctx: ToolContext, raw?: string): ToolResult {
   return { ok: true, text: formatVetSummary(result) + '\n\nUI: open **#/trade** → Vet panel.' + via }
 }
 
-/** trade.chart — describe demo candles */
+/** trade.chart — describe the chart the desk will draw */
 export function tradeChartSkill(ctx: ToolContext, raw?: string): ToolResult {
   const addr = extractTradeAddress(raw) || HOOD_DEMO_ADDRESS
   const token = findToken(addr, ctx.address) || collectTradeTokens(ctx.address)[0]
+  if (HOOD_TOKEN_ADDRESS && token.address.toLowerCase() === HOOD_TOKEN_ADDRESS.toLowerCase()) {
+    recordSkillUsage('chart')
+    return {
+      ok: true,
+      text: `**$HOOD chart**\n\nThe trade page reads swaps from the $HOOD/WETH pool. This chat does not draw stand-in candles.\n\nOpen **#/trade**. Market buy and sell sign in your wallet.`,
+    }
+  }
   const candles = generateDemoCandles(token.address, '15m', token.price || 0.0001)
   const last = candles[candles.length - 1]
   const first = candles[0]

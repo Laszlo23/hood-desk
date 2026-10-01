@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ColorType, createChart, type IChartApi, type ISeriesApi } from 'lightweight-charts'
 import { generateDemoCandles } from '../../lib/trade/chartData'
-import type { Timeframe, TradeToken } from '../../lib/trade/types'
+import type { Candle, Timeframe, TradeToken } from '../../lib/trade/types'
 import { HOOD_TOKEN_ADDRESS } from '../../lib/hoodToken'
 import { hoodHasPool } from '../../lib/trade/uniswap'
 
@@ -9,11 +9,14 @@ type Props = {
   token: TradeToken
   timeframe: Timeframe
   onTimeframe: (tf: Timeframe) => void
+  /** Pool candles for live $HOOD. Null while they load. Omit for demo pairs. */
+  poolCandles?: Candle[] | null
+  poolSwapCount?: number
 }
 
 const TFS: Timeframe[] = ['1m', '5m', '15m', '1h', '4h', '1D']
 
-export function TradeChart({ token, timeframe, onTimeframe }: Props) {
+export function TradeChart({ token, timeframe, onTimeframe, poolCandles, poolSwapCount }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null)
@@ -86,6 +89,10 @@ export function TradeChart({ token, timeframe, onTimeframe }: Props) {
       borderDownColor: '#ff5c5c',
       wickUpColor: '#CCFF00',
       wickDownColor: '#ff5c5c',
+      priceFormat:
+        poolCandles != null
+          ? { type: 'price', precision: 12, minMove: 1e-12 }
+          : { type: 'price', precision: 6, minMove: 0.000001 },
     })
 
     chartRef.current = chart
@@ -106,11 +113,16 @@ export function TradeChart({ token, timeframe, onTimeframe }: Props) {
       chartRef.current = null
       seriesRef.current = null
     }
-  }, [shouldShowChart])
+  }, [shouldShowChart, poolCandles != null])
 
   useEffect(() => {
     if (!seriesRef.current || !chartRef.current || !shouldShowChart) return
-    const candles = generateDemoCandles(token.address, timeframe, token.price || 0.0001)
+    if (isHoodToken && poolExists && poolCandles == null) return
+    const candles =
+      isHoodToken && poolCandles
+        ? poolCandles
+        : generateDemoCandles(token.address, timeframe, token.price || 0.0001)
+    if (candles.length === 0) return
     seriesRef.current.setData(
       candles.map((c) => ({
         time: c.time as unknown as import('lightweight-charts').UTCTimestamp,
@@ -121,7 +133,7 @@ export function TradeChart({ token, timeframe, onTimeframe }: Props) {
       })),
     )
     chartRef.current.timeScale().fitContent()
-  }, [token.address, token.price, timeframe, shouldShowChart])
+  }, [token.address, token.price, timeframe, shouldShowChart, isHoodToken, poolExists, poolCandles])
 
   return (
     <div className="trade-chart-block">
@@ -136,7 +148,9 @@ export function TradeChart({ token, timeframe, onTimeframe }: Props) {
               : isCheckingPool
                 ? 'Checking pool status...'
                 : isHoodToken
-                  ? 'Candles are a desk drawing. $HOOD/WETH is live — market swaps sign on Uniswap.'
+                  ? poolCandles == null
+                    ? 'Reading $HOOD/WETH swaps…'
+                    : `${poolSwapCount ?? poolCandles.length} swaps on the $HOOD/WETH pool. Price is ETH per HOOD.`
                   : 'Demo OHLCV · not a live RH DEX feed'}
           </p>
         </div>

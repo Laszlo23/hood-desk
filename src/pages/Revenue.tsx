@@ -82,7 +82,7 @@ export function Revenue({ onNavigate }: Props) {
       what: `Orders ${orders.length} · reward entries ${ledger.length}+`,
       amount: `${simFeeTotal.toFixed(1)} credits`,
     },
-    { when: 'Waiting', what: 'DEX fee → treasury (no confirmed $HOOD pool)', amount: 'TBD' },
+    { when: 'Waiting', what: 'Uniswap LP fee stays in the position. Not routed to the desk.', amount: 'TBD' },
   ]
 
   return (

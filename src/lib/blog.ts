@@ -89,7 +89,7 @@ If you still hold a Square, the wallet inside it is the thing Hood Desk binds to
 
 **Plans.** Starter $4.99 / Desk $9.99 / Desk+ $19.99 per month. Checkout is live Stripe on the desk. Demo activate is still labeled, for when you want to look around without paying.
 
-**Trade.** There is still no confirmed $HOOD pool on Robinhood Chain. The trade screen stays a simulator until a real pool exists. No invented routers, no fake fills.
+**Trade.** $HOOD/WETH is a Uniswap V3 pool. Market buy and sell sign in your wallet, and the chart reads those swaps. The pool is thin. Limit, stop, TWAP, DCA, auto-trade, and the rewards ledger stay on the desk.
 
 Hold the coin. Bind it to a Shiba. Subscribe if you want the desk.`,
     date: '2026-10-01T12:00:00.000Z',

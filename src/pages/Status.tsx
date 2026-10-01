@@ -313,7 +313,7 @@ export function Status({ onNavigate }: Props) {
               </tbody>
             </table>
             <p className="tiny muted status-rank-foot">
-              Seeded demo pairs only — not live RH DEX quotes. Open Trade to simulate fills.
+              $HOOD market swaps sign on Uniswap. The ranks below are demo pairs.
             </p>
           </div>
         ) : (

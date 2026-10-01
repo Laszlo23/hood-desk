@@ -16,12 +16,12 @@ const PAGES: Record<ViewId, PageMeta> = {
   landing: {
     title: 'Hood Desk · AI trading desk on Robinhood Chain',
     description:
-      'Hood Desk on Robinhood Chain. $HOOD is live, CCFF00 and DogiHood NFTs bind to their own wallets, and Stripe plans are open. Trade stays a labeled simulator until a real pool exists.',
+      'Hood Desk on Robinhood Chain. $HOOD market swaps sign on Uniswap V3. Limit orders, auto-trade, and the rewards ledger stay on the desk.',
   },
   trade: {
     title: 'Trade · Hood Desk',
     description:
-      'Simulate Hood Street pairs on Hood Desk. Fills are labeled simulated until a confirmed $HOOD pool exists on Robinhood Chain.',
+      '$HOOD/WETH market swaps sign on Uniswap. The chart reads pool swaps. Other pairs and order types stay on the desk.',
   },
   community: {
     title: 'Auto-Trade · Hood Desk',
@@ -41,7 +41,7 @@ const PAGES: Record<ViewId, PageMeta> = {
   },
   rewards: {
     title: 'Rewards · Hood Desk',
-    description: 'Creator, platform, and referrer split of simulated desk fees. Nothing is paid on-chain until a real pool exists.',
+    description: 'Creator, platform, and referrer split on a local ledger. Nothing is paid on-chain.',
   },
   blog: {
     title: 'Hood Street notes · Hood Desk',

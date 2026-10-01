@@ -12,6 +12,7 @@ import type {
   VetResult,
 } from '../../lib/trade/types'
 import { VerifiedBadge } from '../VerifiedBadge'
+import type { HoodPoolChart } from '../../lib/trade/poolCandles'
 import { hoodHasPool } from '../../lib/trade/uniswap'
 
 export type TradeDraft = {
@@ -29,6 +30,8 @@ type Props = {
   busy?: boolean
   /** $HOOD market orders sign on Uniswap when this is true. */
   poolLive?: boolean
+  /** Live pool price. Omit for demo pairs. */
+  liveQuote?: HoodPoolChart | null
   /** Called when user clicks simulate; parent may gate via vet modal */
   onRequestSimulate: (draft: TradeDraft) => void
 }
@@ -41,6 +44,7 @@ export function TradePanel({
   onOpenVet,
   busy = false,
   poolLive = false,
+  liveQuote = null,
   onRequestSimulate,
 }: Props) {
   const { address } = useAccount()
@@ -163,27 +167,36 @@ export function TradePanel({
         <div>
           <span className="rail-label">Price</span>
           <strong className="mono">
-            {hasNoPool ? '—' : formatPrice(token.price)}
+            {hasNoPool ? '—' : formatPrice(liveQuote ? liveQuote.price : token.price)}
           </strong>
           {token.isDemo && !hasNoPool && <span className="demo-tag">demo</span>}
+          {liveQuote && <span className="demo-tag">pool</span>}
           {hasNoPool && <span className="demo-tag">no pool</span>}
         </div>
         <div>
           <span className="rail-label">24h</span>
-          <strong className={`mono ${changeCls}`}>
-            {hasNoPool ? '—' : `${token.change24h >= 0 ? '+' : ''}${token.change24h.toFixed(1)}%`}
+          <strong className={`mono ${liveQuote ? (liveQuote.changePct >= 0 ? 'up' : 'down') : changeCls}`}>
+            {hasNoPool
+              ? '—'
+              : liveQuote
+                ? `${liveQuote.changePct >= 0 ? '+' : ''}${liveQuote.changePct.toFixed(1)}%`
+                : `${token.change24h >= 0 ? '+' : ''}${token.change24h.toFixed(1)}%`}
           </strong>
         </div>
         <div>
           <span className="rail-label">MC</span>
           <strong className="mono">
-            {hasNoPool ? '—' : formatUsdCompact(token.marketCap)}
+            {hasNoPool || liveQuote ? '—' : formatUsdCompact(token.marketCap)}
           </strong>
         </div>
         <div>
-          <span className="rail-label">24h vol</span>
+          <span className="rail-label">Vol</span>
           <strong className="mono">
-            {hasNoPool ? '—' : formatUsdCompact(token.volume24h)}
+            {hasNoPool
+              ? '—'
+              : liveQuote
+                ? `${liveQuote.volumeEth.toFixed(6)} ETH`
+                : formatUsdCompact(token.volume24h)}
           </strong>
         </div>
       </div>

@@ -208,11 +208,8 @@ export function Blog({ slug, onNavigate }: Props) {
       <WeeklyBanner />
       <div className="page-intro">
         <p className="eyebrow">Hood Street</p>
-        <h1>Blog</h1>
-        <p className="muted">
-          Motivational posts for builders & traders. Stored in{' '}
-          <code className="inline-code">hood-desk:blog:v1</code>. Toggle admin to edit.
-        </p>
+        <h1>Notes</h1>
+        <p className="muted">What the street said, written down here.</p>
         <div className="cta-row">
           <button
             type="button"

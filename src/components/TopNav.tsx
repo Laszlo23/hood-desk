@@ -5,7 +5,7 @@ import {
   DRAWER_SECTIONS_STORAGE_KEY,
   drawerSectionHasActive,
   hashForView,
-  MORE_NAV,
+  STREET_GROUPS,
   moreNavActive,
   navActive,
   PRIMARY_NAV,
@@ -408,25 +408,33 @@ export function TopNav({ view, onNavigate }: Props) {
                 aria-haspopup="menu"
                 onClick={() => setMoreOpen((o) => !o)}
               >
-                <span className="nav-link-label">More</span>
+                <span className="nav-link-label">Street</span>
                 <span className="nav-more-caret" aria-hidden />
               </button>
               {moreOpen && (
-                <div className="nav-more-menu" role="menu" aria-label="More pages">
-                  {MORE_NAV.map((v) => (
-                    <a
-                      key={v.id}
-                      role="menuitem"
-                      href={hashForView(v.id)}
-                      className={`nav-more-item${navActive(view, v.id) ? ' active' : ''}`}
-                      onClick={(e) => {
-                        e.preventDefault()
-                        go(v.id)
-                      }}
-                    >
-                      <span>{v.label}</span>
-                      {navActive(view, v.id) && <span className="nav-link-pip" aria-hidden />}
-                    </a>
+                <div className="nav-more-menu" role="menu" aria-label="The street">
+                  {STREET_GROUPS.map((group) => (
+                    <div key={group.label} className="nav-more-group">
+                      <p className="nav-more-group-label">{group.label}</p>
+                      {group.items.map((v) => (
+                        <a
+                          key={v.id}
+                          role="menuitem"
+                          href={hashForView(v.id)}
+                          className={`nav-more-item${navActive(view, v.id) ? ' active' : ''}`}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            go(v.id)
+                          }}
+                        >
+                          <span className="nav-more-copy">
+                            <span className="nav-more-name">{v.label}</span>
+                            <span className="nav-more-hint">{v.hint}</span>
+                          </span>
+                          {navActive(view, v.id) && <span className="nav-link-pip" aria-hidden />}
+                        </a>
+                      ))}
+                    </div>
                   ))}
                 </div>
               )}

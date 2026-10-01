@@ -23,8 +23,8 @@ export const VIEWS: { id: ViewId; label: string; hash: string }[] = [
   { id: 'terminal', label: 'Terminal', hash: '#/terminal' },
   { id: 'trade', label: 'Trade', hash: '#/trade' },
   { id: 'skills', label: 'Skills', hash: '#/skills' },
-  { id: 'rewards', label: 'Rewards', hash: '#/rewards' },
-  { id: 'blog', label: 'Blog', hash: '#/blog' },
+  { id: 'rewards', label: 'Ledger', hash: '#/rewards' },
+  { id: 'blog', label: 'Notes', hash: '#/blog' },
   { id: 'create', label: 'Create', hash: '#/create' },
   { id: 'projects', label: 'Projects', hash: '#/projects' },
   { id: 'hood', label: '$HOOD', hash: '#/hood' },
@@ -32,34 +32,64 @@ export const VIEWS: { id: ViewId; label: string; hash: string }[] = [
   { id: 'revenue', label: 'Revenue', hash: '#/revenue' },
   { id: 'subscribe', label: 'Subscribe', hash: '#/subscribe' },
   { id: 'account', label: 'Account', hash: '#/account' },
-  { id: 'nfts', label: 'NFTs', hash: '#/nfts' },
+  { id: 'nfts', label: 'Marks', hash: '#/nfts' },
   { id: 'status', label: 'Status', hash: '#/status' },
-  { id: 'community', label: 'Auto-Trade', hash: '#/community' },
-  { id: 'lore', label: 'The Legend', hash: '#/lore' },
+  { id: 'community', label: 'Pool', hash: '#/community' },
+  { id: 'lore', label: 'Legend', hash: '#/lore' },
 ]
 
 /** Primary top-bar links — 4 core items so the navbar stays scannable. */
 export const PRIMARY_NAV: { id: ViewId; label: string; hash: string }[] = [
   { id: 'trade', label: 'Trade', hash: '#/trade' },
-  { id: 'community', label: 'Auto-Trade', hash: '#/community' },
+  { id: 'community', label: 'Pool', hash: '#/community' },
   { id: 'status', label: 'Status', hash: '#/status' },
   { id: 'skills', label: 'Skills', hash: '#/skills' },
 ]
 
-/** Secondary links — desktop More dropdown only (mobile uses DRAWER_SECTIONS). */
-export const MORE_NAV: { id: ViewId; label: string; hash: string }[] = [
-  { id: 'rewards', label: 'Rewards', hash: '#/rewards' },
-  { id: 'blog', label: 'Blog', hash: '#/blog' },
-  { id: 'projects', label: 'Projects', hash: '#/projects' },
-  { id: 'create', label: 'Create', hash: '#/create' },
-  { id: 'terminal', label: 'Terminal', hash: '#/terminal' },
-  { id: 'nfts', label: 'NFTs · Stories', hash: '#/nfts' },
-  { id: 'hood', label: '$HOOD', hash: '#/hood' },
-  { id: 'ops', label: 'Ops', hash: '#/ops' },
-  { id: 'revenue', label: 'Revenue', hash: '#/revenue' },
-  { id: 'account', label: 'Account / Wallet', hash: '#/account' },
-  { id: 'lore', label: 'The Legend', hash: '#/lore' },
+export type StreetItem = {
+  id: ViewId
+  label: string
+  hint: string
+  hash: string
+}
+
+export type StreetGroup = {
+  label: string
+  items: StreetItem[]
+}
+
+/** The rest of the desk, grouped so the menu says where each door goes. */
+export const STREET_GROUPS: StreetGroup[] = [
+  {
+    label: 'The coin',
+    items: [
+      { id: 'hood', label: '$HOOD', hint: 'The purse, the pool, the cause', hash: '#/hood' },
+      { id: 'rewards', label: 'Ledger', hint: 'Every swap, in order', hash: '#/rewards' },
+      { id: 'blog', label: 'Notes', hint: 'What the street just said', hash: '#/blog' },
+    ],
+  },
+  {
+    label: 'The wood',
+    items: [
+      { id: 'nfts', label: 'Marks', hint: 'NFTs and the wallets inside them', hash: '#/nfts' },
+      { id: 'lore', label: 'Legend', hint: 'From Sherwood to this desk', hash: '#/lore' },
+    ],
+  },
+  {
+    label: 'The desk',
+    items: [
+      { id: 'terminal', label: 'Ask', hint: 'Talk to the desk', hash: '#/terminal' },
+      { id: 'projects', label: 'Projects', hint: 'Launches on the street', hash: '#/projects' },
+      { id: 'create', label: 'Create', hint: 'Start a fair launch', hash: '#/create' },
+      { id: 'ops', label: 'Ops', hint: 'How the desk stays up', hash: '#/ops' },
+      { id: 'revenue', label: 'Revenue', hint: 'Plans, and what is actually paid', hash: '#/revenue' },
+      { id: 'account', label: 'Account', hint: 'This wallet', hash: '#/account' },
+    ],
+  },
 ]
+
+/** Flat list for active-state checks. */
+export const MORE_NAV: StreetItem[] = STREET_GROUPS.flatMap((group) => group.items)
 
 export type DrawerSectionId = 'agent' | 'explore' | 'build'
 
@@ -82,11 +112,11 @@ export type DrawerSection = {
 export const DRAWER_SECTIONS: DrawerSection[] = [
   {
     id: 'agent',
-    label: 'Agent',
+    label: 'The desk',
     defaultOpen: true,
     items: [
       { id: 'trade', label: 'Trade', hash: '#/trade', icon: 'trade' },
-      { id: 'community', label: 'Auto-Trade', hash: '#/community', icon: 'autotrade' },
+      { id: 'community', label: 'Pool', hash: '#/community', icon: 'autotrade' },
       { id: 'status', label: 'Status', hash: '#/status', icon: 'status' },
       { id: 'skills', label: 'Skills', hash: '#/skills', icon: 'skills' },
       { id: 'terminal', label: 'Terminal', hash: '#/terminal', icon: 'terminal' },
@@ -94,20 +124,20 @@ export const DRAWER_SECTIONS: DrawerSection[] = [
   },
   {
     id: 'explore',
-    label: 'Explore',
+    label: 'The street',
     defaultOpen: false,
     items: [
-      { id: 'rewards', label: 'Rewards', hash: '#/rewards', icon: 'rewards' },
-      { id: 'blog', label: 'Blog', hash: '#/blog', icon: 'blog' },
-      { id: 'nfts', label: 'NFTs · Stories', hash: '#/nfts', icon: 'nfts' },
       { id: 'hood', label: '$HOOD', hash: '#/hood', icon: 'hood' },
-      { id: 'lore', label: 'The Legend', hash: '#/lore', icon: 'lore' },
-      { id: 'account', label: 'Account / Wallet', hash: '#/account', icon: 'account' },
+      { id: 'rewards', label: 'Ledger', hash: '#/rewards', icon: 'rewards' },
+      { id: 'blog', label: 'Notes', hash: '#/blog', icon: 'blog' },
+      { id: 'nfts', label: 'Marks', hash: '#/nfts', icon: 'nfts' },
+      { id: 'lore', label: 'Legend', hash: '#/lore', icon: 'lore' },
+      { id: 'account', label: 'Account', hash: '#/account', icon: 'account' },
     ],
   },
   {
     id: 'build',
-    label: 'Build',
+    label: 'The work',
     defaultOpen: false,
     items: [
       { id: 'projects', label: 'Projects', hash: '#/projects', icon: 'projects' },

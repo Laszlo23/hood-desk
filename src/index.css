@@ -3538,8 +3538,8 @@ a:hover {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  min-width: 196px;
-  padding: 6px;
+  min-width: 280px;
+  padding: 8px;
   border-radius: 14px;
   z-index: 40;
   background:
@@ -3554,20 +3554,50 @@ a:hover {
   gap: 2px;
 }
 
+.nav-more-group + .nav-more-group {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(204, 255, 0, 0.12);
+}
+
+.nav-more-group-label {
+  margin: 4px 12px 2px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  color: var(--accent);
+}
+
 .nav-more-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 9px 12px;
+  padding: 8px 12px;
   border-radius: 10px;
-  color: var(--muted);
+  color: var(--text);
   text-decoration: none !important;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
   border: 1px solid transparent;
   transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.nav-more-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.nav-more-name {
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.nav-more-hint {
+  font-size: 0.72rem;
+  font-weight: 450;
+  color: var(--muted);
+  line-height: 1.3;
 }
 
 .nav-more-item:hover {

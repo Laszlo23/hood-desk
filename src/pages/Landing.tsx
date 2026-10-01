@@ -222,15 +222,6 @@ export function Landing({ onNavigate }: Props) {
         </article>
       </div>
 
-      <footer className="landing-footer-lore">
-        <HoodSeal size={40} decorative className="landing-footer-seal" />
-        <p className="muted tiny">
-          Lore is atmosphere — DogiHood NFTs &amp; HOOD agent remain the brand face.{' '}
-          <button type="button" className="link-btn" onClick={() => onNavigate('lore')}>
-            Legend
-          </button>
-        </p>
-      </footer>
     </section>
   )
 }

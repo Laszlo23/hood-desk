@@ -6219,6 +6219,91 @@ a.nft-gallery-tile:hover {
   margin-top: 2px;
 }
 
+.site-footer {
+  margin-top: 12px;
+  padding: 28px 4px 8px;
+  border-top: 1px solid rgba(204, 255, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.site-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.site-footer-brand .hood-mark {
+  border-radius: 12px;
+}
+
+.site-footer-brand strong {
+  display: block;
+  font-family: Palatino, 'Palatino Linotype', 'Iowan Old Style', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.35rem;
+  letter-spacing: -0.03em;
+}
+
+.site-footer-brand p {
+  margin: 4px 0 0;
+  max-width: 36ch;
+  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.35;
+  color: var(--text-dim);
+}
+
+.site-footer-social,
+.site-footer-doors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+
+.site-footer-social a,
+.site-footer-doors a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+
+.site-footer-social a span {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.site-footer-social a:hover,
+.site-footer-doors a:hover {
+  color: var(--accent);
+}
+
+.site-footer-meta {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.desk-layout-trade .site-footer {
+  max-width: 1040px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 28px 24px 36px;
+}
+
+@media (max-width: 1079px) {
+  .site-footer {
+    padding: 28px 18px 36px;
+  }
+}
+
 /* Logo lockup and the short legend line */
 .brand-mark-wrap {
   width: auto;

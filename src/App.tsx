@@ -22,6 +22,7 @@ import { Trade } from './pages/Trade'
 import { CommunityTrade } from './pages/CommunityTrade'
 import { Lore } from './pages/Lore'
 import { LoreBackdrop } from './components/LoreBackdrop'
+import { SiteFooter } from './components/SiteFooter'
 
 export default function App() {
   const initial = typeof window !== 'undefined' ? routeFromHash(window.location.hash) : { view: 'landing' as ViewId }
@@ -102,6 +103,7 @@ export default function App() {
           {view === 'nfts' && <Nfts onNavigate={navigate} />}
           {view === 'lore' && <Lore onNavigate={navigate} />}
         </main>
+        <SiteFooter onNavigate={navigate} />
       </div>
     </div>
   )

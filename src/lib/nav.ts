@@ -13,6 +13,7 @@ export type ViewId =
   | 'revenue'
   | 'subscribe'
   | 'account'
+  | 'card'
   | 'nfts'
   | 'status'
   | 'community'
@@ -32,6 +33,7 @@ export const VIEWS: { id: ViewId; label: string; hash: string }[] = [
   { id: 'revenue', label: 'Revenue', hash: '#/revenue' },
   { id: 'subscribe', label: 'Subscribe', hash: '#/subscribe' },
   { id: 'account', label: 'Account', hash: '#/account' },
+  { id: 'card', label: 'Card', hash: '#/card' },
   { id: 'nfts', label: 'Marks', hash: '#/nfts' },
   { id: 'status', label: 'Status', hash: '#/status' },
   { id: 'community', label: 'Pool', hash: '#/community' },
@@ -188,6 +190,7 @@ export function routeFromHash(hash: string): RouteState {
   if (parts[0] === 'account' || parts[0] === 'wallet' || parts[0] === 'profile') {
     return { view: 'account' }
   }
+  if (parts[0] === 'card') return { view: 'card' }
   if (
     parts[0] === 'nfts' ||
     parts[0] === 'nft' ||

@@ -6458,3 +6458,71 @@ a.nft-gallery-tile:hover {
     margin-left: 58px;
   }
 }
+
+.desk-share-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 440px;
+  margin: 8px 0 28px;
+  padding: 22px;
+  border-radius: 22px;
+  border: 1px solid rgba(204, 255, 0, 0.45);
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(204, 255, 0, 0.16), transparent 46%),
+    linear-gradient(180deg, #10160c, #070806);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.desk-share-top {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.desk-share-name {
+  margin: 0;
+  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.7rem;
+  letter-spacing: 0;
+}
+
+.desk-share-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.desk-share-stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.desk-share-stats strong {
+  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.desk-share-marks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.desk-share-marks li {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(204, 255, 0, 0.35);
+  background: rgba(204, 255, 0, 0.08);
+  font-size: 0.82rem;
+}

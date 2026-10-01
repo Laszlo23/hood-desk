@@ -4,6 +4,7 @@ import { WeeklyBanner } from './components/WeeklyBanner'
 import { hashForView, routeFromHash, type ViewId } from './lib/nav'
 import { usePageSeo } from './lib/seo'
 import { Account } from './pages/Account'
+import { CardPage } from './pages/Card'
 import { Blog } from './pages/Blog'
 import { CreateProject } from './pages/CreateProject'
 import { Hood } from './pages/Hood'
@@ -100,6 +101,7 @@ export default function App() {
           {view === 'revenue' && <Revenue onNavigate={navigate} />}
           {view === 'subscribe' && <Subscribe onNavigate={navigate} />}
           {view === 'account' && <Account onNavigate={navigate} />}
+          {view === 'card' && <CardPage onNavigate={navigate} />}
           {view === 'nfts' && <Nfts onNavigate={navigate} />}
           {view === 'lore' && <Lore onNavigate={navigate} />}
         </main>

@@ -5,6 +5,7 @@ import { HoodSeederCard } from '../components/HoodSeederCard'
 import { InnerCircleCard } from '../components/InnerCircleCard'
 import { WalletPanel } from '../components/WalletPanel'
 import { XpChip } from '../components/XpChip'
+import { DeskShareCard } from '../components/DeskShareCard'
 import { formatUpdatesUntil, getSubscription } from '../lib/subscription'
 import type { ViewId } from '../lib/nav'
 
@@ -35,6 +36,8 @@ export function Account({ onNavigate }: Props) {
         </div>
       </div>
 
+
+      <DeskShareCard />
 
       <div className="featured-nft-strip account-nft-strip" aria-label="Featured NFT collections">
         <div className="row-gap" style={{ justifyContent: 'space-between', width: '100%' }}>

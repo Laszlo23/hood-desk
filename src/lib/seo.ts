@@ -67,6 +67,10 @@ const PAGES: Record<ViewId, PageMeta> = {
     title: 'Account · Hood Desk',
     description: 'Your Hood Desk wallet, subscription, and NFT-bound balances on Robinhood Chain.',
   },
+  card: {
+    title: 'Desk card · Hood Desk',
+    description: 'A shareable Hood Desk card. Level, mornings, signed swaps, and marks held on Robinhood Chain.',
+  },
   projects: {
     title: 'Projects · Hood Desk',
     description: 'Fair-launch projects on Hood Desk. Fixed supply, no invented DEX routers.',

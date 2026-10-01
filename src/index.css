@@ -2412,6 +2412,65 @@ a:hover {
   line-height: 1.45;
 }
 
+.street-today h2 {
+  margin: 6px 0 10px;
+  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.8rem;
+  letter-spacing: -0.02em;
+}
+
+.street-today-line {
+  margin: 0 0 10px;
+  max-width: 62ch;
+  line-height: 1.5;
+}
+
+.street-bars-label {
+  margin: 18px 0 10px;
+}
+
+.street-bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.street-bars li {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr 1.5rem;
+  align-items: center;
+  gap: 10px;
+}
+
+.street-bar-name {
+  font-size: 0.82rem;
+}
+
+.street-bar-track {
+  height: 8px;
+  background: rgba(204, 255, 0, 0.12);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.street-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 99px;
+}
+
+.street-bar-count {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 .blog-list {
   display: grid;
   gap: 14px;

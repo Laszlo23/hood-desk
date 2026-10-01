@@ -17,6 +17,7 @@ import {
 } from '../lib/banner'
 import { awardXp } from '../lib/gamification'
 import type { ViewId } from '../lib/nav'
+import { StreetToday } from '../components/StreetToday'
 import { WeeklyBanner } from '../components/WeeklyBanner'
 
 type Props = {
@@ -209,7 +210,7 @@ export function Blog({ slug, onNavigate }: Props) {
       <div className="page-intro">
         <p className="eyebrow">Hood Street</p>
         <h1>Notes</h1>
-        <p className="muted">What the street said, written down here.</p>
+        <p className="muted">What the street said today, and the notes under it.</p>
         <div className="cta-row">
           <button
             type="button"
@@ -220,6 +221,8 @@ export function Blog({ slug, onNavigate }: Props) {
           </button>
         </div>
       </div>
+
+      <StreetToday />
 
       <div className="blog-list">
         {posts.map((p) => (

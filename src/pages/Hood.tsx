@@ -58,7 +58,7 @@ export function Hood({ onNavigate }: Props) {
     <section className="page hood-rite">
       <p className="hood-rite-kicker">The green hood</p>
       <div className="hood-rite-title">
-        <HoodMark size={44} variant="mark" />
+        <HoodMark size={72} variant="logo" alt="Hood Desk" />
         <h1>${HOOD_META.symbol}</h1>
         {verify?.verified ? <VerifiedBadge address={hoodAddr} size="md" /> : null}
       </div>

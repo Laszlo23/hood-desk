@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { DeskStory } from '../components/DeskStory'
 import { EXPLORER_TX } from '../lib/chain'
 import { loadHoodLedger, type HoodSwapRow } from '../lib/trade/poolCandles'
 import { HOOD_WETH_POOL, uniswapPoolUrl } from '../lib/trade/uniswap'
@@ -44,6 +45,10 @@ export function Rewards({ onNavigate }: Props) {
   return (
     <section className="page rewards-page">
       <div className="page-intro">
+        <DeskStory
+          line="The desk keeps the books the chain already wrote."
+          onLegend={() => onNavigate('lore')}
+        />
         <p className="eyebrow">Pool ledger</p>
         <h1>Ledger</h1>
         <p className="muted">

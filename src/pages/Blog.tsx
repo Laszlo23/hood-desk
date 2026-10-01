@@ -17,6 +17,7 @@ import {
 } from '../lib/banner'
 import { awardXp } from '../lib/gamification'
 import type { ViewId } from '../lib/nav'
+import { DeskStory } from '../components/DeskStory'
 import { StreetToday } from '../components/StreetToday'
 import { WeeklyBanner } from '../components/WeeklyBanner'
 
@@ -217,6 +218,10 @@ export function Blog({ slug, onNavigate }: Props) {
     <section className="page blog-page">
       <WeeklyBanner />
       <div className="page-intro">
+        <DeskStory
+          line="The street speaks. The desk writes it down."
+          onLegend={() => onNavigate('lore')}
+        />
         <p className="eyebrow">Hood Street</p>
         <h1>Notes</h1>
         <p className="muted">What the street said today, and the notes under it.</p>

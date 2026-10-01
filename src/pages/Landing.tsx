@@ -15,16 +15,13 @@ export function Landing({ onNavigate }: Props) {
     <section className="page landing-page">
       <div className="hero card">
         <div className="hero-top row-gap">
-          <div className="hero-mark-stack">
-            <HoodMark size={88} variant="photo" bounce className="hero-mascot" />
-            <HoodSeal size={36} decorative className="hero-seal" />
-          </div>
+          <HoodMark size={112} variant="logo" className="hero-logo" alt="Hood Desk" />
           <div>
-            <p className="eyebrow">Robinhood Chain · Hood Street</p>
+            <p className="eyebrow">From the wood · Hood Street</p>
             <h1 className="hero-title">Hood Desk</h1>
             <p className="hero-tagline">
-              Trade $HOOD, read the pool, and follow what the street just said. A swap happens when
-              your wallet signs it.
+              Once the forest took from the rich so the pack could eat. Tonight that story is one
+              coin, one pool, and the notes.
             </p>
             <HoodAgentBadge className="landing-hood-badge" />
           </div>
@@ -83,23 +80,20 @@ export function Landing({ onNavigate }: Props) {
           </button>
         </div>
         <p className="muted lore-legend-copy">
-          Outlaws once stole from the rich so the pack could eat. Tonight the neon bow draws on RH
-          4663: HOOD keeps a <strong>community desk</strong> — $HOOD market swaps sign on Uniswap,
-          and a swap happens when a wallet signs it. Mist behind the glass; DogiHood &amp; the agent
-          mark stay front.
+          Three scenes from the wood. The coin, the pool, and the notes carry them.
         </p>
         <div className="lore-legend-thumbs">
-          <button type="button" className="lore-thumb" onClick={() => onNavigate('lore')} aria-label="Forest lore">
+          <button type="button" className="lore-thumb" onClick={() => onNavigate('lore')} aria-label="The wood took from the rich">
             <img src="/lore/hood-forest.jpg" alt="" loading="lazy" />
-            <span>Forest</span>
+            <span className="lore-thumb-line">The wood took from the rich.</span>
           </button>
-          <button type="button" className="lore-thumb" onClick={() => onNavigate('lore')} aria-label="Council lore">
+          <button type="button" className="lore-thumb" onClick={() => onNavigate('lore')} aria-label="The desk keeps the books">
             <img src="/lore/hood-council.jpg" alt="" loading="lazy" />
-            <span>Council</span>
+            <span className="lore-thumb-line">The desk keeps the books.</span>
           </button>
-          <button type="button" className="lore-thumb" onClick={() => onNavigate('lore')} aria-label="Seal lore">
+          <button type="button" className="lore-thumb" onClick={() => onNavigate('lore')} aria-label="The hood marks the pack">
             <img src="/lore/hood-seal.jpg" alt="" loading="lazy" />
-            <span>Seal</span>
+            <span className="lore-thumb-line">The hood marks the pack.</span>
           </button>
         </div>
       </section>

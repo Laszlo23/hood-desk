@@ -30,7 +30,10 @@ export function HoodAgentHero({
           <span className="hood-agent-hero-ring" aria-hidden />
         </div>
         <div className="hood-agent-hero-copy">
-          <p className="eyebrow">{eyebrow}</p>
+          <div className="row-gap">
+            <HoodMark size={36} variant="logo" alt="Hood Desk" />
+            <p className="eyebrow">{eyebrow}</p>
+          </div>
           <h1 className="hero-title hood-agent-hero-title">{title}</h1>
           <HoodAgentBadge />
           <p className="muted hood-agent-hero-lead">{lead}</p>

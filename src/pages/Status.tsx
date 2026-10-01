@@ -10,6 +10,7 @@ import { listProjects } from '../lib/projects'
 import { listSkillPacks } from '../lib/market/skillMarket'
 import { DOGIHOOD_NFT_ADDRESS } from '../lib/nfts/dogihood'
 import { shortHash } from '../lib/status/featured'
+import { DeskStory } from '../components/DeskStory'
 import { HoodSeal } from '../components/HoodSeal'
 import { HOOD_TOKEN_ADDRESS, HOOD_TOKEN_DEPLOYED } from '../lib/hoodToken'
 import { EXPLORER_TX } from '../lib/chain'
@@ -93,10 +94,11 @@ export function Status({ onNavigate }: Props) {
       <header className="status-page-hero card">
         <div className="status-page-hero-top">
           <div>
-            <div className="row-gap status-lore-head">
-              <HoodSeal size={32} decorative className="status-lore-seal" />
-              <p className="eyebrow">Robinhood Chain</p>
-            </div>
+            <DeskStory
+              line="The desk stays up so the street can read the books."
+              onLegend={() => onNavigate('lore')}
+            />
+            <p className="eyebrow">Robinhood Chain</p>
             <h1 className="hero-title status-title">Status</h1>
             <p className="muted status-lead">
               Whether the desk is up, how many projects are saved here, and where $HOOD lives.

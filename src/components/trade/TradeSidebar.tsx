@@ -43,10 +43,10 @@ export function TradeSidebar({ active, onNavigate }: Props) {
     <aside className="trade-sidebar">
       <div className="trade-sidebar-brand">
         <button type="button" className="brand-btn row-gap" onClick={() => onNavigate('landing')}>
-          <HoodMark size={36} variant="mark" className="brand-mark-img" />
+          <HoodMark size={52} variant="logo" className="brand-mark-img" alt="Hood Desk" />
           <div>
             <strong className="brand-name">Hood Desk</strong>
-            <span className="brand-sub muted block">Hood Street</span>
+            <span className="brand-sub muted block">The bow draws when the wallet signs.</span>
           </div>
         </button>
         <div className="command-desk-pill" aria-label="Desk pulse">

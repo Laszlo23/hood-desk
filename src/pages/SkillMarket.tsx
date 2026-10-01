@@ -16,6 +16,7 @@ import {
   type SkillPack,
 } from '../lib/market/skillMarket'
 import { awardXp } from '../lib/gamification'
+import { DeskStory } from '../components/DeskStory'
 import { HoodMark } from '../components/HoodMark'
 import { DogiHoodHolderBadge } from '../components/DogiHoodCard'
 import type { ViewId } from '../lib/nav'
@@ -135,6 +136,7 @@ export function SkillMarket({ onNavigate }: Props) {
   return (
     <section className="page skills-market-page">
       <div className="page-intro">
+        <DeskStory line="The desk answers what the street asks." onLegend={() => onNavigate('lore')} />
         <p className="eyebrow">The desk</p>
         <h1>
           Skills <DogiHoodHolderBadge className="skills-holder-inline" />

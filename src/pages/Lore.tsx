@@ -1,3 +1,4 @@
+import { HoodMark } from '../components/HoodMark'
 import { HoodSeal } from '../components/HoodSeal'
 import { LoreBackdrop } from '../components/LoreBackdrop'
 import type { ViewId } from '../lib/nav'
@@ -31,7 +32,10 @@ export function Lore({ onNavigate }: Props) {
       <LoreBackdrop variant="council" className="lore-page-bg" />
 
       <div className="page-intro lore-intro row-gap">
-        <HoodSeal size={72} className="lore-intro-seal" />
+        <div className="lore-intro-marks">
+          <HoodMark size={88} variant="logo" className="lore-intro-logo" alt="Hood Desk" />
+          <HoodSeal size={52} className="lore-intro-seal" />
+        </div>
         <div>
           <p className="eyebrow">The Legend · Hood Street</p>
           <h1>From Sherwood to the desk</h1>

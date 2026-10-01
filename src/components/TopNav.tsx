@@ -375,13 +375,14 @@ export function TopNav({ view, onNavigate }: Props) {
             aria-label="Hood Desk home"
           >
             <span className="brand-mark-wrap">
-              <HoodMark size={30} variant="mark" className="brand-mark-img" />
+              <HoodMark size={44} variant="logo" className="brand-mark-img" alt="Hood Desk" />
             </span>
             <span className="brand-wordmark">
               <strong className="brand-name">
                 <span className="brand-hood">HOOD</span>
                 <span className="brand-desk"> Desk</span>
               </strong>
+              <span className="brand-sub">From the wood</span>
             </span>
           </button>
 

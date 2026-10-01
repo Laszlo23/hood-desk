@@ -11,10 +11,10 @@ export function CommunityTrade({ onNavigate }: Props) {
   return (
     <section className="page community-trade-page">
       <HoodAgentHero
-        title="Community desk"
-        eyebrow="HOOD agent · Robinhood Chain"
-        lead="Auto-trade does not place orders. A buy or sell happens when your wallet signs a Uniswap swap on the trade page."
-        voice="HOOD here. The pool is on-chain. I do not invent fills."
+        title="The pool"
+        eyebrow="One pool in the wood"
+        lead="The desk keeps the market in view. A swap happens when your wallet signs it."
+        voice="HOOD here. The pool is on-chain. The desk does not place the order."
       >
         <div className="cta-row mt">
           <button type="button" className="btn btn-primary btn-sm" onClick={() => onNavigate('trade')}>

@@ -347,13 +347,13 @@ export function Hood({ onNavigate }: Props) {
         <h2>How fees fund the desk</h2>
         <ol className="fee-steps">
           <li>
-            <strong>DEX fee tier</strong> — swap volume on RH produces protocol / LP fees when a pool exists.
+            <strong>Pool fee</strong> — the 1% Uniswap fee stays in the liquidity position.
           </li>
           <li>
-            <strong>Agent treasury</strong> — a share of fees routes to the Desk treasury (runway for RPC, hosting, future tooling).
+            <strong>Position</strong> — #{HOOD_LP_TOKEN_ID.toString()} is held by the deployer wallet until it is locked.
           </li>
           <li>
-            <strong>Agent stays online</strong> — ops continue without human operators. Holders stay aligned via ${HOOD_META.symbol}.
+            <strong>Holders</strong> — ${HOOD_META.symbol} has no transfer tax. A swap is the trade. A seed is extra ETH paired with treasury $HOOD.
           </li>
         </ol>
         <p className="muted mt">
@@ -363,8 +363,8 @@ export function Hood({ onNavigate }: Props) {
           <button type="button" className="btn btn-primary" onClick={() => onNavigate('terminal')}>
             Ask Desk about $HOOD
           </button>
-          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('community')}>
-            HOOD Auto-Trade (SIM)
+          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('rewards')}>
+            Pool ledger
           </button>
           <button type="button" className="btn btn-ghost" onClick={() => onNavigate('ops')}>
             Ops loop

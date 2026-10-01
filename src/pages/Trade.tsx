@@ -48,7 +48,9 @@ export function Trade({ onNavigate }: Props) {
   const { sendTransactionAsync } = useSendTransaction()
   const { writeContractAsync } = useWriteContract()
   const tokens = useMemo(() => collectTradeTokens(address), [address])
-  const [token, setToken] = useState<TradeToken>(DEMO_TOKENS[0])
+  const [token, setToken] = useState<TradeToken>(
+    () => collectTradeTokens()[0] ?? DEMO_TOKENS[0],
+  )
   const [timeframe, setTimeframe] = useState<Timeframe>('15m')
   const [ordersTab, setOrdersTab] = useState<'orders' | 'trades'>('orders')
   const [orders, setOrders] = useState<SimulatedOrder[]>([])

@@ -161,7 +161,7 @@ const HOOD_SEEDER_GALLERY: NftGalleryItem[] = [
     image: '/nfts/hood-seeder/1.svg',
     placeholder: '/nfts/hood-seeder/placeholder.svg',
     openseaItemUrl: HOOD_SEEDER_NFT_ADDRESS ? hoodSeederItemUrl(1) : undefined,
-    note: 'Sample seeder pass — deploy contract to enable',
+    note: 'Pass #1 is minted. The desk wallet mints the rest.',
   },
   {
     id: 'hood-seeder-42',

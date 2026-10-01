@@ -191,12 +191,13 @@ export function SeedRailCard() {
       <p className="hood-rite-kicker">Lay a seed</p>
       <h2>The wood matches what you bring.</h2>
       <p className="hood-seed-line">
-        The treasury meets you in the pool
-        {facts ? `, up to ${hoodText(spendable)} HOOD` : ''}.{' '}
+        {facts
+          ? `The treasury meets you in the pool, up to ${hoodText(spendable)} HOOD. `
+          : 'The treasury meets you in the pool. '}
         <a href={`${EXPLORER_BASE}/address/${HOOD_CAUSES}`} target="_blank" rel="noreferrer">
           The cause
         </a>
-        {causesEth !== null ? ` holds ${ethText(causesEth)} ETH` : ''}.
+        {causesEth !== null ? ` holds ${ethText(causesEth)} ETH.` : '.'}
       </p>
       {rail === null ? (
         <p className="muted">The path is cut. It opens from {short(HOOD_DEPLOYER)}.</p>

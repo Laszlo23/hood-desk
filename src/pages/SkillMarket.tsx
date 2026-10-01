@@ -221,12 +221,8 @@ export function SkillMarket({ onNavigate }: Props) {
                     />
                     <div>
                     <p className="eyebrow">
-                      {bot.id === 'bot_hood_community'
-                        ? '★ Flagship HOOD agent · '
-                        : bot.featured
-                          ? 'Featured · '
-                          : ''}
-                      {bot.isDemo ? 'On the desk' : 'Community'}
+                      {bot.id === 'bot_hood_community' ? 'Hood agent · ' : ''}
+                      {bot.isDemo ? 'Question list' : 'Community'}
                     </p>
                     <h3 className="market-bot-name">{bot.name}</h3>
                     <p className="muted tiny">
@@ -238,8 +234,14 @@ export function SkillMarket({ onNavigate }: Props) {
                     </div>
                   </div>
                   <div className="market-rating mono">
-                    ★ {bot.rating.toFixed(1)}
-                    <span className="muted block tiny">{bot.followerCount} followers</span>
+                    {bot.isDemo ? (
+                      <span className="status-feed-badge">Does not trade</span>
+                    ) : (
+                      <>
+                        ★ {bot.rating.toFixed(1)}
+                        <span className="muted block tiny">{bot.followerCount} followers</span>
+                      </>
+                    )}
                   </div>
                 </div>
                 <p className="market-desc muted">{bot.description}</p>

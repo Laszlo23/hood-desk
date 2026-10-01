@@ -1,13 +1,10 @@
 /**
- * Local desk activity for Status density — simulated trades / XP only.
- * Never claims live DEX fills.
+ * Status activity is only what this browser saved: signed swaps and desk XP.
+ * Skill lists and sample NFTs are not events.
  */
 
 import { listOrders } from '../trade/orders'
 import { getGamification } from '../gamification'
-import { listSkillPacks } from '../market/skillMarket'
-import { DOGIHOOD } from '../nfts/dogihood'
-import { FEATURED_RH_TX, shortHash } from './featured'
 
 export type DeskActivityKind = 'order' | 'xp' | 'desk' | 'featured' | 'pack' | 'skill'
 
@@ -33,7 +30,6 @@ export function lastLocalActivitySummary(): string | null {
 
 export function buildLocalActivityFeed(limit = 24): DeskActivityItem[] {
   const items: DeskActivityItem[] = []
-  const now = Date.now()
 
   for (const o of listOrders().slice(0, 40)) {
     items.push({
@@ -42,7 +38,7 @@ export function buildLocalActivityFeed(limit = 24): DeskActivityItem[] {
       at: o.createdAt,
       title: `${o.side.toUpperCase()} ${o.tokenSymbol}`,
       detail: `${o.type} · ${o.amount} ${o.quote} · ${o.status}`,
-      badge: 'ONCHAIN',
+      badge: o.txHash ? 'SIGNED' : 'SAVED',
     })
   }
 
@@ -59,47 +55,6 @@ export function buildLocalActivityFeed(limit = 24): DeskActivityItem[] {
       badge: 'LOCAL',
     })
   }
-
-  const packs = listSkillPacks()
-    .filter((p) => p.featured || p.isDemo)
-    .slice(0, 3)
-  packs.forEach((p, i) => {
-    items.push({
-      id: `pack-${p.id}`,
-      kind: 'pack',
-      at: p.createdAt || new Date(now - (i + 2) * 3_600_000).toISOString(),
-      title: p.featured ? `Featured pack · ${p.name}` : `Demo bot · ${p.name}`,
-      detail: `@${p.authorHandle} · ${p.followerCount} followers · ${p.rating.toFixed(1)}★`,
-      badge: p.featured ? 'FEATURED' : 'DEMO',
-    })
-  })
-
-  items.push({
-    id: 'dogihood-featured',
-    kind: 'featured',
-    at: new Date(now - 5_400_000).toISOString(),
-    title: `${DOGIHOOD.name} pack pride`,
-    detail: `Sample #${DOGIHOOD.sampleTokenId} · ${DOGIHOOD.badges.join(' · ')} · RH ${DOGIHOOD.chainId}`,
-    badge: 'NFT',
-  })
-
-  items.push({
-    id: 'featured-hash-watch',
-    kind: 'featured',
-    at: new Date(now - 7_200_000).toISOString(),
-    title: 'Watched hash · not on RH',
-    detail: `${shortHash(FEATURED_RH_TX, 6, 4)} — explorer miss · desk status only`,
-    badge: 'WATCH',
-  })
-
-  items.push({
-    id: 'desk-online',
-    kind: 'desk',
-    at: new Date().toISOString(),
-    title: 'Desk online',
-    detail: 'HOOD agent · RH 4663 · DogiHood pack featured',
-    badge: 'LIVE',
-  })
 
   return items
     .sort((a, b) => (a.at < b.at ? 1 : -1))

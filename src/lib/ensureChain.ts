@@ -100,6 +100,9 @@ export function friendlyConnectError(e: unknown, opts?: { hasWc?: boolean }): st
       ? 'No browser wallet detected. Use WalletConnect, or open in MetaMask.'
       : 'No browser wallet detected. Open in MetaMask, or set VITE_WC_PROJECT_ID for WalletConnect.'
   }
+  if (/allowlist|not allow|origin|unauthorized|forbidden/i.test(lower)) {
+    return 'This site is not on the wallet allowlist yet. Add https://doghood.aibusiness.fun in the Reown project, or connect the browser wallet.'
+  }
   if (/chain|network|4663/i.test(lower)) {
     return msg.split('\n')[0] || 'Wallet could not switch to Robinhood Chain (4663).'
   }

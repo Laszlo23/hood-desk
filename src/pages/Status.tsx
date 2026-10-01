@@ -241,7 +241,7 @@ export function Status({ onNavigate }: Props) {
 
       <div className="status-rank card">
         <div className="status-rank-head">
-          <p className="rail-label">Ranked · Skill Market</p>
+          <p className="rail-label">Skill lists · this browser</p>
           <div className="status-rank-tabs" role="tablist" aria-label="Rank mode">
             <button
               type="button"
@@ -295,18 +295,17 @@ export function Status({ onNavigate }: Props) {
                       </strong>
                       <span className="muted tiny block">{tok.name}</span>
                     </td>
-                    <td className="mono">{formatPrice(tok.price)}</td>
-                    <td className={tok.change24h >= 0 ? 'side-buy' : 'side-sell'}>
-                      {tok.change24h >= 0 ? '+' : ''}
-                      {tok.change24h.toFixed(1)}%
+                    <td className="mono">{tok.price > 0 ? formatPrice(tok.price) : '—'}</td>
+                    <td className={tok.change24h > 0 ? 'side-buy' : tok.change24h < 0 ? 'side-sell' : undefined}>
+                      {tok.change24h === 0 ? '—' : `${tok.change24h > 0 ? '+' : ''}${tok.change24h.toFixed(1)}%`}
                     </td>
-                    <td className="mono">{formatUsdCompact(tok.volume24h)}</td>
+                    <td className="mono">{tok.volume24h > 0 ? formatUsdCompact(tok.volume24h) : '—'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
             <p className="tiny muted status-rank-foot">
-              $HOOD market swaps sign on Uniswap. This list is live contracts only.
+              Addresses saved on this desk. A 24h tape is not on this page. The pool log is the ledger.
             </p>
           </div>
         ) : (
@@ -333,10 +332,8 @@ export function Status({ onNavigate }: Props) {
                       <td>{p.followerCount}</td>
                       <td>{p.rating.toFixed(1)}</td>
                       <td>
-                        {p.featured ? (
-                          <span className="status-feed-badge">FEATURED</span>
-                        ) : p.isDemo ? (
-                          <span className="status-feed-badge">DEMO</span>
+                        {p.isDemo ? (
+                          <span className="status-feed-badge">List</span>
                         ) : (
                           <span className="tiny muted">local</span>
                         )}
@@ -354,7 +351,7 @@ export function Status({ onNavigate }: Props) {
               </table>
             </div>
             <p className="tiny muted status-rank-foot">
-              Local catalog ranks only — not live DEX volume or on-chain leaderboards.
+              Saved on this browser. A follower count here is not a live crowd.
             </p>
           </>
         )}
@@ -415,8 +412,8 @@ export function Status({ onNavigate }: Props) {
 
       <div className="status-feed card">
         <div className="status-feed-head">
-          <p className="rail-label">Activity feed</p>
-          <span className="tiny muted">Wallet swaps and desk notes</span>
+          <p className="rail-label">This browser</p>
+          <span className="tiny muted">Signed swaps saved here. The pool log is the ledger.</span>
         </div>
         <ul className="status-feed-list">
           {feed.map((item) => (

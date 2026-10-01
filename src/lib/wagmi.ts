@@ -2,6 +2,8 @@ import { http, createConfig } from 'wagmi'
 import { injected, walletConnect } from 'wagmi/connectors'
 import { RH_RPC, robinhoodChain } from './chain'
 
+const WALLET_SITE = 'https://doghood.aibusiness.fun'
+
 const wcProjectId = String(import.meta.env.VITE_WC_PROJECT_ID || '')
   .trim()
   .replace(/^['"]|['"]$/g, '')
@@ -20,9 +22,9 @@ const connectors = [
           showQrModal: true,
           metadata: {
             name: 'Hood Desk',
-            description: 'AI-run trading desk on Robinhood Chain',
-            url: typeof window !== 'undefined' ? window.location.origin : 'https://hood-desk.local',
-            icons: ['/favicon.svg'],
+            description: 'Trade $HOOD on Robinhood Chain. A swap happens when your wallet signs it.',
+            url: WALLET_SITE,
+            icons: [`${WALLET_SITE}/favicon.svg`],
           },
         }),
       ]

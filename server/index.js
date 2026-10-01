@@ -42,6 +42,43 @@ const HOODSTREET_MCP_URL =
 
 const app = express()
 
+const hits = new Map()
+
+function clientIp(req) {
+  const forwarded = req.headers['x-forwarded-for']
+  if (typeof forwarded === 'string' && forwarded.trim()) return forwarded.split(',')[0].trim()
+  return req.socket.remoteAddress || 'unknown'
+}
+
+function tooFast(key, limit, windowMs) {
+  const now = Date.now()
+  const fresh = (hits.get(key) || []).filter((at) => now - at < windowMs)
+  if (fresh.length >= limit) {
+    hits.set(key, fresh)
+    return true
+  }
+  fresh.push(now)
+  hits.set(key, fresh)
+  return false
+}
+
+function publicError(_req, res, status, message) {
+  res.status(status).json({ ok: false, error: message })
+}
+
+function neonTokenId(raw) {
+  return /^\d{1,8}$/.test(String(raw || ''))
+}
+
+function neonWalletType(raw) {
+  const value = String(raw || 'ccff00-erc6551')
+  return value === 'ccff00-erc6551' ? value : null
+}
+
+function ethAddress(raw) {
+  return /^0x[a-fA-F0-9]{40}$/.test(String(raw || ''))
+}
+
 app.use(
   cors({
     origin: [
@@ -117,60 +154,70 @@ async function callMcpTool(toolName, args = {}) {
 
 /** GET /api/hoodstreet/neon/:tokenId — resolve CCFF00 ERC-6551 TBA */
 app.get('/api/hoodstreet/neon/:tokenId', async (req, res) => {
+  if (tooFast(`neon:${clientIp(req)}`, 40, 10 * 60 * 1000)) {
+    return publicError(req, res, 429, 'Too many reads. Wait a moment.')
+  }
+  if (!neonTokenId(req.params.tokenId)) {
+    return publicError(req, res, 400, 'Token id must be a number.')
+  }
   try {
     const result = await callMcpTool('get_neon_wallet', { tokenId: req.params.tokenId })
     res.json({ ok: true, data: result })
   } catch (err) {
-    res.status(500).json({ ok: false, error: err.message })
+    console.error('[neon]', err.message)
+    publicError(req, res, 502, 'That wallet read failed.')
   }
 })
 
 /** GET /api/hoodstreet/neon/:tokenId/assets?walletType=ccff00-erc6551 */
 app.get('/api/hoodstreet/neon/:tokenId/assets', async (req, res) => {
+  if (!neonTokenId(req.params.tokenId)) return publicError(req, res, 400, 'Token id must be a number.')
+  const walletType = neonWalletType(req.query.walletType)
+  if (!walletType) return publicError(req, res, 400, 'Unknown wallet type.')
   try {
-    const walletType = req.query.walletType || 'ccff00-erc6551'
-    const result = await callMcpTool('get_neon_assets', {
-      tokenId: req.params.tokenId,
-      walletType,
-    })
+    const result = await callMcpTool('get_neon_assets', { tokenId: req.params.tokenId, walletType })
     res.json({ ok: true, data: result })
   } catch (err) {
-    res.status(500).json({ ok: false, error: err.message })
+    console.error('[neon assets]', err.message)
+    publicError(req, res, 502, 'That wallet read failed.')
   }
 })
 
 /** GET /api/hoodstreet/neon/:tokenId/balances?walletType=ccff00-erc6551 */
 app.get('/api/hoodstreet/neon/:tokenId/balances', async (req, res) => {
+  if (!neonTokenId(req.params.tokenId)) return publicError(req, res, 400, 'Token id must be a number.')
+  const walletType = neonWalletType(req.query.walletType)
+  if (!walletType) return publicError(req, res, 400, 'Unknown wallet type.')
   try {
-    const walletType = req.query.walletType || 'ccff00-erc6551'
-    const result = await callMcpTool('get_neon_balances', {
-      tokenId: req.params.tokenId,
-      walletType,
-    })
+    const result = await callMcpTool('get_neon_balances', { tokenId: req.params.tokenId, walletType })
     res.json({ ok: true, data: result })
   } catch (err) {
-    res.status(500).json({ ok: false, error: err.message })
+    console.error('[neon balances]', err.message)
+    publicError(req, res, 502, 'That wallet read failed.')
   }
 })
 
 /** GET /api/hoodstreet/neon/:tokenId/activity?walletType=ccff00-erc6551 */
 app.get('/api/hoodstreet/neon/:tokenId/activity', async (req, res) => {
+  if (!neonTokenId(req.params.tokenId)) return publicError(req, res, 400, 'Token id must be a number.')
+  const walletType = neonWalletType(req.query.walletType)
+  if (!walletType) return publicError(req, res, 400, 'Unknown wallet type.')
   try {
-    const walletType = req.query.walletType || 'ccff00-erc6551'
-    const result = await callMcpTool('get_neon_activity', {
-      tokenId: req.params.tokenId,
-      walletType,
-    })
+    const result = await callMcpTool('get_neon_activity', { tokenId: req.params.tokenId, walletType })
     res.json({ ok: true, data: result })
   } catch (err) {
-    res.status(500).json({ ok: false, error: err.message })
+    console.error('[neon activity]', err.message)
+    publicError(req, res, 502, 'That wallet read failed.')
   }
 })
 
 /** GET /api/hoodstreet/neon/:tokenId/token/:tokenAddress?walletType=ccff00-erc6551 */
 app.get('/api/hoodstreet/neon/:tokenId/token/:tokenAddress', async (req, res) => {
+  if (!neonTokenId(req.params.tokenId)) return publicError(req, res, 400, 'Token id must be a number.')
+  if (!ethAddress(req.params.tokenAddress)) return publicError(req, res, 400, 'Token address is not valid.')
+  const walletType = neonWalletType(req.query.walletType)
+  if (!walletType) return publicError(req, res, 400, 'Unknown wallet type.')
   try {
-    const walletType = req.query.walletType || 'ccff00-erc6551'
     const result = await callMcpTool('get_wallet_token', {
       tokenId: req.params.tokenId,
       walletType,
@@ -178,7 +225,8 @@ app.get('/api/hoodstreet/neon/:tokenId/token/:tokenAddress', async (req, res) =>
     })
     res.json({ ok: true, data: result })
   } catch (err) {
-    res.status(500).json({ ok: false, error: err.message })
+    console.error('[neon token]', err.message)
+    publicError(req, res, 502, 'That wallet read failed.')
   }
 })
 
@@ -202,7 +250,7 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), (req,
     event = stripe.webhooks.constructEvent(req.body, sig, WEBHOOK_SECRET)
   } catch (err) {
     console.error('[stripe webhook]', err.message)
-    return res.status(400).send(`Webhook Error: ${err.message}`)
+    return res.status(400).json({ error: 'Webhook signature did not match' })
   }
 
   if (event.type === 'checkout.session.completed') {
@@ -219,7 +267,7 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), (req,
   res.json({ received: true })
 })
 
-app.use(express.json())
+app.use(express.json({ limit: '32kb' }))
 
 function requireStripe(res) {
   if (!SECRET) {
@@ -268,6 +316,10 @@ app.post('/api/stripe/checkout', async (req, res) => {
   const stripe = requireStripe(res)
   if (!stripe) return
 
+  if (tooFast(`checkout:${clientIp(req)}`, 8, 10 * 60 * 1000)) {
+    return res.status(429).json({ error: 'Too many checkouts. Wait a moment.' })
+  }
+
   const { tier, successUrl, cancelUrl } = req.body || {}
   if (!PAID.has(tier)) {
     return res.status(400).json({ error: 'tier must be starter | desk | desk_plus' })
@@ -295,7 +347,7 @@ app.post('/api/stripe/checkout', async (req, res) => {
     res.json({ sessionId: session.id, url: session.url })
   } catch (err) {
     console.error('[checkout]', err.message)
-    res.status(400).json({ error: err.message || 'Checkout session failed' })
+    res.status(400).json({ error: 'Checkout did not open.' })
   }
 })
 
@@ -303,6 +355,13 @@ app.post('/api/stripe/checkout', async (req, res) => {
 app.get('/api/stripe/session/:id', async (req, res) => {
   const stripe = requireStripe(res)
   if (!stripe) return
+
+  if (!/^cs_(test|live)_[A-Za-z0-9]{8,}$/.test(String(req.params.id || '')) || String(req.params.id).length > 120) {
+    return res.status(400).json({ error: 'Checkout session id is not valid.' })
+  }
+  if (tooFast(`session:${clientIp(req)}`, 30, 10 * 60 * 1000)) {
+    return res.status(429).json({ error: 'Too many lookups. Wait a moment.' })
+  }
 
   try {
     const session = await stripe.checkout.sessions.retrieve(req.params.id)
@@ -319,7 +378,7 @@ app.get('/api/stripe/session/:id', async (req, res) => {
     })
   } catch (err) {
     console.error('[session]', err.message)
-    res.status(400).json({ error: err.message || 'Session lookup failed' })
+    res.status(400).json({ error: 'Checkout session was not found.' })
   }
 })
 

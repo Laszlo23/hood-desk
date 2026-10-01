@@ -54,25 +54,25 @@ export function DeskShareCard({ card: given, shared = false }: Props) {
 
   const share = async () => {
     const url = cardShareUrl(card)
+    let copied = false
     try {
-      if (navigator.share) {
+      await navigator.clipboard.writeText(url)
+      copied = true
+    } catch {
+      copied = false
+    }
+    if (navigator.share) {
+      try {
         await navigator.share({
           title: 'Hood Desk card',
           text: `${shortDeskAddress(card.address)} · level ${card.level}`,
           url,
         })
-        setNote('Share sheet opened.')
-        return
+      } catch {
+        /* the sheet was closed; the link is already copied when the browser allowed it */
       }
-    } catch {
-      /* closed sheet, fall through to copy */
     }
-    try {
-      await navigator.clipboard.writeText(url)
-      setNote('Link copied.')
-    } catch {
-      setNote(url)
-    }
+    setNote(copied ? 'Link copied.' : url)
   }
 
   return (

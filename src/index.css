@@ -3152,6 +3152,8 @@ a:hover {
 /* Mobile: Drawer slides down from below sticky header */
 @media (max-width: 1079px) {
   .top-nav-drawer {
+    display: flex;
+    flex-direction: column;
     position: fixed;
     top: 50px;
     left: 0;
@@ -3200,6 +3202,14 @@ a:hover {
   padding: 0;
   border-top: none;
   margin-top: 0;
+}
+
+/* Mobile: Ensure drawer content fills available height */
+@media (max-width: 1079px) {
+  .top-nav-mobile {
+    min-height: 100%;
+    flex: 1;
+  }
 }
 
 .top-nav-drawer-label {

@@ -63,7 +63,7 @@ app.get('/api/health', (_req, res) => {
 /**
  * Hoodstreet MCP client — call MCP tools via JSON-RPC over HTTP POST.
  * Server: erc-6551-agent v0.2.0
- * Read-only tools for v1 (no prepare_*/confirm_*/execute_* write flows).
+ * Read-only tools for v1 (no prepare_/confirm_/execute_ write flows).
  */
 let mcpRequestId = 1
 
@@ -71,7 +71,10 @@ async function callMcpTool(toolName, args = {}) {
   try {
     const response = await fetch(HOODSTREET_MCP_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/event-stream',
+      },
       body: JSON.stringify({
         jsonrpc: '2.0',
         id: mcpRequestId++,
@@ -84,7 +87,16 @@ async function callMcpTool(toolName, args = {}) {
       throw new Error(`MCP HTTP ${response.status}`)
     }
 
-    const data = await response.json()
+    // MCP over HTTP POST returns SSE format, need to parse event stream
+    const text = await response.text()
+    
+    // Parse SSE format: "event: message\ndata: {json}\n\n"
+    const dataMatch = text.match(/data: (.+)/s)
+    if (!dataMatch) {
+      throw new Error('Invalid MCP SSE response format')
+    }
+    
+    const data = JSON.parse(dataMatch[1])
     if (data.error) {
       throw new Error(data.error.message || 'MCP tool error')
     }

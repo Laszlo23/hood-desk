@@ -20,32 +20,26 @@ export function Landing({ onNavigate }: Props) {
             <HoodSeal size={36} decorative className="hero-seal" />
           </div>
           <div>
-            <p className="eyebrow">Hood Street · Sherwood reborn · HOOD agent online</p>
+            <p className="eyebrow">Robinhood Chain · Hood Street</p>
             <h1 className="hero-title">Hood Desk</h1>
             <p className="hero-tagline">
-              From the forest to Hood Street — HOOD runs the desk. Take from the rich (opacity &amp; fake
-              rails), feed the community auto-trade. Robinhood Chain. No humans required for ops.
+              Trade $HOOD, read the pool, and follow what the street just said. A swap happens when
+              your wallet signs it.
             </p>
             <HoodAgentBadge className="landing-hood-badge" />
           </div>
         </div>
 
-        <blockquote className="hood-agent-voice landing-hood-voice">
-          <span className="hood-agent-voice-label">HOOD</span>
-          HOOD here — scanning RH 4663 for the community. Auto-trade strategies on for the pack. SIM
-          labeled. Pack first.
-        </blockquote>
-
         <p className="hero-pitch">
-          Flagship AI desk on <strong>Robinhood Chain 4663</strong>. HOOD is the star agent —
-          community auto-trade, fair launches, Skill Market. <strong>{skillCount()} skills</strong>{' '}
-          ready. <strong>$HOOD</strong> is live on RH 4663 — transparent fixed supply.
+          One coin, one Uniswap pool, and a desk that keeps the notes. <strong>$HOOD</strong> is a
+          fixed 1,000,000,000 supply. <strong>{skillCount()} skills</strong> answer questions. They
+          do not place orders.
         </p>
 
         <div className="status-badges" aria-label="Quick tags">
-          <span className="badge">HOOD agent</span>
-          <span className="badge">Community Auto-Trade</span>
-          <span className="badge">AI-operated</span>
+          <span className="badge">$HOOD</span>
+          <span className="badge">One pool</span>
+          <span className="badge">Wallet signs</span>
           <span className="badge">{skillCount()} skills</span>
         </div>
 
@@ -53,53 +47,23 @@ export function Landing({ onNavigate }: Props) {
         <FeaturedTxRow compact className="landing-featured-tx" />
 
         <div className="demo-banner landing-honesty" role="note">
-          <strong>Honest desk.</strong> $HOOD market swaps sign on Uniswap V3. Limit, TWAP, auto-trade, and the rewards ledger stay on this desk.
-          $HOOD is deployed (transparent ERC-20). Green check means Sourcify or Blockscout verified the contract.
-          Featured hash stays labeled <em>not found on RH</em>.
+          <strong>What is live.</strong> $HOOD trades on Uniswap. The ledger lists those swaps. A
+          seed pairs ETH with treasury $HOOD, and 2% of that ETH goes to the cause. A green check
+          means Sourcify matched the contract.
         </div>
 
         <div className="cta-row landing-cta-primary">
-          <button type="button" className="btn btn-primary" onClick={() => onNavigate('community')}>
-            Community Auto-Trade
-          </button>
           <button type="button" className="btn btn-primary" onClick={() => onNavigate('trade')}>
             Trade
           </button>
-          <button type="button" className="btn btn-primary" onClick={() => onNavigate('status')}>
-            Status
-          </button>
-          <button type="button" className="btn btn-primary" onClick={() => onNavigate('skills')}>
-            Skills
+          <button type="button" className="btn btn-primary" onClick={() => onNavigate('hood')}>
+            $HOOD
           </button>
           <button type="button" className="btn btn-primary" onClick={() => onNavigate('rewards')}>
-            Rewards
+            Ledger
           </button>
-          <button type="button" className="btn btn-primary" onClick={() => onNavigate('blog')}>
-            Blog
-          </button>
-          <button type="button" className="btn btn-primary" onClick={() => onNavigate('subscribe')}>
-            Subscribe
-          </button>
-        </div>
-
-        <div className="cta-row">
-          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('create')}>
-            Create project
-          </button>
-          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('projects')}>
-            Projects
-          </button>
-          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('terminal')}>
-            Open Terminal
-          </button>
-          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('nfts')}>
-            DogiHood NFTs
-          </button>
-          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('hood')}>
-            View $HOOD
-          </button>
-          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('ops')}>
-            Ops loop
+          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('blog')}>
+            Notes
           </button>
         </div>
       </div>
@@ -182,55 +146,54 @@ export function Landing({ onNavigate }: Props) {
 
       <div className="landing-grid">
         <article className="card mini-card">
-          <h3>Create → Trade → Rewards</h3>
+          <h3>Ledger</h3>
           <p className="muted">
-            The Uniswap LP fee stays in the $HOOD/WETH position. There is no separate payout ledger.
+            Every $HOOD swap, in order. The pool fee stays in the position.
           </p>
           <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('rewards')}>
-            Earnings →
+            Open the ledger
           </button>
         </article>
         <article className="card mini-card">
-          <h3>Create project</h3>
+          <h3>Create</h3>
           <p className="muted">
-            Name, ticker, socials, logo/emoji, agent persona. Persist per wallet in localStorage.
+            Start a fair launch: a name, a ticker, and a supply that is minted once.
           </p>
           <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('create')}>
             Create →
           </button>
         </article>
         <article className="card mini-card">
-          <h3>Projects + fair launch</h3>
+          <h3>Projects</h3>
           <p className="muted">
-            List & detail with social chips. Launch fair token wizard — mint-once, no team mint, no
-            tax.
+            Launches saved on this desk. Mint once, no team mint, no tax.
           </p>
           <button type="button" className="btn btn-sm btn-ghost mt" onClick={() => onNavigate('projects')}>
             Browse →
           </button>
         </article>
         <article className="card mini-card community-mini-card">
-          <h3>Community Auto-Trade</h3>
+          <h3>The pool</h3>
           <p className="muted">
-            The agent watches the desk. Swaps happen when you sign them on Trade.
+            The live $HOOD/WETH market. The desk does not place the order for you.
           </p>
           <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('community')}>
-            Open desk →
+            See the pool
           </button>
         </article>
         <article className="card mini-card">
-          <h3>Skill Market</h3>
+          <h3>Skills</h3>
           <p className="muted">
-            Follow trading bots / skill packs. Creators earn demo follow + usage credits — no fake mainnet fees.
+            Questions the desk can answer. Following a pack copies its skill list. It does not trade.
           </p>
           <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('skills')}>
             Browse →
           </button>
         </article>
         <article className="card mini-card">
-          <h3>Blog</h3>
+          <h3>Notes</h3>
           <p className="muted">
-            Hood Street posts — edit locally. Weekly banner motivates builders on RH.
+            What Hood Street said, written down here.
           </p>
           <button type="button" className="btn btn-sm btn-ghost mt" onClick={() => onNavigate('blog')}>
             Read →
@@ -247,9 +210,9 @@ export function Landing({ onNavigate }: Props) {
           </button>
         </article>
         <article className="card mini-card">
-          <h3>NFT stories</h3>
+          <h3>Marks</h3>
           <p className="muted">
-            Featured pack on RH 4663 — sample #445, Dogiflow+ label. OpenSea + Blockscout links on NFTs.
+            DogiHood, Hood Seeder, and CCFF00. Each mark can hold a wallet.
           </p>
           <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('nfts')}>
             Pack pride →
@@ -258,8 +221,7 @@ export function Landing({ onNavigate }: Props) {
         <article className="card mini-card">
           <h3>$HOOD</h3>
           <p className="muted">
-            1B mint-once ERC-20 — live via <code className="inline-code">VITE_HOOD_TOKEN</code>.
-            DEX fees → treasury.
+            Struck once. One pool. A cut of every seed for the cause.
           </p>
           <button type="button" className="btn btn-sm btn-ghost mt" onClick={() => onNavigate('hood')}>
             Token card →
@@ -272,7 +234,7 @@ export function Landing({ onNavigate }: Props) {
         <p className="muted tiny">
           Lore is atmosphere — DogiHood NFTs &amp; HOOD agent remain the brand face.{' '}
           <button type="button" className="link-btn" onClick={() => onNavigate('lore')}>
-            The Legend
+            Legend
           </button>
         </p>
       </footer>

@@ -39,8 +39,8 @@ export function Projects({ onNavigate }: Props) {
           <p className="eyebrow">Empty desk</p>
           <h2>No projects yet</h2>
           <p className="muted">
-            Create a local AI-business card (name, ticker, socials, persona). Fair-launch wizard is
-            demo until you paste a real RH token address — no invented routers.
+            A project is a name and a fair-launch plan saved on this desk. The token is real only
+            after you deploy it and paste the address.
           </p>
           <div className="cta-row mt">
             <button type="button" className="btn btn-primary" onClick={() => onNavigate('create')}>
@@ -50,7 +50,7 @@ export function Projects({ onNavigate }: Props) {
               Read Hood Street posts
             </button>
             <button type="button" className="btn btn-ghost" onClick={() => onNavigate('trade')}>
-              Try demo Trade
+              Trade $HOOD
             </button>
           </div>
         </div>

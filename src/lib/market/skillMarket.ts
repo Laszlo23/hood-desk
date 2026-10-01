@@ -167,7 +167,7 @@ const DEMO_BOTS: SkillPack[] = [
     name: 'HOOD Community Desk',
     authorHandle: '@hood',
     description:
-      'Flagship HOOD agent — community auto-trade (DCA pool, momentum scout, risk-off, DogiHood pride). Not a generic bot. Paper / SIM only on RH 4663.',
+      'The desk agent. It can read the pool, list skills, and answer a fair-launch question. It does not place a swap.',
     skillTags: ['community', 'auto-trade', 'DCA', 'HOOD agent', 'trade.order'],
     skillConfig: ['trade_order', 'trade_chart', 'portfolio', 'daily_brief', 'fox_coach', 'help'],
     followerCount: 420,
@@ -182,7 +182,7 @@ const DEMO_BOTS: SkillPack[] = [
     name: 'Hood Vet Pro',
     authorHandle: '@0xleonardo',
     description:
-      'Legitimacy-first desk: trade.vet before every simulate. Primary FC @0xleonardo · FID 873944.',
+      'Checks a token before you trade it. @0xleonardo · FID 873944.',
     skillTags: ['trade.vet', 'trade.order', 'portfolio', 'ensure_chain'],
     skillConfig: ['trade_vet', 'trade_order', 'portfolio', 'ensure_chain', 'help'],
     followerCount: 128,
@@ -196,7 +196,7 @@ const DEMO_BOTS: SkillPack[] = [
     id: 'bot_dca_desk',
     name: 'DCA Desk',
     authorHandle: '@dca_desk',
-    description: 'Scheduled DCA / TWAP-style simulates with calm sizing tips. Local fills only.',
+    description: 'Sizing notes for a calm buy. The swap still signs in your wallet.',
     skillTags: ['DCA', 'trade.order', 'trade.chart', 'portfolio'],
     skillConfig: ['trade_order', 'trade_chart', 'portfolio', 'daily_brief', 'help'],
     followerCount: 64,
@@ -231,7 +231,7 @@ const DEMO_BOTS: SkillPack[] = [
     id: 'bot_chart_hawk',
     name: 'Chart Hawk',
     authorHandle: '@charthawk',
-    description: 'Demo OHLCV summaries + chart chrome tips. Neon green, never Bankr purple.',
+    description: 'Reads the $HOOD chart, which is built from pool swaps.',
     skillTags: ['trade.chart', 'price', 'neon_tips'],
     skillConfig: ['trade_chart', 'price', 'neon_tips', 'portfolio', 'help'],
     followerCount: 55,
@@ -245,7 +245,7 @@ const DEMO_BOTS: SkillPack[] = [
     id: 'bot_neon_ops',
     name: 'Neon Ops',
     authorHandle: '@neonops',
-    description: 'Ops loop, treasury explain, revenue demo stats. Keeps the desk runway honest.',
+    description: 'Explains how the desk stays up, and what is actually paid.',
     skillTags: ['ops', 'treasury', 'revenue', 'fox_coach'],
     skillConfig: [
       'how_desk_runs',
@@ -270,11 +270,14 @@ function ensureSeeded(): void {
     writeJson(KEY_BOTS, DEMO_BOTS)
   } else {
     // Merge any missing demo bots by id
-    const ids = new Set(bots.map((b) => b.id))
     let changed = false
     for (const d of DEMO_BOTS) {
-      if (!ids.has(d.id)) {
+      const existing = bots.find((b) => b.id === d.id)
+      if (!existing) {
         bots.push(d)
+        changed = true
+      } else if (existing.isDemo && existing.description !== d.description) {
+        existing.description = d.description
         changed = true
       }
     }

@@ -95,12 +95,12 @@ export function Status({ onNavigate }: Props) {
           <div>
             <div className="row-gap status-lore-head">
               <HoodSeal size={32} decorative className="status-lore-seal" />
-              <p className="eyebrow">Hood Street · command desk · mystic mist</p>
+              <p className="eyebrow">Robinhood Chain</p>
             </div>
             <h1 className="hero-title status-title">Status</h1>
             <p className="muted status-lead">
-              Bankr-ish density with Hood flow — KPI pulse, featured cards, ranked local tables.
-              Demo / local counts only. No invented DEX volume.
+              Whether the desk is up, how many projects are saved here, and where $HOOD lives.
+              Swap volume is on the ledger, not on this page.
             </p>
           </div>
           <div className="status-kpis">
@@ -122,7 +122,7 @@ export function Status({ onNavigate }: Props) {
               </strong>
             </div>
             <div className="status-kpi">
-              <span className="status-kpi-label">Sim orders</span>
+              <span className="status-kpi-label">Signed here</span>
               <strong className="status-kpi-value">{orderCount}</strong>
             </div>
             <div className="status-kpi">
@@ -157,28 +157,19 @@ export function Status({ onNavigate }: Props) {
         </div>
         <div className="cta-row">
           <button type="button" className="btn btn-primary btn-sm" onClick={() => onNavigate('community')}>
-            Community Auto-Trade
+            Pool
           </button>
           <button type="button" className="btn btn-primary btn-sm" onClick={() => onNavigate('trade')}>
             Trade
           </button>
-          <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('skills')}>
-            Skills
-          </button>
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('rewards')}>
-            Rewards
-          </button>
-          <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('terminal')}>
-            Terminal
-          </button>
-          <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('nfts')}>
-            NFTs
+            Ledger
           </button>
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('hood')}>
             $HOOD
           </button>
-          <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('lore')}>
-            The Legend
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('nfts')}>
+            Marks
           </button>
         </div>
       </header>
@@ -212,8 +203,8 @@ export function Status({ onNavigate }: Props) {
             onClick={() => onNavigate('community')}
           >
             <span className="status-feature-tag">Agent</span>
-            <strong>HOOD Auto-Trade</strong>
-            <span className="muted tiny">Community desk · SIM MODE</span>
+            <strong>The pool</strong>
+            <span className="muted tiny">$HOOD/WETH · you sign the swap</span>
           </button>
           {featuredProjects.map((p) => (
             <button

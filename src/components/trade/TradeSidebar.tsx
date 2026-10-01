@@ -1,9 +1,7 @@
-import { useState } from 'react'
-import type { ViewId } from '../../lib/nav'
+import { PRIMARY_NAV, STREET_GROUPS, type ViewId } from '../../lib/nav'
 import { getSubscription } from '../../lib/subscription'
 import { HoodMark } from '../HoodMark'
 import { DogiHoodHolderBadge } from '../DogiHoodCard'
-import { XpChip } from '../XpChip'
 
 type Props = {
   active: ViewId
@@ -12,35 +10,7 @@ type Props = {
 
 type NavItem = { id: ViewId; label: string }
 
-const AGENT: NavItem[] = [
-  { id: 'terminal', label: 'Chat' },
-  { id: 'community', label: 'Auto-Trade · HOOD' },
-  { id: 'status', label: 'Status' },
-  { id: 'account', label: 'Wallet' },
-  { id: 'trade', label: 'Trade' },
-  { id: 'skills', label: 'Skills / bots' },
-]
-
-const EXPLORE: NavItem[] = [
-  { id: 'community', label: 'Community desk' },
-  { id: 'skills', label: 'Skill Market' },
-  { id: 'nfts', label: 'NFTs' },
-  { id: 'rewards', label: 'Rewards' },
-  { id: 'blog', label: 'Blog' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'revenue', label: 'Metrics' },
-  { id: 'status', label: 'Top / Trending' },
-  { id: 'lore', label: 'The Legend' },
-]
-
-const BUILD: NavItem[] = [
-  { id: 'create', label: 'Your Tokens / Launch' },
-  { id: 'hood', label: '$HOOD' },
-  { id: 'subscribe', label: 'Subscribe' },
-]
-
 export function TradeSidebar({ active, onNavigate }: Props) {
-  const [xpTick, setXpTick] = useState(0)
   const sub = getSubscription()
 
   const renderGroup = (title: string, items: NavItem[]) => (
@@ -88,40 +58,22 @@ export function TradeSidebar({ active, onNavigate }: Props) {
         </div>
       </div>
 
-      {renderGroup('Agent', AGENT)}
-      {renderGroup('Explore', EXPLORE)}
-      {renderGroup('Build', BUILD)}
+      {renderGroup('Start', PRIMARY_NAV.map((item) => ({ id: item.id, label: item.label })))}
+      {STREET_GROUPS.map((group) =>
+        renderGroup(
+          group.label,
+          group.items.map((item) => ({ id: item.id, label: item.label })),
+        ),
+      )}
 
       <div className="trade-sidebar-footer">
-        <div className="sidebar-xp-wrap">
-          <XpChip
-            tick={xpTick}
-            onClick={() => {
-              setXpTick((t) => t + 1)
-              onNavigate('account')
-            }}
-          />
-          <button
-            type="button"
-            className="btn btn-ghost btn-sm launch-cta"
-            onClick={() => onNavigate('account')}
-          >
-            Wallet / Profile
-          </button>
-        </div>
-        <button type="button" className="btn btn-primary btn-sm launch-cta" onClick={() => onNavigate('create')}>
-          Launch a token
-        </button>
         <button type="button" className="btn btn-ghost btn-sm launch-cta" onClick={() => onNavigate('subscribe')}>
           {sub.label === 'Free' ? 'Subscribe' : `Plan: ${sub.label}`}
         </button>
         <div className="sidebar-perk-row">
           <DogiHoodHolderBadge />
         </div>
-        <p className="tiny muted">
-          $HOOD swaps sign on Uniswap. · RH
-          4663
-        </p>
+        <p className="tiny muted">A swap happens when your wallet signs it.</p>
       </div>
     </aside>
   )

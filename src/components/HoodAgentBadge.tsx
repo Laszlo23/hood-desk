@@ -2,17 +2,17 @@ import { HOOD_AGENT_STATUS } from '../lib/autoTrade/communityDesk'
 
 type Props = {
   className?: string
-  /** compact = single line pill; full = ONLINE · COMMUNITY DESK · SIM MODE */
+  /** compact = single line pill; full = ONLINE · COMMUNITY DESK · LIVE */
   compact?: boolean
 }
 
-/** HOOD agent status pill — ONLINE · COMMUNITY DESK · SIM MODE */
+/** HOOD agent status pill — ONLINE · COMMUNITY DESK · LIVE */
 export function HoodAgentBadge({ className = '', compact }: Props) {
   if (compact) {
     return (
-      <span className={`hood-agent-badge compact ${className}`.trim()} title="HOOD agent · SIM">
+      <span className={`hood-agent-badge compact ${className}`.trim()} title="HOOD agent · Robinhood Chain">
         <span className="hood-agent-dot" aria-hidden />
-        ONLINE · SIM
+        ONLINE · RH 4663
       </span>
     )
   }

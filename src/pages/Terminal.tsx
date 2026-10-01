@@ -48,7 +48,7 @@ export function Terminal({ onNavigate }: Props) {
               How this AI business runs →
             </button>
             <button type="button" className="link-btn" onClick={() => onNavigate('revenue')}>
-              Revenue (demo) →
+              Revenue →
             </button>
             <button type="button" className="link-btn" onClick={() => onNavigate('nfts')}>
               DogiHood NFTs →

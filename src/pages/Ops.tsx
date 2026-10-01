@@ -3,30 +3,27 @@ import type { ViewId } from '../lib/nav'
 type Props = { onNavigate: (id: ViewId, projectId?: string) => void }
 
 const LOOP = [
-  { icon: '💬', title: 'Users chat', body: 'Ask Desk for balance, $HOOD, future swap — chips or free text.' },
-  { icon: '🦊', title: 'Agent acts on RH', body: 'Rule-based tools on chain 4663. You sign; Desk never holds keys.' },
-  { icon: '💸', title: 'Fees → treasury', body: 'DEX fee share fills agent runway (documented; live after DEX).' },
-  { icon: '🟢', title: 'Agent stays online', body: 'No humans required for ops. AI business keeps the desk open.' },
+  { icon: '💬', title: 'You ask', body: 'Balance, $HOOD, or a fair-launch note. The desk answers in Ask.' },
+  { icon: '🦊', title: 'You sign', body: 'A swap is a Uniswap transaction. The desk never holds the key.' },
+  { icon: '🌱', title: 'A seed pairs', body: 'ETH you send is matched with treasury $HOOD. 2% of that ETH goes to the cause.' },
+  { icon: '🟢', title: 'The pool stays', body: 'The 1% fee stays in the liquidity position until the position is locked.' },
 ]
 
 const ROLES = [
-  { title: 'Agent (ops)', body: 'Desk fox — witty, RH-only, action-oriented. Runs tools & stays online.' },
-  { title: 'Token holders', body: '$HOOD holders are aligned with desk success — companion coin, not equity.' },
-  { title: 'Treasury', body: 'Runway from fees. Funds infra so the agent can keep operating.' },
+  { title: 'Ask', body: 'The desk answers on Robinhood Chain. It does not hold your key.' },
+  { title: '$HOOD holders', body: 'The coin is a companion. It is not a share of the desk.' },
+  { title: 'The cause', body: '2% of each seed. The pool fee stays in the position.' },
 ]
 
 export function Ops({ onNavigate }: Props) {
   return (
     <section className="page ops-page">
       <div className="page-intro">
-        <p className="eyebrow">How this AI business runs</p>
-        <h1>Ops loop</h1>
+        <p className="eyebrow">How the desk stays up</p>
+        <h1>Ops</h1>
         <p className="muted">
-          One polished product that proves an AI business can exist — Bankr-style, Hood Street.
+          Ask answers. Your wallet signs. A seed adds to the same pool. The fee stays there.
         </p>
-        <div className="demo-banner">
-          <strong>V1 is demo ops.</strong> Live swap after a known RH DEX. No invented routers.
-        </div>
       </div>
 
       <div className="ops-loop" aria-label="Business loop">
@@ -55,25 +52,15 @@ export function Ops({ onNavigate }: Props) {
 
       <div className="cta-row mt">
         <button type="button" className="btn btn-primary" onClick={() => onNavigate('terminal')}>
-          Open Terminal
-        </button>
-        <button type="button" className="btn btn-ghost" onClick={() => onNavigate('skills')}>
-          Skill Market / Creator desk →
+          Ask
         </button>
         <button type="button" className="btn btn-ghost" onClick={() => onNavigate('rewards')}>
-          Rewards
-        </button>
-        <button type="button" className="btn btn-ghost" onClick={() => onNavigate('blog')}>
-          Blog / weekly banner
+          Ledger
         </button>
         <button type="button" className="btn btn-ghost" onClick={() => onNavigate('revenue')}>
-          Revenue (demo)
+          Revenue
         </button>
       </div>
-      <p className="tiny muted mt">
-        Edit the weekly motivational banner under Blog → Admin. Fee split constants in{' '}
-        <code className="inline-code">src/lib/rewards/config.ts</code>.
-      </p>
     </section>
   )
 }

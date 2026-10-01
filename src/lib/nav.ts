@@ -119,7 +119,7 @@ export const DRAWER_SECTIONS: DrawerSection[] = [
       { id: 'community', label: 'Pool', hash: '#/community', icon: 'autotrade' },
       { id: 'status', label: 'Status', hash: '#/status', icon: 'status' },
       { id: 'skills', label: 'Skills', hash: '#/skills', icon: 'skills' },
-      { id: 'terminal', label: 'Terminal', hash: '#/terminal', icon: 'terminal' },
+      { id: 'terminal', label: 'Ask', hash: '#/terminal', icon: 'terminal' },
     ],
   },
   {

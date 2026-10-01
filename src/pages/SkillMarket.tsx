@@ -135,17 +135,13 @@ export function SkillMarket({ onNavigate }: Props) {
   return (
     <section className="page skills-market-page">
       <div className="page-intro">
-        <p className="eyebrow">Explore · Skill Market</p>
+        <p className="eyebrow">The desk</p>
         <h1>
-          Skill Market <DogiHoodHolderBadge className="skills-holder-inline" />
+          Skills <DogiHoodHolderBadge className="skills-holder-inline" />
         </h1>
         <p className="muted">
-          Browse skill packs you publish. Following a pack copies its skill list into the Desk agent.
-          There is no payout ledger. Pool fees stay on{' '}
-          <button type="button" className="link-btn" onClick={() => onNavigate('rewards')}>
-            #/rewards
-          </button>
-          .
+          A skill pack is a list of questions the desk can answer. Follow one to copy that list
+          into Ask. Swaps stay on Trade, and the rows stay on the ledger.
         </p>
         {flash && <div className="trade-flash mt">{flash}</div>}
         {activeBot && (
@@ -190,12 +186,12 @@ export function SkillMarket({ onNavigate }: Props) {
             <p className="eyebrow">Flagship · HOOD agent · not a generic bot</p>
             <h2 className="section-title">Hood Street Skill Market</h2>
             <p className="muted">
-              HOOD Community Desk runs pack auto-trade (SIM). Follow bots, copy skill configs, earn
-              demo creator credits. Desk unlocks featured badges + more publish slots.
+              These packs are questions the desk can answer. Following one copies its skill list into
+              Ask. It does not place a swap.
             </p>
             <div className="cta-row mt">
               <button type="button" className="btn btn-primary btn-sm" onClick={() => onNavigate('community')}>
-                Community Auto-Trade
+                The pool
               </button>
             </div>
           </div>
@@ -228,7 +224,7 @@ export function SkillMarket({ onNavigate }: Props) {
                         : bot.featured
                           ? 'Featured · '
                           : ''}
-                      {bot.isDemo ? 'Demo seed' : 'Community'}
+                      {bot.isDemo ? 'On the desk' : 'Community'}
                     </p>
                     <h3 className="market-bot-name">{bot.name}</h3>
                     <p className="muted tiny">
@@ -258,13 +254,13 @@ export function SkillMarket({ onNavigate }: Props) {
                 {bot.id === 'bot_hood_community' && (
                   <p className="hood-agent-voice tiny mt">
                     <span className="hood-agent-voice-label">HOOD</span>
-                    Not a generic bot — I run the community desk. Open Auto-Trade for SIM strategies.
+                    I answer on this desk. A swap still needs your wallet.
                   </p>
                 )}
                 <div className="cta-row mt">
                   {bot.id === 'bot_hood_community' && (
                     <button type="button" className="btn btn-sm btn-ghost" onClick={() => onNavigate('community')}>
-                      Auto-Trade desk
+                      The pool
                     </button>
                   )}
                   {following ? (
@@ -295,10 +291,9 @@ export function SkillMarket({ onNavigate }: Props) {
       {tab === 'publish' && (
         <form className="card form-card market-publish" onSubmit={onPublish}>
           <p className="eyebrow">Publish skill pack</p>
-          <h2 className="section-title">Create a trading bot</h2>
+          <h2 className="section-title">Add a skill pack</h2>
           <p className="muted small">
-            Publishing unlocks the <strong>Creator</strong> perk and a demo compensation ledger
-            (follow bonus + usage share). No real token transfers.
+            A pack is a name and a skill list saved on this desk. Following it does not move tokens.
           </p>
           <label className="field">
             <span>Name</span>
@@ -443,8 +438,8 @@ export function SkillMarket({ onNavigate }: Props) {
           </article>
 
           <article className="card mt">
-            <p className="eyebrow">Compensation ledger</p>
-            <h3>Recent demo entries</h3>
+            <p className="eyebrow">Saved on this desk</p>
+            <h3>Follows and uses</h3>
             {ledger.length === 0 ? (
               <div className="orders-empty">
                 <p className="muted">No ledger entries yet</p>

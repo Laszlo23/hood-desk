@@ -246,7 +246,7 @@ export function Subscribe({ onNavigate }: Props) {
         </p>
         <div className="cta-row mt">
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('rewards')}>
-            View Rewards →
+            View the ledger →
           </button>
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('skills')}>
             Skill Market →

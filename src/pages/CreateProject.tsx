@@ -55,8 +55,8 @@ export function CreateProject({ onNavigate }: Props) {
           the project page. Stored in localStorage (wallet key or <code className="inline-code">anon</code>).
         </p>
         <p className="tiny muted">
-          Path: Create → deploy the token → paste the address → Trade. {' '}
-          <button type="button" className="link-btn" onClick={() => onNavigate('rewards')}>Rewards</button>.
+          Create the card, deploy the token, paste the address, then trade. The swaps land on the{' '}
+          <button type="button" className="link-btn" onClick={() => onNavigate('rewards')}>ledger</button>.
         </p>
       </div>
 

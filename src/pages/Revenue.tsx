@@ -119,10 +119,10 @@ export function Revenue({ onNavigate }: Props) {
             How it runs
           </button>
           <button type="button" className="btn btn-ghost" onClick={() => onNavigate('trade')}>
-            Simulate trade
+            Trade
           </button>
           <button type="button" className="btn btn-ghost" onClick={() => onNavigate('rewards')}>
-            Rewards
+            Ledger
           </button>
           <button type="button" className="btn btn-ghost" onClick={() => onNavigate('status')}>
             Status

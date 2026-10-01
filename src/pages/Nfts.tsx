@@ -124,13 +124,11 @@ export function Nfts({ onNavigate }: Props) {
   return (
     <section className="page nfts-page">
       <div className="page-intro">
-        <p className="eyebrow">Explore · NFT stories · #CCFF00</p>
-        <h1>Pack pride &amp; Proof of Neon</h1>
+        <p className="eyebrow">The wood</p>
+        <h1>Marks</h1>
         <p className="muted">
-          Real Hoodstreet / desk-supported collections on Robinhood Chain (4663).{' '}
-          <strong>DogiHood</strong> stays the flagship pack; <strong>Hood Seeder</strong> honors
-          early supporters; <strong>CCFF00</strong> is HoodStreet&apos;s founding ERC-6551 neon
-          membership. No invented contracts, no fake verified badges, no live-trading claims.
+          DogiHood, Hood Seeder, and CCFF00. A mark can hold its own wallet. DogiHood and CCFF00
+          belong to Hood Street. Hood Seeder belongs to this desk.
         </p>
         <div className="demo-banner">
           <strong>Honest labels.</strong> Contracts shown were checked via OpenSea / official

@@ -48,8 +48,7 @@ export function Lore({ onNavigate }: Props) {
           Three scenes bind the aura: a forest archer with fox companion, a council around a glowing
           map-desk, and the hooded seal. They do not replace DogiHood NFTs or the HOOD agent mark —
           they deepen the mist behind the glass. Take from the rich (opacity, rent-seeking
-          middlemen); give to the community desk (open demos, fair-launch paths, Skill Market
-          credits).
+          middlemen); give to the community desk (one public pool, a fair launch, and notes anyone can read).
         </p>
       </div>
 
@@ -67,10 +66,10 @@ export function Lore({ onNavigate }: Props) {
 
       <div className="cta-row lore-cta">
         <button type="button" className="btn btn-primary" onClick={() => onNavigate('community')}>
-          Community Auto-Trade
+          The pool
         </button>
         <button type="button" className="btn btn-primary" onClick={() => onNavigate('trade')}>
-          Demo Trade
+          Trade
         </button>
         <button type="button" className="btn btn-ghost" onClick={() => onNavigate('landing')}>
           Back to Desk

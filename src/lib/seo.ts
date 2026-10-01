@@ -16,7 +16,7 @@ const PAGES: Record<ViewId, PageMeta> = {
   landing: {
     title: 'Hood Desk · AI trading desk on Robinhood Chain',
     description:
-      'Hood Desk on Robinhood Chain. $HOOD market swaps sign on Uniswap V3. Limit orders, auto-trade, and the rewards ledger stay on the desk.',
+      'Hood Desk on Robinhood Chain. Trade $HOOD, read the pool ledger, and follow Hood Street notes.',
   },
   trade: {
     title: 'Trade · Hood Desk',
@@ -24,7 +24,7 @@ const PAGES: Record<ViewId, PageMeta> = {
       '$HOOD/WETH market swaps sign on Uniswap. The chart reads pool swaps. Other pairs and order types stay on the desk.',
   },
   community: {
-    title: 'Auto-Trade · Hood Desk',
+    title: 'The pool · Hood Desk',
     description: 'Hood Desk on Robinhood Chain. $HOOD swaps are wallet-signed. The agent does not place orders.',
   },
   status: {
@@ -40,7 +40,7 @@ const PAGES: Record<ViewId, PageMeta> = {
     description: 'Chat the HOOD agent. Fair-launch notes, wallet reads, and desk ops on Robinhood Chain.',
   },
   rewards: {
-    title: 'Rewards · Hood Desk',
+    title: 'Ledger · Hood Desk',
     description: 'The $HOOD/WETH swap ledger. Each row is a Uniswap transaction. The fee stays in the position.',
   },
   blog: {
@@ -60,7 +60,7 @@ const PAGES: Record<ViewId, PageMeta> = {
       '$HOOD is live at 0xC7749BCFDC8d06FC246be556f4EAD75Ac7E1320c. Fixed 1B supply, mint-once, exact match on Sourcify.',
   },
   lore: {
-    title: 'The Legend · Hood Desk',
+    title: 'Legend · Hood Desk',
     description: 'Sherwood to Hood Street. The HOOD fox, the mist, and the desk that keeps the books honest.',
   },
   account: {

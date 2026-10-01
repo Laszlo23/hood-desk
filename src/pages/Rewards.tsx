@@ -45,7 +45,7 @@ export function Rewards({ onNavigate }: Props) {
     <section className="page rewards-page">
       <div className="page-intro">
         <p className="eyebrow">Pool ledger</p>
-        <h1>Swaps</h1>
+        <h1>Ledger</h1>
         <p className="muted">
           Every row is a $HOOD/WETH swap on Uniswap. The 1% fee stays in the liquidity position.
           There is no second payout book. Only swap an amount you can afford to lose. The pool is thin.

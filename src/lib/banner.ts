@@ -14,12 +14,12 @@ export type BannerOverride = {
 const SEEDED: string[] = [
   'Sherwood → Hood Street: take from the rich, feed the community desk. HOOD keeps the mist honest.',
   'Ship fair launches on RH 4663 — creators earn when the street trades.',
-  'Follow a bot. Simulate a fill. Watch Rewards tick. Demo today, DEX tomorrow.',
-  'Hood Street energy: dark + neon. Build the desk that stays online.',
-  'One click: Create → Fair launch → Trade → Rewards. Keep the streak.',
-  'No fake routers. Honest ledgers. When RH DEX lands, fees get real.',
-  'Skill Market + Trade + Blog — the AI business loop, Bankr-style.',
-  'Token creators 50% · Platform 30% · Bot/referrer 20%. Documented. Adjustable.',
+  'A swap happens when your wallet signs it. The ledger writes the row.',
+  'One pool. A seed pairs what you bring. Two percent of that ETH goes to the cause.',
+  'Trade, then the ledger, then the notes. That is the desk.',
+  'Only swap an amount you can afford to lose. The pool is thin.',
+  'Ask answers questions. It does not place the order.',
+  'Mint once. No tax. The fee stays in the position.',
   'GM Hood Street — fox on duty. FID 873944 · @0xleonardo.',
   'DogiHood pack pride — pixel Shibas on RH 4663. OpenSea · Dogiflow+ vibes on the desk.',
 ]

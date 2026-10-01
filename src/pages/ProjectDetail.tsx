@@ -153,7 +153,7 @@ export function ProjectDetail({ projectId, onNavigate }: Props) {
               </button>
             )}
             <button type="button" className="btn btn-ghost" onClick={() => onNavigate('rewards')}>
-              See Rewards →
+              See the ledger →
             </button>
           </div>
           <p className="tiny muted mt">

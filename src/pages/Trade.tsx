@@ -11,7 +11,7 @@ import { collectTradeTokens, defaultTradeToken, stubTokenFromAddress } from '../
 import { HOOD_SWAP_SLIPPAGE_BPS, planHoodMarketSwap } from '../lib/trade/hoodSwap'
 import { listOrders, placeOnchainOrder } from '../lib/trade/orders'
 import { loadHoodPoolChart, type HoodPoolChart } from '../lib/trade/poolCandles'
-import { hoodHasPool, uniswapSwapUrl } from '../lib/trade/uniswap'
+import { hoodHasPool, okuSwapUrl, uniswapSwapUrl } from '../lib/trade/uniswap'
 import { erc20Abi } from '../lib/hoodToken'
 import type {
   SimulatedOrder,
@@ -211,7 +211,7 @@ export function Trade({ onNavigate }: Props) {
   }
 
   const uniswapTokenUrl = uniswapSwapUrl(token.address)
-  const okuTokenUrl = `https://oku.trade/token/4663:${token.address}`
+  const okuTokenUrl = okuSwapUrl(token.address)
 
   return (
     <section className="trade-page lore-shell-page">

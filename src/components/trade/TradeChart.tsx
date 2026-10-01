@@ -3,7 +3,7 @@ import { ColorType, createChart, type IChartApi, type ISeriesApi } from 'lightwe
 import { generateDemoCandles } from '../../lib/trade/chartData'
 import type { Candle, Timeframe, TradeToken } from '../../lib/trade/types'
 import { HOOD_TOKEN_ADDRESS } from '../../lib/hoodToken'
-import { hoodHasPool } from '../../lib/trade/uniswap'
+import { hoodHasPool, okuSwapUrl, uniswapSwapUrl } from '../../lib/trade/uniswap'
 
 type Props = {
   token: TradeToken
@@ -182,7 +182,7 @@ export function TradeChart({ token, timeframe, onTimeframe, poolCandles, poolSwa
             </p>
             <div className="cta-row mt">
               <a 
-                href={`https://app.uniswap.org/swap?chain=robinhood&inputCurrency=ETH&outputCurrency=${token.address}`}
+                href={uniswapSwapUrl(token.address)}
                 target="_blank" 
                 rel="noreferrer" 
                 className="btn btn-ghost btn-sm"
@@ -190,7 +190,7 @@ export function TradeChart({ token, timeframe, onTimeframe, poolCandles, poolSwa
                 Check on Uniswap →
               </a>
               <a 
-                href={`https://oku.trade/token/4663:${token.address}`}
+                href={okuSwapUrl(token.address)}
                 target="_blank" 
                 rel="noreferrer" 
                 className="btn btn-ghost btn-sm"

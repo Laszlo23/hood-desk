@@ -39,6 +39,13 @@ export function uniswapPoolUrl(pool: string = HOOD_WETH_POOL): string {
   return `https://app.uniswap.org/explore/pools/robinhood/${pool}`
 }
 
+/** Oku's token route 404s. The swap route with inputChain=robinhood opens ETH → the token. */
+const OKU_NATIVE = '0x0000000000000000000000000000000000000000'
+
+export function okuSwapUrl(token: string): string {
+  return `https://oku.trade/swap?inputChain=robinhood&inToken=${OKU_NATIVE}&outToken=${token}`
+}
+
 const FEE_TIERS = [100, 500, 3000, 10000] as const
 
 const FACTORY_ABI = [

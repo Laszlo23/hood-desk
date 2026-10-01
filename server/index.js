@@ -1,5 +1,5 @@
 /**
- * Hood Desk Stripe helper — local Express on :8787
+ * Hood Desk Stripe + Hoodstreet MCP helper — local Express on :8787
  *
  * Endpoints:
  *   POST /api/stripe/checkout          → create Checkout Session (mode: subscription)
@@ -7,9 +7,16 @@
  *   POST /api/stripe/webhook             → stub for checkout.session.completed
  *   GET  /api/health
  *
+ *   GET  /api/hoodstreet/neon/:tokenId                    → get Neon TBA via MCP
+ *   GET  /api/hoodstreet/neon/:tokenId/assets             → get Neon assets
+ *   GET  /api/hoodstreet/neon/:tokenId/balances           → get Neon balances
+ *   GET  /api/hoodstreet/neon/:tokenId/activity           → get Neon activity
+ *   GET  /api/hoodstreet/neon/:tokenId/token/:tokenAddr   → get specific token balance
+ *
  * Env (see ../.env.example):
  *   STRIPE_SECRET_KEY
  *   STRIPE_WEBHOOK_SECRET (optional for local)
+ *   HOODSTREET_MCP_URL (default https://agent.hoodstreet.capital/mcp)
  *   PORT (default 8787)
  *   CORS_ORIGIN (default http://localhost:5182)
  */
@@ -29,6 +36,8 @@ const PORT = Number(process.env.PORT || 8787)
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5182'
 const SECRET = (process.env.STRIPE_SECRET_KEY || '').trim()
 const WEBHOOK_SECRET = (process.env.STRIPE_WEBHOOK_SECRET || '').trim()
+const HOODSTREET_MCP_URL =
+  (process.env.HOODSTREET_MCP_URL || '').trim() || 'https://agent.hoodstreet.capital/mcp'
 
 const app = express()
 
@@ -43,11 +52,127 @@ app.get('/api/health', (_req, res) => {
   res.json({
     ok: true,
     stripe: Boolean(SECRET),
+    hoodstreet: Boolean(HOODSTREET_MCP_URL),
     port: PORT,
     note: SECRET
       ? 'Stripe secret loaded'
       : 'Add STRIPE_SECRET_KEY to .env (never commit secrets)',
   })
+})
+
+/**
+ * Hoodstreet MCP client — call MCP tools via JSON-RPC over HTTP POST.
+ * Server: erc-6551-agent v0.2.0
+ * Read-only tools for v1 (no prepare_/confirm_/execute_ write flows).
+ */
+let mcpRequestId = 1
+
+async function callMcpTool(toolName, args = {}) {
+  try {
+    const response = await fetch(HOODSTREET_MCP_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/event-stream',
+      },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: mcpRequestId++,
+        method: 'tools/call',
+        params: { name: toolName, arguments: args },
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error(`MCP HTTP ${response.status}`)
+    }
+
+    // MCP over HTTP POST returns SSE format, need to parse event stream
+    const text = await response.text()
+    
+    // Parse SSE format: "event: message\ndata: {json}\n\n"
+    const dataMatch = text.match(/data: (.+)/s)
+    if (!dataMatch) {
+      throw new Error('Invalid MCP SSE response format')
+    }
+    
+    const data = JSON.parse(dataMatch[1])
+    if (data.error) {
+      throw new Error(data.error.message || 'MCP tool error')
+    }
+
+    return data.result
+  } catch (err) {
+    console.error(`[hoodstreet mcp] ${toolName} failed:`, err.message)
+    throw err
+  }
+}
+
+/** GET /api/hoodstreet/neon/:tokenId — resolve CCFF00 ERC-6551 TBA */
+app.get('/api/hoodstreet/neon/:tokenId', async (req, res) => {
+  try {
+    const result = await callMcpTool('get_neon_wallet', { tokenId: req.params.tokenId })
+    res.json({ ok: true, data: result })
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message })
+  }
+})
+
+/** GET /api/hoodstreet/neon/:tokenId/assets?walletType=ccff00-erc6551 */
+app.get('/api/hoodstreet/neon/:tokenId/assets', async (req, res) => {
+  try {
+    const walletType = req.query.walletType || 'ccff00-erc6551'
+    const result = await callMcpTool('get_neon_assets', {
+      tokenId: req.params.tokenId,
+      walletType,
+    })
+    res.json({ ok: true, data: result })
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message })
+  }
+})
+
+/** GET /api/hoodstreet/neon/:tokenId/balances?walletType=ccff00-erc6551 */
+app.get('/api/hoodstreet/neon/:tokenId/balances', async (req, res) => {
+  try {
+    const walletType = req.query.walletType || 'ccff00-erc6551'
+    const result = await callMcpTool('get_neon_balances', {
+      tokenId: req.params.tokenId,
+      walletType,
+    })
+    res.json({ ok: true, data: result })
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message })
+  }
+})
+
+/** GET /api/hoodstreet/neon/:tokenId/activity?walletType=ccff00-erc6551 */
+app.get('/api/hoodstreet/neon/:tokenId/activity', async (req, res) => {
+  try {
+    const walletType = req.query.walletType || 'ccff00-erc6551'
+    const result = await callMcpTool('get_neon_activity', {
+      tokenId: req.params.tokenId,
+      walletType,
+    })
+    res.json({ ok: true, data: result })
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message })
+  }
+})
+
+/** GET /api/hoodstreet/neon/:tokenId/token/:tokenAddress?walletType=ccff00-erc6551 */
+app.get('/api/hoodstreet/neon/:tokenId/token/:tokenAddress', async (req, res) => {
+  try {
+    const walletType = req.query.walletType || 'ccff00-erc6551'
+    const result = await callMcpTool('get_wallet_token', {
+      tokenId: req.params.tokenId,
+      walletType,
+      tokenAddress: req.params.tokenAddress,
+    })
+    res.json({ ok: true, data: result })
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message })
+  }
 })
 
 /**

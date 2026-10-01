@@ -27,6 +27,7 @@ export type SkillId =
   | 'daily_brief'
   | 'gm_streak'
   | 'neon_tips'
+  | 'neon_tba'
   | 'fox_coach'
   | 'what_is_hood'
   | 'trade_vet'
@@ -252,6 +253,14 @@ export const SKILLS: SkillDef[] = [
     description: 'Static #CCFF00 / Hood Street style tips',
     examples: ['neon tips', 'hood street tips'],
     invoke: () => tools.neonTips(),
+  },
+  {
+    id: 'neon_tba',
+    name: 'Neon TBA (Hoodstreet)',
+    category: 'wallet',
+    description: 'Resolve CCFF00 ERC-6551 TBA + $HOOD balance via Hoodstreet MCP',
+    examples: ['neon tba', 'ccff00 tba', 'neon wallet', 'tba 1'],
+    invoke: (_ctx, raw) => tools.neonTbaSkill(raw),
   },
   {
     id: 'fox_coach',

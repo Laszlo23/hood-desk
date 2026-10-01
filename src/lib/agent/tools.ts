@@ -618,3 +618,65 @@ Explorer: ${link}
 Checklist item: **Verify contract on explorer** on #/projects. Skill pairs with fair-launch attach.`,
   }
 }
+
+/** neon_tba — resolve CCFF00 ERC-6551 TBA + $HOOD balance via Hoodstreet MCP */
+export async function neonTbaSkill(raw?: string): Promise<ToolResult> {
+  const tokenIdMatch = raw?.match(/\d+/)
+  const tokenId = tokenIdMatch?.[0] || '1'
+  
+  try {
+    // Call our proxy endpoint
+    const walletRes = await fetch(`/api/hoodstreet/neon/${tokenId}`)
+    if (!walletRes.ok) {
+      const err = await walletRes.json().catch(() => ({ error: 'Network error' }))
+      return {
+        ok: false,
+        text: `**Neon TBA — unavailable**\n\nHoodstreet MCP endpoint failed for token #${tokenId}.\n\nError: ${err.error || walletRes.statusText}\n\nEnsure server is running (\`npm run server\`) and \`HOODSTREET_MCP_URL\` is reachable.`,
+      }
+    }
+    
+    const walletData = await walletRes.json()
+    if (!walletData.ok || !walletData.data) {
+      return { ok: false, text: `Could not resolve TBA for token #${tokenId}` }
+    }
+    
+    const tbaAddress = walletData.data.content?.[0]?.text
+    if (!tbaAddress) {
+      return { ok: false, text: `No TBA address returned for token #${tokenId}` }
+    }
+    
+    // Get $HOOD balance (use VITE_HOOD_TOKEN from env, or fallback to known address)
+    const hoodAddress = HOOD_TOKEN_ADDRESS || '0xC7749BCFDC8d06FC246be556f4EAD75Ac7E1320c'
+    const tokenRes = await fetch(
+      `/api/hoodstreet/neon/${tokenId}/token/${hoodAddress}?walletType=ccff00-erc6551`
+    )
+    
+    let hoodBalance = 'unavailable'
+    if (tokenRes.ok) {
+      const tokenData = await tokenRes.json()
+      if (tokenData.ok && tokenData.data?.content?.[0]?.text) {
+        hoodBalance = tokenData.data.content[0].text
+      }
+    }
+    
+    return {
+      ok: true,
+      text: `**Neon TBA — CCFF00 #${tokenId}**
+
+**TBA address:** \`${tbaAddress}\`
+
+**$HOOD balance:** ${hoodBalance}
+
+Explorer: ${EXPLORER_ADDRESS(tbaAddress)}
+
+_Live read from Hoodstreet MCP agent (agent.hoodstreet.capital)._
+
+Open **#/nfts** for CCFF00 story + gallery. Read-only v1 — no trade/mint UI until product policy.`,
+    }
+  } catch (err) {
+    return {
+      ok: false,
+      text: `**Neon TBA — error**\n\nCould not reach Hoodstreet MCP.\n\nError: ${err instanceof Error ? err.message : String(err)}\n\nEnsure server is running and network is available.`,
+    }
+  }
+}

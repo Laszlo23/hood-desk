@@ -84,18 +84,23 @@ contract HoodSeedRail {
 
     address public owner;
     address public treasury;
+    address public immutable causes;
     uint256 public hoodBudget;
     uint16 public slippageBps;
+    /// @notice Whole percent of each seed kept for causes. Only 1%, 2%, or 3%.
+    uint16 public causesBps;
     bool public paused;
     uint256 private locked;
 
     event Seeded(
         address indexed payer,
         uint256 ethIn,
+        uint256 causesEth,
         uint256 wethUsed,
         uint256 hoodUsed,
         uint128 liquidity
     );
+    event CausesBpsSet(uint16 causesBps);
     event HoodBudgetSet(uint256 budget);
     event TreasurySet(address treasury);
     event SlippageSet(uint16 slippageBps);
@@ -108,6 +113,7 @@ contract HoodSeedRail {
     error NotApproved();
     error NothingToSeed();
     error BadSlippage();
+    error BadCauses();
     error ZeroAddress();
     error PriceOutOfRange();
 
@@ -123,8 +129,19 @@ contract HoodSeedRail {
         locked = 0;
     }
 
-    constructor(address owner_, address weth_, address hood_, address pool_, address positionManager_, uint256 tokenId_) {
-        if (owner_ == address(0) || weth_ == address(0) || hood_ == address(0) || pool_ == address(0) || positionManager_ == address(0)) {
+    constructor(
+        address owner_,
+        address weth_,
+        address hood_,
+        address pool_,
+        address positionManager_,
+        uint256 tokenId_,
+        address causes_
+    ) {
+        if (
+            owner_ == address(0) || weth_ == address(0) || hood_ == address(0) || pool_ == address(0)
+                || positionManager_ == address(0) || causes_ == address(0)
+        ) {
             revert ZeroAddress();
         }
         if (IPool(pool_).token0() != weth_ || IPool(pool_).token1() != hood_ || IPool(pool_).fee() != FEE) {
@@ -152,16 +169,24 @@ contract HoodSeedRail {
         pool = pool_;
         positionManager = positionManager_;
         tokenId = tokenId_;
+        causes = causes_;
         owner = owner_;
         treasury = owner_;
         slippageBps = 100;
+        causesBps = 200;
         emit OwnershipTransferred(address(0), owner_);
+        emit CausesBpsSet(200);
     }
 
-    /// @notice ETH used and $HOOD the treasury must supply for this deposit, after the budget cap.
-    function quoteSeed(uint256 ethAmount) external view returns (uint256 ethUsed, uint256 hoodPull) {
+    /// @notice Pool ETH, treasury $HOOD, and the causes slice for this deposit.
+    function quoteSeed(uint256 ethAmount)
+        external
+        view
+        returns (uint256 ethUsed, uint256 hoodPull, uint256 causesCut)
+    {
+        causesCut = (ethAmount * causesBps) / 10_000;
         (uint160 sqrtPriceX96,, , , , ,) = IPool(pool).slot0();
-        (ethUsed, hoodPull) = _plan(ethAmount, sqrtPriceX96);
+        (ethUsed, hoodPull) = _plan(ethAmount - causesCut, sqrtPriceX96);
     }
 
     /// @notice $HOOD matched to an ETH amount at the current pool price. Ignores the budget cap.
@@ -179,10 +204,17 @@ contract HoodSeedRail {
         if (msg.value == 0) revert NoValue();
         if (!_canAdd()) revert NotApproved();
 
-        IWETH(weth).deposit{value: msg.value}();
+        uint256 causesCut = (msg.value * causesBps) / 10_000;
+        uint256 forPool = msg.value - causesCut;
         (uint160 sqrtPriceX96,, , , , ,) = IPool(pool).slot0();
-        (uint256 ethUsed, uint256 hoodPull) = _plan(msg.value, sqrtPriceX96);
+        (uint256 ethUsed, uint256 hoodPull) = _plan(forPool, sqrtPriceX96);
         if (ethUsed == 0 || hoodPull == 0) revert NothingToSeed();
+
+        if (causesCut > 0) {
+            (bool sent,) = causes.call{value: causesCut}("");
+            if (!sent) revert NothingToSeed();
+        }
+        IWETH(weth).deposit{value: forPool}();
 
         uint256 fairHood = hoodForWeth(ethUsed, sqrtPriceX96);
         _pull(hood, treasury, hoodPull);
@@ -208,7 +240,14 @@ contract HoodSeedRail {
         _refund(IERC20(hood).balanceOf(address(this)), treasury);
         _refundEth(IERC20(weth).balanceOf(address(this)), msg.sender);
 
-        emit Seeded(msg.sender, msg.value, amount0, amount1, liquidity);
+        emit Seeded(msg.sender, msg.value, causesCut, amount0, amount1, liquidity);
+    }
+
+    /// @notice 1%, 2%, or 3% of each seed. The rest is paired into the pool.
+    function setCausesBps(uint16 next) external onlyOwner {
+        if (next != 100 && next != 200 && next != 300) revert BadCauses();
+        causesBps = next;
+        emit CausesBpsSet(next);
     }
 
     function setHoodBudget(uint256 budget) external onlyOwner {
@@ -335,5 +374,47 @@ contract HoodSeedRail {
             inverse *= 2 - denominator * inverse;
             result = prod0 * inverse;
         }
+    }
+}
+
+/**
+ * @title HoodCauses
+ * @notice Holds the 1–3% slice of each seed. The owner releases it with grant().
+ */
+contract HoodCauses {
+    address public owner;
+    uint256 public totalReceived;
+
+    event Received(address indexed from, uint256 amount);
+    event Granted(address indexed to, uint256 amount);
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+    error NotOwner();
+    error ZeroAddress();
+
+    constructor(address owner_) {
+        if (owner_ == address(0)) revert ZeroAddress();
+        owner = owner_;
+        emit OwnershipTransferred(address(0), owner_);
+    }
+
+    receive() external payable {
+        totalReceived += msg.value;
+        emit Received(msg.sender, msg.value);
+    }
+
+    function grant(address to, uint256 amount) external {
+        if (msg.sender != owner) revert NotOwner();
+        if (to == address(0)) revert ZeroAddress();
+        (bool ok,) = to.call{value: amount}("");
+        require(ok, "grant");
+        emit Granted(to, amount);
+    }
+
+    function transferOwnership(address next) external {
+        if (msg.sender != owner) revert NotOwner();
+        if (next == address(0)) revert ZeroAddress();
+        emit OwnershipTransferred(owner, next);
+        owner = next;
     }
 }

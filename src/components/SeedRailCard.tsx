@@ -4,11 +4,20 @@ import { formatUnits, parseEther, parseUnits, type Address } from 'viem'
 import { erc20Abi } from '../lib/hoodToken'
 import { HOOD_LP_TOKEN_ID, HOOD_POSITION_MANAGER } from '../lib/trade/uniswap'
 import {
+  HOOD_CAUSES,
   HOOD_DEPLOYER,
   HOOD_SEED_RAIL,
   HOOD_TOKEN_FOR_RAIL,
   seedRailAbi,
 } from '../lib/trade/seedRail'
+
+function hoodText(value: bigint): string {
+  return Number(formatUnits(value, 18)).toLocaleString('en-US', { maximumFractionDigits: 0 })
+}
+
+function ethText(value: bigint): string {
+  return Number(formatUnits(value, 18)).toLocaleString('en-US', { maximumFractionDigits: 6 })
+}
 
 const approveAbi = [
   {
@@ -40,7 +49,9 @@ export function SeedRailCard() {
   const [amount, setAmount] = useState('')
   const [budgetInput, setBudgetInput] = useState('')
   const [facts, setFacts] = useState<RailFacts | null>(null)
-  const [quote, setQuote] = useState<{ ethUsed: bigint; hoodPull: bigint } | null>(null)
+  const [quote, setQuote] = useState<{ ethUsed: bigint; hoodPull: bigint; causesCut: bigint } | null>(null)
+  const [causesEth, setCausesEth] = useState<bigint | null>(null)
+  const [causesBps, setCausesBps] = useState<number>(200)
   const [status, setStatus] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
@@ -51,7 +62,7 @@ export function SeedRailCard() {
     if (!rail || !publicClient) return
     let cancelled = false
     const load = async () => {
-      const [budget, treasury, owner, paused, approved] = await Promise.all([
+      const [budget, treasury, owner, paused, approved, bps, pot] = await Promise.all([
         publicClient.readContract({ address: rail, abi: seedRailAbi, functionName: 'hoodBudget' }),
         publicClient.readContract({ address: rail, abi: seedRailAbi, functionName: 'treasury' }),
         publicClient.readContract({ address: rail, abi: seedRailAbi, functionName: 'owner' }),
@@ -62,6 +73,8 @@ export function SeedRailCard() {
           functionName: 'getApproved',
           args: [HOOD_LP_TOKEN_ID],
         }),
+        publicClient.readContract({ address: rail, abi: seedRailAbi, functionName: 'causesBps' }),
+        publicClient.getBalance({ address: HOOD_CAUSES }),
       ])
       const allowance = await publicClient.readContract({
         address: HOOD_TOKEN_FOR_RAIL,
@@ -70,6 +83,8 @@ export function SeedRailCard() {
         args: [treasury, rail],
       })
       if (!cancelled) {
+        setCausesBps(Number(bps))
+        setCausesEth(pot)
         setFacts({
           budget,
           treasury,
@@ -104,8 +119,8 @@ export function SeedRailCard() {
     }
     publicClient
       .readContract({ address: rail, abi: seedRailAbi, functionName: 'quoteSeed', args: [eth] })
-      .then(([ethUsed, hoodPull]) => {
-        if (!cancelled) setQuote({ ethUsed, hoodPull })
+      .then(([ethUsed, hoodPull, causesCut]) => {
+        if (!cancelled) setQuote({ ethUsed, hoodPull, causesCut })
       })
       .catch(() => {
         if (!cancelled) setQuote(null)
@@ -177,9 +192,9 @@ export function SeedRailCard() {
     <article className="card">
       <h2>Seed the pool</h2>
       <p className="muted">
-        Send ETH. The rail wraps it, pulls matching $HOOD from the treasury, and adds both to position #
-        {HOOD_LP_TOKEN_ID.toString()}. A large deposit uses the same price as a small one. Extra ETH comes
-        back when the treasury budget cannot match the full amount. A market swap does not add liquidity.
+        Send ETH. {causesBps / 100}% goes to the causes pot. The rest is paired with treasury $HOOD on
+        position #{HOOD_LP_TOKEN_ID.toString()}, up to 100,000,000 HOOD. A large deposit uses the same
+        price as a small one. Extra ETH comes back when the budget cannot match the full amount.
       </p>
       {rail === null ? (
         <p className="muted mt">
@@ -195,8 +210,12 @@ export function SeedRailCard() {
             </li>
             <li>
               <span className="rail-label">Treasury budget</span>
+              <span className="mono">{facts ? `${hoodText(spendable)} HOOD` : '…'}</span>
+            </li>
+            <li>
+              <span className="rail-label">Causes ({causesBps / 100}%)</span>
               <span className="mono">
-                {facts ? `${Number(formatUnits(spendable, 18)).toLocaleString(undefined, { maximumFractionDigits: 0 })} HOOD` : '…'}
+                {causesEth === null ? '…' : `${ethText(causesEth)} ETH`} · {HOOD_CAUSES}
               </span>
             </li>
             <li>
@@ -216,8 +235,8 @@ export function SeedRailCard() {
           </label>
           {quote && quote.ethUsed > 0n && (
             <p className="muted mt">
-              Uses {formatUnits(quote.ethUsed, 18)} ETH and up to{' '}
-              {Number(formatUnits(quote.hoodPull, 18)).toLocaleString(undefined, { maximumFractionDigits: 0 })} HOOD.
+              Causes {ethText(quote.causesCut)} ETH. Pool {ethText(quote.ethUsed)} ETH and up to {hoodText(quote.hoodPull)}{' '}
+              HOOD.
             </p>
           )}
           <div className="cta-row mt">

@@ -2,7 +2,7 @@
 pragma solidity 0.8.28;
 
 import {Script, console} from "forge-std/Script.sol";
-import {HoodSeedRail} from "../src/HoodSeedRail.sol";
+import {HoodCauses, HoodSeedRail} from "../src/HoodSeedRail.sol";
 
 contract DeployHoodSeedRail is Script {
     address constant WETH = 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73;
@@ -15,8 +15,10 @@ contract DeployHoodSeedRail is Script {
         uint256 pk = vm.envUint("PRIVATE_KEY");
         address deployer = vm.addr(pk);
         vm.startBroadcast(pk);
-        HoodSeedRail rail = new HoodSeedRail(deployer, WETH, HOOD, POOL, POSITION_MANAGER, TOKEN_ID);
+        HoodCauses causes = new HoodCauses(deployer);
+        HoodSeedRail rail = new HoodSeedRail(deployer, WETH, HOOD, POOL, POSITION_MANAGER, TOKEN_ID, address(causes));
         vm.stopBroadcast();
+        console.log("HoodCauses", address(causes));
         console.log("HoodSeedRail", address(rail));
     }
 }

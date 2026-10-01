@@ -2,7 +2,7 @@
 pragma solidity 0.8.28;
 
 import {Test} from "forge-std/Test.sol";
-import {HoodSeedRail} from "../src/HoodSeedRail.sol";
+import {HoodCauses, HoodSeedRail} from "../src/HoodSeedRail.sol";
 
 contract MockWeth {
     mapping(address => uint256) public balanceOf;
@@ -172,6 +172,7 @@ contract HoodSeedRailTest is Test {
     MockPool pool;
     MockNpmPull npm;
     HoodSeedRail rail;
+    HoodCauses causes;
     address treasury = address(0xA11CE);
 
     function setUp() public {
@@ -179,7 +180,8 @@ contract HoodSeedRailTest is Test {
         hood = new MockHood();
         pool = new MockPool(address(weth), address(hood));
         npm = new MockNpmPull(weth, hood, 10_000);
-        rail = new HoodSeedRail(address(this), address(weth), address(hood), address(pool), address(npm), 1359889);
+        causes = new HoodCauses(address(this));
+        rail = new HoodSeedRail(address(this), address(weth), address(hood), address(pool), address(npm), 1359889, address(causes));
         rail.setTreasury(treasury);
         npm.setApproved(address(rail));
         hood.mint(treasury, 500_000_000 ether);
@@ -198,13 +200,24 @@ contract HoodSeedRailTest is Test {
         assertApproxEqRel(big, small * 10_000, 1e8);
     }
 
-    function test_seed_pairs_eth_and_refunds_nothing_when_quote_fills() public {
+    function test_seed_pairs_eth_and_keeps_two_percent_for_causes() public {
         uint256 treasuryBefore = hood.balanceOf(treasury);
+        uint256 pooled = 0.00098 ether;
+        uint256 hoodUsed = rail.hoodForWeth(pooled, SPOT) * 10_100 / 10_000;
         rail.seed{value: 0.001 ether}();
-        assertEq(hood.balanceOf(treasury), treasuryBefore - HOOD_FOR_MILLI_ETH * 10_100 / 10_000);
+        assertEq(address(causes).balance, 0.00002 ether);
+        assertEq(causes.totalReceived(), 0.00002 ether);
+        assertEq(hood.balanceOf(treasury), treasuryBefore - hoodUsed);
         assertEq(address(rail).balance, 0);
         assertEq(weth.balanceOf(address(rail)), 0);
         assertEq(hood.balanceOf(address(rail)), 0);
+    }
+
+    function test_causes_percent_stays_inside_one_to_three() public {
+        rail.setCausesBps(100);
+        rail.setCausesBps(300);
+        vm.expectRevert(HoodSeedRail.BadCauses.selector);
+        rail.setCausesBps(400);
     }
 
     function test_seed_scales_a_deposit_down_to_the_budget() public {
@@ -220,7 +233,7 @@ contract HoodSeedRailTest is Test {
 
     function test_seed_refunds_unused_when_position_takes_less() public {
         MockNpmPull thinner = new MockNpmPull(weth, hood, 9_900);
-        HoodSeedRail partialRail = new HoodSeedRail(address(this), address(weth), address(hood), address(pool), address(thinner), 1359889);
+        HoodSeedRail partialRail = new HoodSeedRail(address(this), address(weth), address(hood), address(pool), address(thinner), 1359889, address(causes));
         partialRail.setTreasury(treasury);
         thinner.setApproved(address(partialRail));
         vm.prank(treasury);

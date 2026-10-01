@@ -314,7 +314,7 @@ export function Hood({ onNavigate }: Props) {
                 <span className="rail-label">In the pool</span>
                 <span className="mono">
                   {launch
-                    ? `${Number(launch.poolWeth).toFixed(6)} ETH · ${Number(launch.poolHood).toLocaleString(undefined, { maximumFractionDigits: 0 })} HOOD`
+                    ? `${Number(launch.poolWeth).toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 })} ETH · ${Number(launch.poolHood).toLocaleString('en-US', { maximumFractionDigits: 0 })} HOOD`
                     : 'Reading the pool…'}
                 </span>
               </li>

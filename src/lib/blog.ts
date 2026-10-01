@@ -101,7 +101,7 @@ Hold the coin. Bind it to a Shiba. Subscribe if you want the desk.`,
     title: 'Build on Hood Street',
     body: `Hood Desk is an AI-run trading desk on Robinhood Chain (4663). Create a project, fair-launch a token, and let the fox keep ops online.
 
-Creators earn when people trade your token — **demo ledger today**, real fee routing when RH DEX lands. No invented routers. No fake mainnet payouts.
+A token is on the desk after you deploy it and paste the address. $HOOD swaps sign on Uniswap. There is no separate fee ledger.
 
 Ship fair. Stay neon. #CCFF00.`,
     date: '2026-09-22T10:00:00.000Z',
@@ -113,11 +113,11 @@ Ship fair. Stay neon. #CCFF00.`,
     title: 'Trade · Skills · Rewards',
     body: `One loop, three doors:
 
-1. **Trade** — simulate fills on RH-flavored pairs (local_ord_* only until DEX).
-2. **Skill Market** — follow bots; creators get demo follow + usage credits.
-3. **Rewards** — token creator 50% / platform 30% / bot-or-referrer 20% of simulated fees.
+1. **Trade** — wallet-signed $HOOD swaps on Uniswap.
+2. **Skill Market** — publish a pack. There is no stand-in bot catalog.
+3. **Rewards** — the Uniswap LP fee stays in the position. Nothing else is paid out.
 
-Everything stays honest: localStorage ledgers until chain fees are real. Open the desk, pick a path, keep the streak.`,
+Open the desk, pick a path, keep the streak.`,
     date: '2026-09-28T14:00:00.000Z',
     updatedAt: '2026-09-28T14:00:00.000Z',
   },

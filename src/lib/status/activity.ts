@@ -24,7 +24,7 @@ export function lastLocalActivitySummary(): string | null {
   const orders = listOrders()
   if (orders[0]) {
     const o = orders[0]
-    return `Sim ${o.side} ${o.tokenSymbol} · ${o.id.slice(0, 14)}…`
+    return `${o.side} ${o.tokenSymbol} · ${o.txHash?.slice(0, 10) ?? o.id.slice(0, 10)}…`
   }
   const g = getGamification()
   if (g.xp > 0) return `XP ${g.xp} · L${g.level}`
@@ -42,7 +42,7 @@ export function buildLocalActivityFeed(limit = 24): DeskActivityItem[] {
       at: o.createdAt,
       title: `${o.side.toUpperCase()} ${o.tokenSymbol}`,
       detail: `${o.type} · ${o.amount} ${o.quote} · ${o.status}`,
-      badge: 'SIMULATED',
+      badge: 'ONCHAIN',
     })
   }
 

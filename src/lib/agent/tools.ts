@@ -16,7 +16,6 @@ import {
 import { generateDemoCandles } from '../trade/chartData'
 import { getTokenPrice } from '../trade/uniswap'
 import { collectTradeTokens, findToken, formatPrice, HOOD_DEMO_ADDRESS } from '../trade/demoTokens'
-import { listOrders, placeSimulatedOrder } from '../trade/orders'
 import { formatVetSummary, vetToken } from '../trade/vet'
 import {
   followBot,
@@ -237,7 +236,7 @@ export function fairLaunchStatusSkill(ctx: ToolContext, raw?: string): ToolResul
 export function explainFairLaunch(): ToolResult {
   return {
     ok: true,
-    text: `**Fair launch (Hood pattern)**\n\n${FAIR_LAUNCH_COPY}\n\n• Fixed supply default **1B** · **18** decimals (like \`Hood.sol\`)\n• Mint **once** in constructor — no ownerMint after deploy\n• No transfer tax / reflections / blacklist / pause\n• Fees that fund the agent = DEX fee tier or external router — **not** in the token\n• Browser cannot safely deploy without a key ceremony → Desk uses **local/demo** (draft / simulated) + optional paste of forge-deployed address\n• Live: \`cd Desktop/hood-token && forge script script/DeployHood.s.sol:DeployHood --rpc-url "$RPC_URL" --broadcast --chain-id 4663\`\n• Never print or commit \`PRIVATE_KEY\``,
+    text: `**Fair launch (Hood pattern)**\n\n${FAIR_LAUNCH_COPY}\n\n• Fixed supply default **1B** · **18** decimals (like \`Hood.sol\`)\n• Mint **once** in constructor — no ownerMint after deploy\n• No transfer tax / reflections / blacklist / pause\n• Fees that fund the agent = DEX fee tier or external router — **not** in the token\n• The browser does not deploy. Paste the contract after a Foundry broadcast.\n• Live: \`cd Desktop/hood-token && forge script script/DeployHood.s.sol:DeployHood --rpc-url "$RPC_URL" --broadcast --chain-id 4663\`\n• Never print or commit \`PRIVATE_KEY\``,
   }
 }
 
@@ -408,7 +407,7 @@ export function dailyBrief(ctx: ToolContext): ToolResult {
   const onRh = ctx.chainId === 4663 ? 'on RH 4663 ✓' : ctx.chainId ? `chain ${ctx.chainId}` : 'wallet disconnected'
   return {
     ok: true,
-    text: `**Daily brief** 🦊\n\n• Desk online · ${onRh}\n• Projects stored: **${projects.length}**\n• $HOOD: ${HOOD_TOKEN_DEPLOYED ? `\`${HOOD_TOKEN_ADDRESS}\`` : 'not deployed'}\n• Stripe Checkout is live on the desk\n• $HOOD/WETH market swaps sign on Uniswap. Auto-trade stays paper.\n• Ask **list skills** for the full catalog\n\nGM. What are we building?`,
+    text: `**Daily brief** 🦊\n\n• Desk online · ${onRh}\n• Projects stored: **${projects.length}**\n• $HOOD: ${HOOD_TOKEN_DEPLOYED ? `\`${HOOD_TOKEN_ADDRESS}\`` : 'not deployed'}\n• Stripe Checkout is live on the desk\n• $HOOD/WETH market swaps sign on Uniswap. The agent does not place orders.\n• Ask **list skills** for the full catalog\n\nGM. What are we building?`,
   }
 }
 
@@ -537,35 +536,11 @@ export function tradeChartSkill(ctx: ToolContext, raw?: string): ToolResult {
   }
 }
 
-/** trade.order — place a local simulated market order */
-export function tradeOrderSkill(ctx: ToolContext, raw?: string): ToolResult {
-  const addr = extractTradeAddress(raw) || HOOD_DEMO_ADDRESS
-  const token = findToken(addr, ctx.address) || collectTradeTokens(ctx.address)[0]
-  if (HOOD_TOKEN_ADDRESS && token.address.toLowerCase() === HOOD_TOKEN_ADDRESS.toLowerCase()) {
-    return {
-      ok: false,
-      text: `**$HOOD swaps are wallet-signed.**\n\nOpen **#/trade**, connect on Robinhood Chain, and press Buy or Sell. This agent will not invent a fill.`,
-    }
-  }
-  const side = /\bsell\b/i.test(raw || '') ? 'sell' : 'buy'
-  const amtMatch = raw?.match(/(\d+(?:\.\d+)?)/)
-  const amount = amtMatch?.[1] || (side === 'buy' ? '0.1' : '1000')
-  const order = placeSimulatedOrder({
-    tokenAddress: token.address,
-    tokenSymbol: token.symbol,
-    quote: token.quote,
-    side,
-    type: 'market',
-    mode: 'pro',
-    amount,
-  })
-  const recent = listOrders().slice(0, 3)
-  recordSkillUsage('order')
-  const bot = getActiveBot()
-  const via = bot ? `\nVia primary bot **${bot.name}** (usage share → demo ledger).` : ''
+/** trade.order — wallet must sign. The agent does not invent a fill. */
+export function tradeOrderSkill(_ctx: ToolContext, _raw?: string): ToolResult {
   return {
-    ok: true,
-    text: `**Desk ${side}** (not sent)\n\n• ID: \`${order.id}\`\n• ${token.symbol}/${token.quote} · amount **${amount}**\n• Status: **${order.status}**\n• ${order.note}\n\nRecent local orders: ${recent.map((o) => o.id).join(', ') || 'none'}\n\nUI: **#/trade**.${via}`,
+    ok: false,
+    text: `**Swaps are wallet-signed.**\n\nOpen **#/trade**, connect on Robinhood Chain, and press Buy or Sell. This agent does not place an order.`,
   }
 }
 
@@ -636,7 +611,7 @@ export function deployVerifySkill(ctx: ToolContext, raw?: string): ToolResult {
 1. Deploy fair ERC-20 via forge (\`hood-token\` pattern)
 2. Open Blockscout → Contract tab → **Verify & Publish**
 3. Paste address on project detail / fair-launch wizard
-4. Desk shows a **green checkmark** only when verified (or Mark verified demo for local)
+4. Desk shows a **green checkmark** only when Sourcify or Blockscout reports a match
 
 Explorer: ${link}
 

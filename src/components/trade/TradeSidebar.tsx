@@ -119,7 +119,7 @@ export function TradeSidebar({ active, onNavigate }: Props) {
           <DogiHoodHolderBadge />
         </div>
         <p className="tiny muted">
-          Creators earn when people trade your token (simulated). · Subs feed treasury (demo) · RH
+          $HOOD swaps sign on Uniswap. · RH
           4663
         </p>
       </div>

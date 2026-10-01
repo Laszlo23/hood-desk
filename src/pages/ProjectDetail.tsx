@@ -3,11 +3,7 @@ import { useAccount } from 'wagmi'
 import { FairLaunchWizard } from '../components/FairLaunchWizard'
 import { EXPLORER_TOKEN } from '../lib/chain'
 import { VerifiedBadge } from '../components/VerifiedBadge'
-import {
-  explorerVerifyUrl,
-  getCachedVerified,
-  markVerifiedDemo,
-} from '../lib/verify/onchainVerified'
+import { explorerVerifyUrl } from '../lib/verify/onchainVerified'
 import {
   FAIR_LAUNCH_COPY,
   getProject,
@@ -123,7 +119,7 @@ export function ProjectDetail({ projectId, onNavigate }: Props) {
                 <span className="rail-label">Name / symbol</span>
                 <span className="token-name-row">
                   {fl.name} / ${fl.symbol}
-                  {fl.tokenAddress ? <VerifiedBadge address={fl.tokenAddress} allowDemoMark /> : null}
+                  {fl.tokenAddress ? <VerifiedBadge address={fl.tokenAddress} /> : null}
                 </span>
               </li>
               <li>
@@ -161,7 +157,7 @@ export function ProjectDetail({ projectId, onNavigate }: Props) {
             </button>
           </div>
           <p className="tiny muted mt">
-            Creators earn when people trade your token (simulated).
+            A token shows up on Trade after you paste its deployed address.
           </p>
         </article>
       </div>
@@ -201,20 +197,6 @@ export function ProjectDetail({ projectId, onNavigate }: Props) {
                         </a>
                         {' '}
                         <VerifiedBadge address={fl.tokenAddress} />
-                        {!getCachedVerified(fl.tokenAddress)?.verified ? (
-                          <button
-                            type="button"
-                            className="btn btn-ghost btn-sm verified-demo-btn"
-                            onClick={(e) => {
-                              e.preventDefault()
-                              markVerifiedDemo(fl.tokenAddress!)
-                              toggleLpChecklistItem(project.id, 'verify', address)
-                              setVersion((v) => v + 1)
-                            }}
-                          >
-                            Mark verified (demo)
-                          </button>
-                        ) : null}
                       </>
                     ) : null}
                   </span>

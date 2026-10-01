@@ -33,7 +33,7 @@ export function Terminal({ onNavigate }: Props) {
               Status →
             </button>
             <button type="button" className="link-btn" onClick={() => onNavigate('trade')}>
-              Trade (simulate) →
+              Trade →
             </button>
             <button type="button" className="link-btn" onClick={() => onNavigate('skills')}>
               Skill Market →

@@ -5,7 +5,6 @@ import { listOrders } from '../lib/trade/orders'
 import { listProjects } from '../lib/projects'
 import { listSkillPacks, listCreators } from '../lib/market/skillMarket'
 import { getSubscription } from '../lib/subscription'
-import { listRewardBalances, listRewardLedger } from '../lib/rewards/ledger'
 import { skillCount } from '../lib/agent/skills'
 import { HOOD_TOKEN_DEPLOYED } from '../lib/hoodToken'
 import { stripeConfigured } from '../lib/stripe/client'
@@ -19,26 +18,11 @@ export function Revenue({ onNavigate }: Props) {
   const packs = useMemo(() => listSkillPacks(), [])
   const creators = useMemo(() => listCreators(), [])
   const sub = useMemo(() => getSubscription(), [])
-  const balances = useMemo(() => listRewardBalances(), [])
-  const ledger = useMemo(() => listRewardLedger().slice(0, 8), [])
-  const treasury = balances.find((b) => b.role === 'platform')
-  const simFeeTotal = balances.reduce((s, b) => s + (b.credits || 0), 0)
-
   const metrics = [
     {
-      label: 'Treasury credits (demo)',
-      value: treasury ? treasury.credits.toFixed(2) : '0.00',
-      note: 'Simulated fee share — not on-chain ETH',
-    },
-    {
-      label: 'Sim fee credits (all)',
-      value: simFeeTotal.toFixed(2),
-      note: 'Creator + platform + bot/referrer ledgers',
-    },
-    {
-      label: 'Sim orders',
+      label: 'Signed swaps',
       value: String(orders.length),
-      note: 'local_ord_* fills only',
+      note: 'Wallet-signed Uniswap fills stored in this browser',
     },
     {
       label: 'Desk XP / level',
@@ -78,9 +62,9 @@ export function Revenue({ onNavigate }: Props) {
     },
     { when: 'Live', what: 'NFT wallets · CCFF00 and DogiHood', amount: 'ERC-6551' },
     {
-      when: 'Sim',
-      what: `Orders ${orders.length} · reward entries ${ledger.length}+`,
-      amount: `${simFeeTotal.toFixed(1)} credits`,
+      when: 'Live',
+      what: `Signed swaps in this browser`,
+      amount: String(orders.length),
     },
     { when: 'Waiting', what: 'Uniswap LP fee stays in the position. Not routed to the desk.', amount: 'TBD' },
   ]
@@ -90,10 +74,10 @@ export function Revenue({ onNavigate }: Props) {
       <div className="page-intro">
         <p className="eyebrow">Business dashboard</p>
         <h1>Revenue</h1>
-        <div className="demo-banner">
-          <strong>Local / demo metrics only.</strong> Pulled from your browser ledgers (orders,
-          rewards, XP, packs). Not live on-chain treasury. Swap volume stays $0 until a known RH DEX.
-        </div>
+        <p className="muted">
+          Signed swaps are the trades this browser has confirmed. The Uniswap fee stays in the
+          liquidity position.
+        </p>
       </div>
 
       <div className="metrics-grid">
@@ -127,35 +111,8 @@ export function Revenue({ onNavigate }: Props) {
           </tbody>
         </table>
 
-        {ledger.length > 0 && (
-          <>
-            <h3 className="section-title mt">Recent demo reward entries</h3>
-            <table className="ledger">
-              <thead>
-                <tr>
-                  <th>When</th>
-                  <th>Role</th>
-                  <th>Token</th>
-                  <th>Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ledger.map((e) => (
-                  <tr key={e.id}>
-                    <td className="tiny muted">{new Date(e.at).toLocaleString()}</td>
-                    <td className="mono tiny">{e.role}</td>
-                    <td>{e.tokenSymbol}</td>
-                    <td className="mono">{e.amount.toFixed(4)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
-
         <p className="muted mt">
-          Path: DEX fee → agent treasury → Desk stays online. See Ops for the loop. Trade simulate to
-          grow demo credits.
+          The pool fee is not routed to a desk treasury. Stripe subscriptions are the paid plans.
         </p>
         <div className="cta-row mt">
           <button type="button" className="btn btn-primary" onClick={() => onNavigate('ops')}>

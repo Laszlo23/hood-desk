@@ -324,7 +324,7 @@ export function listSkillPacks(): SkillPack[] {
   } catch {
     /* ignore */
   }
-  return [...bots, ...projectPacks].sort((a, b) => {
+  return [...bots, ...projectPacks].filter((bot) => !bot.isDemo).sort((a, b) => {
     if (a.featured && !b.featured) return -1
     if (!a.featured && b.featured) return 1
     return b.followerCount - a.followerCount
@@ -398,7 +398,8 @@ export function listLedger(): LedgerEntry[] {
 
 export function listCreators(): CreatorProfile[] {
   ensureSeeded()
-  return readJson<CreatorProfile[]>(KEY_CREATORS, DEMO_CREATORS)
+  const seeded = new Set(DEMO_CREATORS.map((creator) => creator.id))
+  return readJson<CreatorProfile[]>(KEY_CREATORS, []).filter((creator) => !seeded.has(creator.id))
 }
 
 export function getCreator(id: string): CreatorProfile | undefined {

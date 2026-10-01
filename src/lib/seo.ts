@@ -25,11 +25,11 @@ const PAGES: Record<ViewId, PageMeta> = {
   },
   community: {
     title: 'Auto-Trade · Hood Desk',
-    description: 'Community auto-trade desk on Robinhood Chain. Follow the HOOD agent and keep every simulated fill labeled.',
+    description: 'Hood Desk on Robinhood Chain. $HOOD swaps are wallet-signed. The agent does not place orders.',
   },
   status: {
     title: 'Desk status · Hood Desk',
-    description: 'Live desk status for Hood Desk on Robinhood Chain: token, NFT wallets, and what is still simulated.',
+    description: 'Live desk status for Hood Desk on Robinhood Chain: token, pool, and NFT wallets.',
   },
   skills: {
     title: 'Skill Market · Hood Desk',
@@ -41,7 +41,7 @@ const PAGES: Record<ViewId, PageMeta> = {
   },
   rewards: {
     title: 'Rewards · Hood Desk',
-    description: 'Creator, platform, and referrer split on a local ledger. Nothing is paid on-chain.',
+    description: 'The $HOOD/WETH swap ledger. Each row is a Uniswap transaction. The fee stays in the position.',
   },
   blog: {
     title: 'Hood Street notes · Hood Desk',
@@ -81,7 +81,7 @@ const PAGES: Record<ViewId, PageMeta> = {
   },
   ops: {
     title: 'Ops · Hood Desk',
-    description: 'How the Hood Desk business runs: agent, plans, and what is live versus simulated.',
+    description: 'How the Hood Desk business runs: agent, plans, and the live $HOOD pool.',
   },
   revenue: {
     title: 'Revenue · Hood Desk',

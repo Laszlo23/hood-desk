@@ -5,7 +5,7 @@ type Props = {
 }
 
 /** Trade desk strip. Live means $HOOD market swaps sign on Uniswap. */
-export function TradeStatusBar({ mode = 'simulate', tokenSymbol, live = false }: Props) {
+export function TradeStatusBar({ mode = 'no pool', tokenSymbol, live = false }: Props) {
   return (
     <div className="trade-status-bar" aria-label="Trade desk status">
       <span className="trade-status-item">
@@ -27,7 +27,7 @@ export function TradeStatusBar({ mode = 'simulate', tokenSymbol, live = false }:
       <span className="trade-status-sep" aria-hidden>
         ·
       </span>
-      <span className="trade-status-badge">{live ? 'UNISWAP' : 'SIMULATED'}</span>
+      <span className="trade-status-badge">{live ? 'UNISWAP' : 'NO POOL'}</span>
       {tokenSymbol && (
         <>
           <span className="trade-status-sep" aria-hidden>
@@ -37,7 +37,7 @@ export function TradeStatusBar({ mode = 'simulate', tokenSymbol, live = false }:
         </>
       )}
       <span className="trade-status-hint muted">
-        {live ? 'market swaps sign in your wallet' : 'desk orders stay local'}
+        {live ? 'only risk what you can lose' : 'no swap until a pool exists'}
       </span>
     </div>
   )

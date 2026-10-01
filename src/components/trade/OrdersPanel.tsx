@@ -38,7 +38,7 @@ export function OrdersPanel({ orders, tab, onTab }: Props) {
           <HoodSeal size={40} decorative className="empty-seal" />
           <p className="muted">No {tab === 'trades' ? 'trades' : 'orders'} yet</p>
           <p className="tiny muted">
-            $HOOD market swaps sign on Uniswap. Other orders stay on this desk.
+            Signed $HOOD swaps show up here. The full pool log is on Rewards.
           </p>
         </div>
       ) : (

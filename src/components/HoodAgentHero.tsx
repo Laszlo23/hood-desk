@@ -16,7 +16,7 @@ type Props = {
 export function HoodAgentHero({
   title = 'HOOD runs the community desk',
   eyebrow = 'Flagship agent · Hood Street',
-  lead = 'HOOD auto-trades paper strategies for the pack. $HOOD/WETH is live on Uniswap. The community vault stays labeled SIMULATED.',
+  lead = '$HOOD/WETH is live on Uniswap. Swaps are wallet-signed. This desk does not run a paper book.',
   voice = 'HOOD here — scanning RH 4663 for the community. No fake routers. Pack first.',
   size = 112,
   className = '',

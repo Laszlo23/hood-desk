@@ -2,68 +2,16 @@ import { HOOD_TOKEN_ADDRESS } from '../hoodToken'
 import { listProjects, type Project } from '../projects'
 import type { TradeToken } from './types'
 
-/** Hood-branded demo pair — not musebook/META. Clearly local demo. */
+/** Retired stand-in address. No longer listed on Trade. */
 export const HOOD_DEMO_ADDRESS = '0xCcFf000000000000000000000000000000004663'
 
-export const DEMO_TOKENS: TradeToken[] = [
-  {
-    address: HOOD_DEMO_ADDRESS,
-    name: 'Hood Street',
-    symbol: 'HOOD',
-    quote: 'ETH',
-    decimals: 18,
-    avatarEmoji: '🦊',
-    price: 0.00042,
-    change24h: 12.6,
-    marketCap: 420_000,
-    volume24h: 68_400,
-    badges: ['Robinhood', 'Trend', 'Demo'],
-    isDemo: true,
-    socials: {
-      website: 'https://doghood.aibusiness.fun/#/hood',
-      farcaster: 'https://warpcast.com/0xleonardo',
-      twitter: 'https://x.com/hoodstreet',
-    },
-    fairLaunchAttached: true,
-  },
-  {
-    address: '0xCcFf00000000000000000000000000000000a11e',
-    name: 'Neon Alley',
-    symbol: 'NEON',
-    quote: 'USDC',
-    decimals: 18,
-    avatarEmoji: '🟢',
-    price: 0.0187,
-    change24h: -3.2,
-    marketCap: 187_000,
-    volume24h: 24_100,
-    badges: ['Robinhood', 'Demo'],
-    isDemo: true,
-    socials: {
-      website: 'https://doghood.aibusiness.fun/#/trade',
-    },
-    fairLaunchAttached: false,
-  },
-  {
-    address: '0xCcFf00000000000000000000000000000000b007',
-    name: 'Fox Run',
-    symbol: 'FOX',
-    quote: 'ETH',
-    decimals: 18,
-    avatarEmoji: '🏃',
-    price: 0.000088,
-    change24h: 41.2,
-    marketCap: 88_000,
-    volume24h: 112_000,
-    badges: ['Robinhood', 'Top', 'Demo'],
-    isDemo: true,
-    fairLaunchAttached: true,
-  },
-]
+export const DEMO_TOKENS: TradeToken[] = []
 
 function projectToToken(p: Project): TradeToken | null {
   const addr = p.fairLaunch?.tokenAddress
   if (!addr) return null
+  if (p.fairLaunch?.status !== 'deployed') return null
+  if (addr.toLowerCase().startsWith('0xccff0000')) return null
   const symbol = (p.fairLaunch?.symbol || p.ticker || 'TOKEN').toUpperCase()
   return {
     address: addr,
@@ -72,25 +20,45 @@ function projectToToken(p: Project): TradeToken | null {
     quote: 'ETH',
     decimals: p.fairLaunch?.decimals ?? 18,
     avatarEmoji: p.avatarEmoji || '🪙',
-    price: 0.0001,
+    price: 0,
     change24h: 0,
     marketCap: 0,
     volume24h: 0,
-    badges: ['Robinhood', 'Local project'],
-    isDemo: true,
+    badges: ['Robinhood'],
+    isDemo: false,
     projectId: p.id,
     socials: p.socials,
     fairLaunchAttached: Boolean(p.fairLaunch),
   }
 }
 
-/** Demo list + any project tokens with pasted addresses (+ optional env $HOOD). */
+export function defaultTradeToken(): TradeToken {
+  return (
+    collectTradeTokens()[0] ?? {
+      address: HOOD_TOKEN_ADDRESS ?? '0x0000000000000000000000000000000000000000',
+      name: 'HOOD',
+      symbol: 'HOOD',
+      quote: 'ETH',
+      decimals: 18,
+      avatarEmoji: '🦊',
+      price: 0,
+      change24h: 0,
+      marketCap: 0,
+      volume24h: 0,
+      badges: ['Robinhood', 'HOOD/WETH'],
+      isDemo: false,
+      fairLaunchAttached: true,
+    }
+  )
+}
+
+/** Live $HOOD, plus project tokens whose fair launch was deployed on chain. */
 export function collectTradeTokens(wallet?: string | null): TradeToken[] {
   const fromProjects = listProjects(wallet)
     .map(projectToToken)
     .filter((t): t is TradeToken => Boolean(t))
 
-  const out: TradeToken[] = [...DEMO_TOKENS]
+  const out: TradeToken[] = []
   const seen = new Set(out.map((t) => t.address.toLowerCase()))
 
   if (HOOD_TOKEN_ADDRESS && !seen.has(HOOD_TOKEN_ADDRESS.toLowerCase())) {
@@ -139,12 +107,12 @@ export function stubTokenFromAddress(address: string): TradeToken {
     quote: 'ETH',
     decimals: 18,
     avatarEmoji: '❔',
-    price: 0.00001,
+    price: 0,
     change24h: 0,
     marketCap: 0,
     volume24h: 0,
-    badges: ['Robinhood', 'Pasted', 'Demo'],
-    isDemo: true,
+    badges: ['Robinhood'],
+    isDemo: false,
   }
 }
 

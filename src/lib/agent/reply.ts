@@ -13,7 +13,7 @@ export function greetingMessage(): ChatMessage {
   return {
     id: 'greeting',
     role: 'agent',
-    text: `GM. **HOOD** here — community desk online. 🦊\n\nFlagship agent on Robinhood Chain **4663**. I run **Community Auto-Trade** (paper / SIM) for the pack — DCA pool, momentum scout, risk-off, DogiHood pride.\n\n**${skillCount()} skills** ready. Open **#/community**, create a project, or ask **what can you do?**\n\n($HOOD market swaps on #/trade are wallet-signed Uniswap fills. Auto-trade stays paper.)`,
+    text: `GM. **HOOD** here — community desk online. 🦊\n\nFlagship agent on Robinhood Chain **4663**. **${skillCount()} skills** ready.\n\n$HOOD market swaps on **#/trade** are wallet-signed Uniswap fills. I do not place orders and I do not run a paper book.`,
   }
 }
 

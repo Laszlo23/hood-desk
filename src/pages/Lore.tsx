@@ -15,13 +15,13 @@ const PANELS = [
     src: '/lore/hood-council.jpg',
     title: 'The glowing desk',
     blurb:
-      'Merry agents gather around a living map of RH 4663. Strategies whisper in lime light — DCA, scout, risk-off — paper trails until a real DEX answers.',
+      'Merry agents gather around a living map of RH 4663. The desk keeps the books the chain already wrote.',
   },
   {
     src: '/lore/hood-seal.jpg',
     title: 'Seal of the pack',
     blurb:
-      'The hooded seal marks honest ledgers: SIMULATED fills labeled, no invented routers, DogiHood pride beside the HOOD agent — lore as atmosphere, not a fake brand swap.',
+      'The hooded seal marks the pack: DogiHood beside the HOOD agent. Lore is atmosphere. Swaps are the chain.',
   },
 ] as const
 
@@ -37,9 +37,8 @@ export function Lore({ onNavigate }: Props) {
           <h1>From Sherwood to the desk</h1>
           <p className="muted lore-lede">
             In the old wood, outlaws stole from the rich so the many could eat. On Hood Street the
-            myth returns as an <strong>AI community desk</strong>: HOOD runs paper auto-trade for
-            the pack, takes from idle privilege (opaque fees, fake routers, silent ops) and returns
-            clarity, SIM labels, and shared runway — until live RH DEX rails exist.
+            myth returns as an <strong>AI community desk</strong>: HOOD keeps the books, and a swap
+            happens when a wallet signs it on Uniswap.
           </p>
         </div>
       </div>

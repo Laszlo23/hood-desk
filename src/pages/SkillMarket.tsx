@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState, type FormEvent } from 'react'
 import { useAccount } from 'wagmi'
 import { SKILLS, type SkillId } from '../lib/agent/skills'
 import {
-  DEMO_FEE_SPLIT,
   followBot,
   getActiveBotId,
   getCreator,
@@ -141,9 +140,8 @@ export function SkillMarket({ onNavigate }: Props) {
           Skill Market <DogiHoodHolderBadge className="skills-holder-inline" />
         </h1>
         <p className="muted">
-          Browse agent skill packs / trading bots. Follow a better-configured bot to copy its skill
-          config into your Desk agent. Creator compensation is a{' '}
-          <strong>demo ledger</strong> until RH DEX + real fee split. Trade fee rewards live on{' '}
+          Browse skill packs you publish. Following a pack copies its skill list into the Desk agent.
+          There is no payout ledger. Pool fees stay on{' '}
           <button type="button" className="link-btn" onClick={() => onNavigate('rewards')}>
             #/rewards
           </button>
@@ -354,25 +352,18 @@ export function SkillMarket({ onNavigate }: Props) {
               Or publish via Terminal
             </button>
           </div>
-          <p className="tiny muted">
-            Fee-share stub: {DEMO_FEE_SPLIT.creatorPct}% creator / {DEMO_FEE_SPLIT.treasuryPct}% desk
-            treasury — labeled demo until RH DEX.
-          </p>
+          <p className="tiny muted">Publishing stores the pack in this browser. It does not pay a fee share.</p>
         </form>
       )}
 
       {tab === 'creator' && (
         <div className="creator-desk">
-          <div className="demo-banner">
-            <strong>Demo ledger.</strong> Follow bonuses and usage credits are local perk points /
-            simulated $HOOD — not mainnet rewards. No invented fee routers.
-          </div>
 
-          {(myCreator || creators[0]) && (
+          {myCreator && (
             <article className="card">
               <p className="eyebrow">Your creator profile</p>
               {(() => {
-                const c = myCreator || creators[0]
+                const c = myCreator
                 return (
                   <>
                     <h2 className="section-title">
@@ -394,11 +385,6 @@ export function SkillMarket({ onNavigate }: Props) {
                       <div className="card mini-card">
                         <span className="rail-label">Usage credits</span>
                         <p className="metric-value">{c.usageCredits}</p>
-                      </div>
-                      <div className="card mini-card">
-                        <span className="rail-label">Sim $HOOD</span>
-                        <p className="metric-value">{c.earningsSim.toFixed(1)}</p>
-                        <p className="metric-note">demo ledger</p>
                       </div>
                       <div className="card mini-card">
                         <span className="rail-label">Fee share</span>
@@ -424,7 +410,7 @@ export function SkillMarket({ onNavigate }: Props) {
           <article className="card mt">
             <p className="eyebrow">Leaderboard · local catalog</p>
             <h3>Creators by followers</h3>
-            <p className="tiny muted">Demo ranks from Skill Market data — also on Status → Top / Trending.</p>
+            <p className="tiny muted">Creators who published a pack from this desk.</p>
             <div className="orders-table-wrap">
               <table className="orders-table ledger">
                 <thead>
@@ -433,7 +419,6 @@ export function SkillMarket({ onNavigate }: Props) {
                     <th>Handle</th>
                     <th>Followers</th>
                     <th>Credits</th>
-                    <th>Sim $HOOD</th>
                     <th>Perks</th>
                   </tr>
                 </thead>
@@ -449,7 +434,6 @@ export function SkillMarket({ onNavigate }: Props) {
                         </td>
                         <td>{c.followerCount}</td>
                         <td className="mono">{c.followCredits + c.usageCredits}</td>
-                        <td className="mono">{c.earningsSim.toFixed(1)}</td>
                         <td className="tiny">{c.perks.join(', ')}</td>
                       </tr>
                     ))}

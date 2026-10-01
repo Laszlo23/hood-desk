@@ -42,6 +42,16 @@ const SLOT0_ABI = [
 
 type Point = { time: number; price: number; volumeEth: number }
 
+export type HoodSwapRow = {
+  txHash: string
+  time: number
+  /** Buy means ETH went into the pool. Sell means HOOD went into the pool. */
+  side: 'buy' | 'sell'
+  eth: number
+  hood: number
+  price: number
+}
+
 export type HoodPoolChart = {
   candles: Candle[]
   /** ETH per 1 HOOD, from the pool price. */
@@ -59,9 +69,9 @@ export function ethPerHoodFromSqrt(sqrtPriceX96: bigint): number {
   return 1 / hoodPerEth
 }
 
-let pointsCache: { at: number; points: Point[]; swapCount: number } | null = null
+let pointsCache: { at: number; points: Point[]; swapCount: number; swaps: HoodSwapRow[] } | null = null
 
-async function loadPoints(): Promise<{ points: Point[]; swapCount: number }> {
+async function loadPoints(): Promise<{ points: Point[]; swapCount: number; swaps: HoodSwapRow[] }> {
   if (pointsCache && Date.now() - pointsCache.at < 20_000) return pointsCache
 
   const client = createPublicClient({
@@ -110,14 +120,33 @@ async function loadPoints(): Promise<{ points: Point[]; swapCount: number }> {
       volumeEth: 0,
     })
   }
+  const swaps: HoodSwapRow[] = []
   for (const log of swapLogs) {
-    if (log.args.sqrtPriceX96 === undefined || log.args.amount0 === undefined) continue
+    if (
+      log.args.sqrtPriceX96 === undefined ||
+      log.args.amount0 === undefined ||
+      log.args.amount1 === undefined
+    ) {
+      continue
+    }
+    const eth = Math.abs(Number(log.args.amount0)) / 1e18
+    const hood = Math.abs(Number(log.args.amount1)) / 1e18
+    const price = ethPerHoodFromSqrt(log.args.sqrtPriceX96)
     points.push({
       time: times.get(log.blockNumber.toString()) ?? 0,
-      price: ethPerHoodFromSqrt(log.args.sqrtPriceX96),
-      volumeEth: Math.abs(Number(log.args.amount0)) / 1e18,
+      price,
+      volumeEth: eth,
+    })
+    swaps.push({
+      txHash: log.transactionHash,
+      time: times.get(log.blockNumber.toString()) ?? 0,
+      side: log.args.amount0 > 0n ? 'buy' : 'sell',
+      eth,
+      hood,
+      price,
     })
   }
+  swaps.sort((a, b) => b.time - a.time)
   points.sort((a, b) => a.time - b.time)
 
   const live = ethPerHoodFromSqrt(slot0[0])
@@ -127,9 +156,14 @@ async function loadPoints(): Promise<{ points: Point[]; swapCount: number }> {
     points.push({ time: Number(head.timestamp), price: live, volumeEth: 0 })
   }
 
-  const cached = { at: Date.now(), points, swapCount: swapLogs.length }
+  const cached = { at: Date.now(), points, swapCount: swapLogs.length, swaps }
   pointsCache = cached
   return cached
+}
+
+export async function loadHoodLedger(): Promise<HoodSwapRow[]> {
+  const { swaps } = await loadPoints()
+  return swaps
 }
 
 export function candlesFromPoints(points: Point[], timeframe: Timeframe): Candle[] {

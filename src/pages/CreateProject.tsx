@@ -55,7 +55,7 @@ export function CreateProject({ onNavigate }: Props) {
           the project page. Stored in localStorage (wallet key or <code className="inline-code">anon</code>).
         </p>
         <p className="tiny muted">
-          Creators earn when people trade your token (simulated). Path: Create → Fair launch → Trade →{' '}
+          Path: Create → deploy the token → paste the address → Trade. {' '}
           <button type="button" className="link-btn" onClick={() => onNavigate('rewards')}>Rewards</button>.
         </p>
       </div>

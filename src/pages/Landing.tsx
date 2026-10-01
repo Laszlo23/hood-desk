@@ -121,7 +121,7 @@ export function Landing({ onNavigate }: Props) {
         <p className="muted lore-legend-copy">
           Outlaws once stole from the rich so the pack could eat. Tonight the neon bow draws on RH
           4663: HOOD keeps a <strong>community desk</strong> — $HOOD market swaps sign on Uniswap,
-          and paper auto-trade stays labeled. Mist behind the glass; DogiHood &amp; the agent
+          and a swap happens when a wallet signs it. Mist behind the glass; DogiHood &amp; the agent
           mark stay front.
         </p>
         <div className="lore-legend-thumbs">
@@ -184,7 +184,7 @@ export function Landing({ onNavigate }: Props) {
         <article className="card mini-card">
           <h3>Create → Trade → Rewards</h3>
           <p className="muted">
-            Creators earn when people trade your token (simulated). One-click path on Rewards.
+            The Uniswap LP fee stays in the $HOOD/WETH position. There is no separate payout ledger.
           </p>
           <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('rewards')}>
             Earnings →
@@ -212,8 +212,7 @@ export function Landing({ onNavigate }: Props) {
         <article className="card mini-card community-mini-card">
           <h3>Community Auto-Trade</h3>
           <p className="muted">
-            HOOD runs DCA, momentum scout, risk-off, and DogiHood pride for the pack — paper / SIM
-            vault. Agent is the face.
+            The agent watches the desk. Swaps happen when you sign them on Trade.
           </p>
           <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('community')}>
             Open desk →

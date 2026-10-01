@@ -87,7 +87,7 @@ export function VetPanel({
         </div>
 
         <p className="muted tiny">
-          Rule-based heuristic (Desk skills style). Not an audit. Helps decide before you simulate a
+          Rule-based heuristic (Desk skills style). Not an audit. Read it before you sign a
           trade.
         </p>
 
@@ -144,7 +144,7 @@ export function VetPanel({
                       checked={ack}
                       onChange={(e) => setAck(e.target.checked)}
                     />
-                    <span>I understand the risk and want to proceed with a local simulate</span>
+                    <span>I understand the risk</span>
                   </label>
                 )}
                 <button
@@ -156,7 +156,7 @@ export function VetPanel({
                     onClose()
                   }}
                 >
-                  {needsAck ? 'Proceed · I understand' : 'Proceed to simulate'}
+                  {needsAck ? 'Proceed · I understand' : 'Close'}
                 </button>
               </div>
             )}

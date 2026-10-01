@@ -7,13 +7,9 @@ import { TradeChart } from '../components/trade/TradeChart'
 import { TradePanel, type TradeDraft } from '../components/trade/TradePanel'
 import { TradeSidebar } from '../components/trade/TradeSidebar'
 import { VetPanel } from '../components/trade/VetPanel'
-import {
-  collectTradeTokens,
-  DEMO_TOKENS,
-  stubTokenFromAddress,
-} from '../lib/trade/demoTokens'
+import { collectTradeTokens, defaultTradeToken, stubTokenFromAddress } from '../lib/trade/demoTokens'
 import { HOOD_SWAP_SLIPPAGE_BPS, planHoodMarketSwap } from '../lib/trade/hoodSwap'
-import { listOrders, placeOnchainOrder, placeSimulatedOrder } from '../lib/trade/orders'
+import { listOrders, placeOnchainOrder } from '../lib/trade/orders'
 import { loadHoodPoolChart, type HoodPoolChart } from '../lib/trade/poolCandles'
 import { hoodHasPool, uniswapSwapUrl } from '../lib/trade/uniswap'
 import { erc20Abi } from '../lib/hoodToken'
@@ -25,7 +21,6 @@ import type {
 } from '../lib/trade/types'
 import { getActiveBot, recordSkillUsage } from '../lib/market/skillMarket'
 import { awardXp } from '../lib/gamification'
-import { accrueTradeRewards } from '../lib/rewards/ledger'
 import type { ViewId } from '../lib/nav'
 import { WeeklyBanner } from '../components/WeeklyBanner'
 import { ConnectButton } from '../components/ConnectButton'
@@ -49,16 +44,13 @@ export function Trade({ onNavigate }: Props) {
   const { sendTransactionAsync } = useSendTransaction()
   const { writeContractAsync } = useWriteContract()
   const tokens = useMemo(() => collectTradeTokens(address), [address])
-  const [token, setToken] = useState<TradeToken>(
-    () => collectTradeTokens()[0] ?? DEMO_TOKENS[0],
-  )
+  const [token, setToken] = useState<TradeToken>(() => defaultTradeToken())
   const [timeframe, setTimeframe] = useState<Timeframe>('15m')
   const [ordersTab, setOrdersTab] = useState<'orders' | 'trades'>('orders')
   const [orders, setOrders] = useState<SimulatedOrder[]>([])
   const [vetOpen, setVetOpen] = useState(false)
   const [vetGate, setVetGate] = useState(false)
   const [lastVet, setLastVet] = useState<VetResult | null>(null)
-  const [pendingDraft, setPendingDraft] = useState<TradeDraft | null>(null)
   const [flash, setFlash] = useState<string | null>(null)
   const [panelKey, setPanelKey] = useState(0)
   const [swapBusy, setSwapBusy] = useState(false)
@@ -119,39 +111,6 @@ export function Trade({ onNavigate }: Props) {
     if (match && match !== token) setToken(match)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokens])
-
-  const commitOrder = useCallback(
-    (draft: TradeDraft) => {
-      const order = placeSimulatedOrder({
-        tokenAddress: token.address,
-        tokenSymbol: token.symbol,
-        quote: token.quote,
-        side: draft.side,
-        type: draft.type,
-        mode: draft.mode,
-        amount: draft.amount,
-        price: draft.price,
-      })
-      refreshOrders()
-      recordSkillUsage('order')
-      const reward = accrueTradeRewards(order)
-      awardXp('simulate_trade', { once: false })
-      const bot = getActiveBot()
-      setOrdersTab(draft.type === 'market' ? 'trades' : 'orders')
-      const rewardHint = reward.ok
-        ? ` · rewards +${reward.feeVolume.toFixed(4)} fee split`
-        : ''
-      setFlash(
-        bot
-          ? `Simulated ${order.side} · ${order.id} · via ${bot.name}${rewardHint}`
-          : `Simulated ${order.side} · ${order.id}${rewardHint}`,
-      )
-      setPendingDraft(null)
-      setPanelKey((k) => k + 1)
-      window.setTimeout(() => setFlash(null), 3200)
-    },
-    [token, refreshOrders],
-  )
 
   const executeHoodSwap = useCallback(
     async (draft: TradeDraft) => {
@@ -236,25 +195,12 @@ export function Trade({ onNavigate }: Props) {
   )
 
   const onRequestSimulate = (draft: TradeDraft) => {
-    const liveMarket =
-      Boolean(isHoodToken) &&
-      poolExists === true &&
-      (draft.mode === 'instant' || draft.type === 'market')
-    if (liveMarket) {
+    if (isHoodToken && poolExists === true) {
       void executeHoodSwap(draft)
       return
     }
-    const vetOk =
-      lastVet &&
-      lastVet.address.toLowerCase() === token.address.toLowerCase() &&
-      lastVet.verdict === 'Likely real'
-    if (vetOk) {
-      commitOrder(draft)
-      return
-    }
-    setPendingDraft(draft)
-    setVetGate(true)
-    setVetOpen(true)
+    setFlash('This token has no Uniswap pool, so there is nothing to sign.')
+    window.setTimeout(() => setFlash(null), 3200)
   }
 
   const onPasteAddress = (addr: string) => {
@@ -274,7 +220,7 @@ export function Trade({ onNavigate }: Props) {
       <div className="trade-center">
         <WeeklyBanner compact />
         <TradeStatusBar
-          mode={isHoodToken && poolExists ? 'uniswap' : 'simulate'}
+          mode={isHoodToken && poolExists ? 'uniswap' : 'no pool'}
           live={Boolean(isHoodToken && poolExists)}
           tokenSymbol={token.symbol}
         />
@@ -301,7 +247,7 @@ export function Trade({ onNavigate }: Props) {
           <div className="trade-pool-notice">
             <strong>$HOOD/WETH is live on Uniswap V3</strong>
             <p className="tiny muted">
-              Market buy and sell sign in your wallet. The pool is thin, so a large size will not fill. Limit, stop, TWAP, and DCA stay on this desk.
+              Only swap an amount you can afford to lose. The pool is thin, so a large size will not fill.
             </p>
             <div className="cta-row">
               <a href={uniswapTokenUrl} target="_blank" rel="noreferrer" className="btn btn-primary btn-sm">
@@ -328,10 +274,10 @@ export function Trade({ onNavigate }: Props) {
             <button
               type="button"
               className="active-bot-chip"
-              title="HOOD Community Auto-Trade"
-              onClick={() => onNavigate('community')}
+              title="Pool facts"
+              onClick={() => onNavigate('rewards')}
             >
-              🦊 HOOD Auto-Trade
+              Pool ledger
             </button>
             {(() => {
               const bot = getActiveBot()
@@ -404,7 +350,8 @@ export function Trade({ onNavigate }: Props) {
           recordSkillUsage('vet')
         }}
         onProceed={() => {
-          if (pendingDraft) commitOrder(pendingDraft)
+          setVetOpen(false)
+          setVetGate(false)
         }}
       />
     </section>

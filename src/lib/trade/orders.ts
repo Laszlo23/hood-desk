@@ -12,9 +12,9 @@ export function listOrders(): SimulatedOrder[] {
     if (!raw) return []
     const parsed = JSON.parse(raw) as unknown
     if (!Array.isArray(parsed)) return []
-    return (parsed as SimulatedOrder[]).sort((a, b) =>
-      a.createdAt < b.createdAt ? 1 : -1,
-    )
+    return (parsed as SimulatedOrder[])
+      .filter((order) => order.status === 'filled' && Boolean(order.txHash))
+      .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
   } catch {
     return []
   }

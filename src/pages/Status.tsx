@@ -4,7 +4,7 @@ import { buildLocalActivityFeed } from '../lib/status/activity'
 import type { ViewId } from '../lib/nav'
 import { getGamification } from '../lib/gamification'
 import { listOrders } from '../lib/trade/orders'
-import { DEMO_TOKENS, formatUsdCompact, formatPrice } from '../lib/trade/demoTokens'
+import { collectTradeTokens, formatUsdCompact, formatPrice } from '../lib/trade/demoTokens'
 import { skillCount } from '../lib/agent/skills'
 import { listProjects } from '../lib/projects'
 import { listSkillPacks } from '../lib/market/skillMarket'
@@ -81,7 +81,7 @@ export function Status({ onNavigate }: Props) {
   }, [orders])
 
   const rankedTokens = useMemo(() => {
-    const copy = [...DEMO_TOKENS]
+    const copy = collectTradeTokens().filter((token) => !token.isDemo)
     if (rankTab === 'trending') {
       return copy.sort((a, b) => Math.abs(b.change24h) - Math.abs(a.change24h))
     }
@@ -313,7 +313,7 @@ export function Status({ onNavigate }: Props) {
               </tbody>
             </table>
             <p className="tiny muted status-rank-foot">
-              $HOOD market swaps sign on Uniswap. The ranks below are demo pairs.
+              $HOOD market swaps sign on Uniswap. This list is live contracts only.
             </p>
           </div>
         ) : (
@@ -353,7 +353,7 @@ export function Status({ onNavigate }: Props) {
                   {rankedPacks.length === 0 && (
                     <tr>
                       <td colSpan={5} className="muted">
-                        No skill packs yet — open Skills to browse demos.
+                        No skill packs yet. Publish one from the Skill Market.
                       </td>
                     </tr>
                   )}
@@ -370,17 +370,14 @@ export function Status({ onNavigate }: Props) {
       {rankedOrders.length === 0 && (
         <div className="card status-empty-orders empty-card">
           <HoodSeal size={48} decorative className="empty-seal" />
-          <p className="rail-label">Simulated orders</p>
-          <p className="muted">
-            No local fills yet. Open Trade to place a <strong>simulated</strong> order (
-            <code className="inline-code">local_ord_*</code>) — Status will list it here.
-          </p>
+          <p className="rail-label">Wallet swaps</p>
+          <p className="muted">No signed swaps yet. Open Trade and confirm a buy or sell in your wallet.</p>
           <div className="cta-row mt">
             <button type="button" className="btn btn-primary btn-sm" onClick={() => onNavigate('trade')}>
               Open Trade
             </button>
             <button type="button" className="btn btn-ghost btn-sm" onClick={() => setRankTab('tokens')}>
-              Browse demo tokens
+              $HOOD pool
             </button>
           </div>
         </div>
@@ -389,8 +386,8 @@ export function Status({ onNavigate }: Props) {
       {rankedOrders.length > 0 && (
         <div className="status-rank card">
           <div className="status-rank-head">
-            <p className="rail-label">Recent simulated orders</p>
-            <span className="tiny muted">SIMULATED · no live fills</span>
+            <p className="rail-label">Recent wallet swaps</p>
+            <span className="tiny muted">Signed on Uniswap</span>
           </div>
           <div className="status-rank-table-wrap">
             <table className="status-rank-table">
@@ -426,7 +423,7 @@ export function Status({ onNavigate }: Props) {
       <div className="status-feed card">
         <div className="status-feed-head">
           <p className="rail-label">Activity feed</p>
-          <span className="tiny muted">local · simulated · DogiHood pack</span>
+          <span className="tiny muted">Wallet swaps and desk notes</span>
         </div>
         <ul className="status-feed-list">
           {feed.map((item) => (
@@ -446,7 +443,7 @@ export function Status({ onNavigate }: Props) {
         </ul>
         {orderCount === 0 && (
           <p className="status-feed-empty muted">
-            No simulated trades yet — open{' '}
+            No signed swaps yet — open{' '}
             <button type="button" className="link-btn inline" onClick={() => onNavigate('trade')}>
               Trade
             </button>{' '}

@@ -6,14 +6,13 @@ import {
   FAIR_LAUNCH_COPY,
   saveFairLaunchDraft,
   setProjectTokenAddress,
-  simulateFairLaunch,
   updateProject,
   type Project,
 } from '../lib/projects'
 import { registerTokenCreator } from '../lib/rewards/ledger'
 import { awardXp } from '../lib/gamification'
 import { VerifiedBadge } from './VerifiedBadge'
-import { explorerVerifyUrl, markVerifiedDemo } from '../lib/verify/onchainVerified'
+import { explorerVerifyUrl } from '../lib/verify/onchainVerified'
 import { EXPLORER_BASE } from '../lib/chain'
 
 type Props = {
@@ -24,18 +23,6 @@ type Props = {
 }
 
 type Step = 'configure' | 'review' | 'deploy'
-
-function registerFromProject(p: Project, creator: string) {
-  const addr = p.fairLaunch?.tokenAddress
-  if (!addr) return
-  registerTokenCreator({
-    tokenAddress: addr,
-    tokenSymbol: p.fairLaunch?.symbol || p.ticker || 'TOKEN',
-    creatorAddress: creator,
-    projectId: p.id,
-    projectName: p.name,
-  })
-}
 
 export function FairLaunchWizard({ project, address, onUpdated, onClose }: Props) {
   const existing = project.fairLaunch
@@ -75,25 +62,8 @@ export function FairLaunchWizard({ project, address, onUpdated, onClose }: Props
       return
     }
     onUpdated(updated)
-    setMsg('Draft saved. Creators earn when people trade your token (simulated).')
+    setMsg('Draft saved. A token is live only after you deploy it and paste the address.')
     setStep('review')
-  }
-
-  const runSimulate = () => {
-    const updated = simulateFairLaunch(project.id, cfg(), address)
-    if (!updated) {
-      setErr('Could not simulate fair launch.')
-      return
-    }
-    if (updated.fairLaunch?.tokenAddress) {
-      registerFromProject(updated, resolvedCreator())
-      setPasteAddr(updated.fairLaunch.tokenAddress)
-    }
-    onUpdated(updated)
-    setMsg(
-      'Pending fair launch recorded (status: simulated) with demo tokenAddress for Trade. Replace via forge paste when live. Creators earn when people trade your token (simulated).',
-    )
-    setStep('deploy')
   }
 
   const pasteDeployed = () => {
@@ -199,7 +169,7 @@ export function FairLaunchWizard({ project, address, onUpdated, onClose }: Props
           )}
           <p className="muted small">
             Decimals fixed at {decimals}. No team mint after deploy. No transfer tax. Rewards know who
-            to credit via creatorAddress (demo ledger).
+            on the project after you paste a deployed contract.
           </p>
           <div className="cta-row">
             <button type="button" className="btn btn-primary" onClick={saveDraft}>
@@ -241,8 +211,8 @@ export function FairLaunchWizard({ project, address, onUpdated, onClose }: Props
             <button type="button" className="btn btn-ghost" onClick={() => setStep('configure')}>
               ← Configure
             </button>
-            <button type="button" className="btn btn-primary" onClick={runSimulate}>
-              Deploy (local/demo) →
+            <button type="button" className="btn btn-primary" onClick={() => setStep('deploy')}>
+              Paste a deployed address →
             </button>
           </div>
         </div>
@@ -251,9 +221,8 @@ export function FairLaunchWizard({ project, address, onUpdated, onClose }: Props
       {step === 'deploy' && (
         <div className="wizard-body">
           <div className="demo-banner">
-            <strong>Local / demo mode.</strong> Browser cannot safely deploy without a user key
-            ceremony. Desk creates a pending fair-launch record (<code className="inline-code">simulated</code>
-            ). Live deploy uses Foundry from <code className="inline-code">Desktop/hood-token</code>.
+            <strong>Deploy from your machine, then paste the contract.</strong> The desk does not
+            mint a stand-in token.
           </div>
 
           <pre className="code-block">{`cd /Users/poker.vibe/Desktop/hood-token
@@ -271,16 +240,10 @@ forge script script/DeployHood.s.sol:DeployHood \\
               placeholder="0x…"
             />
           </label>
-          <p className="tiny muted">
-            Saving registers creator for Rewards. Creators earn when people trade your token
-            (simulated).
-          </p>
+          <p className="tiny muted">Saving stores the deployed contract on this project.</p>
           <div className="cta-row">
             <button type="button" className="btn btn-primary" onClick={pasteDeployed}>
               Save tokenAddress
-            </button>
-            <button type="button" className="btn btn-ghost" onClick={runSimulate}>
-              Re-run simulate
             </button>
           </div>
 
@@ -296,7 +259,7 @@ forge script script/DeployHood.s.sol:DeployHood \\
             {pasteAddr.trim().startsWith('0x') && pasteAddr.trim().length === 42 ? (
               <div className="cta-row mt token-name-row">
                 <span className="mono tiny">${symbol || 'TOKEN'}</span>
-                <VerifiedBadge address={pasteAddr.trim()} allowDemoMark />
+                <VerifiedBadge address={pasteAddr.trim()} />
                 <a
                   className="btn btn-ghost btn-sm"
                   href={explorerVerifyUrl(pasteAddr.trim())}
@@ -305,16 +268,6 @@ forge script script/DeployHood.s.sol:DeployHood \\
                 >
                   Open verify tab →
                 </a>
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => {
-                    markVerifiedDemo(pasteAddr.trim())
-                    setMsg('Marked verified (demo) — green check will show for this address.')
-                  }}
-                >
-                  Mark verified (demo)
-                </button>
               </div>
             ) : (
               <p className="tiny muted mt">Paste a tokenAddress to check / mark verification.</p>

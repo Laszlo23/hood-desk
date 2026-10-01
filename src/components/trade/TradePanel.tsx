@@ -36,8 +36,6 @@ type Props = {
   onRequestSimulate: (draft: TradeDraft) => void
 }
 
-const ORDER_TYPES: OrderType[] = ['market', 'limit', 'stop', 'twap', 'dca']
-
 export function TradePanel({
   token,
   lastVet,
@@ -59,11 +57,8 @@ export function TradePanel({
     args: address ? [address] : undefined,
     query: { enabled: Boolean(address && poolLive && HOOD_TOKEN_ADDRESS) },
   })
-  const [mode, setMode] = useState<TradeMode>('pro')
   const [side, setSide] = useState<OrderSide>('buy')
-  const [type, setType] = useState<OrderType>('market')
   const [amount, setAmount] = useState('')
-  const [limitPrice, setLimitPrice] = useState('')
   const [poolExists, setPoolExists] = useState<boolean | null>(null)
 
   const isHoodToken = HOOD_TOKEN_ADDRESS && 
@@ -98,18 +93,12 @@ export function TradePanel({
   const hasNoPool = isHoodToken && poolExists === false
 
   const changeCls = token.change24h >= 0 ? 'up' : 'down'
-  const effectiveType: OrderType = mode === 'instant' ? 'market' : type
-  const needsPrice = effectiveType === 'limit' || effectiveType === 'stop'
 
   const canSubmit = useMemo(() => {
-    if (hasNoPool) return false
+    if (!poolLive || hasNoPool) return false
     const n = Number(amount)
-    if (!amount || !(n > 0)) return false
-    if (needsPrice && !(Number(limitPrice) > 0)) return false
-    return true
-  }, [amount, limitPrice, needsPrice, hasNoPool])
-
-  const liveMarket = poolLive && (mode === 'instant' || type === 'market')
+    return Boolean(amount) && n > 0
+  }, [amount, hasNoPool, poolLive])
 
   const setPct = (pct: number) => {
     if (poolLive && address) {
@@ -123,19 +112,15 @@ export function TradePanel({
         return
       }
     }
-    const demoBal = side === 'buy' ? 1.25 : 50_000
-    const v = demoBal * pct
-    setAmount(side === 'buy' ? v.toFixed(4) : v.toFixed(0))
   }
 
   const submit = () => {
     if (!canSubmit) return
     onRequestSimulate({
       side,
-      type: effectiveType,
-      mode,
+      type: 'market',
+      mode: 'instant',
       amount,
-      price: needsPrice ? limitPrice : undefined,
     })
   }
 
@@ -169,7 +154,6 @@ export function TradePanel({
           <strong className="mono">
             {hasNoPool ? '—' : formatPrice(liveQuote ? liveQuote.price : token.price)}
           </strong>
-          {token.isDemo && !hasNoPool && <span className="demo-tag">demo</span>}
           {liveQuote && <span className="demo-tag">pool</span>}
           {hasNoPool && <span className="demo-tag">no pool</span>}
         </div>
@@ -222,43 +206,7 @@ export function TradePanel({
         </p>
       )}
 
-      <div className="mode-tabs">
-        <button
-          type="button"
-          className={`mode-tab${mode === 'pro' ? ' active' : ''}`}
-          onClick={() => setMode('pro')}
-        >
-          Pro
-        </button>
-        <button
-          type="button"
-          className={`mode-tab${mode === 'instant' ? ' active' : ''}`}
-          onClick={() => setMode('instant')}
-        >
-          Instant
-        </button>
-      </div>
-
-      {mode === 'pro' && (
-        <div className="order-type-row">
-          {ORDER_TYPES.map((t) => (
-            <button
-              key={t}
-              type="button"
-              className={`ot-chip${type === t ? ' active' : ''}`}
-              onClick={() => setType(t)}
-            >
-              {t.toUpperCase()}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {mode === 'instant' && (
-        <p className="tiny muted instant-note">
-          {poolLive ? 'Instant = market swap on Uniswap. Your wallet signs it.' : 'Instant = market simulate, one tap.'}
-        </p>
-      )}
+      <p className="tiny muted instant-note">Market swap on Uniswap. Your wallet signs it.</p>
 
       <div className="side-tabs">
         <button
@@ -296,57 +244,27 @@ export function TradePanel({
         ))}
       </div>
 
-      {mode === 'pro' && needsPrice && (
-        <label className="field">
-          <span>{effectiveType === 'stop' ? 'Trigger price' : 'Limit price'}</span>
-          <input
-            className="input mono"
-            inputMode="decimal"
-            placeholder={formatPrice(token.price)}
-            value={limitPrice}
-            onChange={(e) => setLimitPrice(e.target.value)}
-          />
-        </label>
-      )}
-
-      {(effectiveType === 'twap' || effectiveType === 'dca') && mode === 'pro' && (
-        <p className="tiny muted">
-          {effectiveType.toUpperCase()} schedules are simulated locally only — no on-chain
-          execution.
-        </p>
-      )}
-
       <button
         type="button"
         className="btn btn-primary trade-submit"
-        disabled={!canSubmit || hasNoPool || busy || undefined}
+        disabled={!canSubmit || busy || undefined}
         onClick={submit}
       >
         {busy
           ? 'Waiting for wallet…'
-          : hasNoPool
-            ? `No pool — cannot trade ${token.symbol}`
-            : liveMarket
-              ? `${side === 'buy' ? 'Buy' : 'Sell'} ${token.symbol}`
-              : `Simulate ${side === 'buy' ? 'Buy' : 'Sell'} ${token.symbol}`}
+          : poolLive
+            ? `${side === 'buy' ? 'Buy' : 'Sell'} ${token.symbol}`
+            : `No pool — cannot trade ${token.symbol}`}
       </button>
 
       <p className="tiny muted trade-disclaimer">
-        {hasNoPool ? (
+        {poolLive ? (
           <>
-            <strong>${token.symbol} has no Uniswap pool.</strong> Create liquidity on{' '}
-            <a href={`https://app.uniswap.org/swap?chain=robinhood&inputCurrency=ETH&outputCurrency=${token.address}`} target="_blank" rel="noreferrer">
-              Uniswap
-            </a>{' '}
-            to enable trading.
-          </>
-        ) : liveMarket ? (
-          <>
-            Signs a Uniswap V3 swap on Robinhood Chain. Slippage {HOOD_SWAP_SLIPPAGE_BPS / 100}%. The pool is thin.
+            Only swap an amount you can afford to lose. Your wallet signs a Uniswap swap. Slippage {HOOD_SWAP_SLIPPAGE_BPS / 100}%. The pool is thin.
           </>
         ) : (
           <>
-            This order stays on the desk. $HOOD market swaps are the wallet-signed path.
+            <strong>${token.symbol} has no Uniswap pool on Robinhood Chain.</strong> There is no local fill.
           </>
         )}
       </p>

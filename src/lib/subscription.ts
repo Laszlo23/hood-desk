@@ -59,9 +59,9 @@ export const TIERS: TierDef[] = [
     name: 'Free',
     price: '$0',
     priceUsd: 0,
-    tagline: 'Browse the desk — simulate before you scale',
+    tagline: 'Browse the desk and sign a $HOOD swap',
     perks: [
-      'Trade simulate (DCA/TWAP demo)',
+      'Wallet-signed $HOOD market swap',
       'Browse Skill Market',
       '1 published bot',
       'Follow up to 3 bots',
@@ -75,7 +75,7 @@ export const TIERS: TierDef[] = [
     paid: true,
     tagline: 'Auto-trade skills + 1 deployer agent',
     perks: [
-      'Auto-trade skills (DCA/TWAP simulate → live when DEX ready)',
+      'Wallet-signed $HOOD swaps',
       '1 deployer agent slot',
       'Basic social growth tips (X / Farcaster)',
       'Follow up to 5 bots',

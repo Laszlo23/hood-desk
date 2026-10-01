@@ -81,8 +81,62 @@ Contracts verified on RH 4663 Blockscout show a **green check** next to token sy
 | `VITE_STRIPE_PRICE_STARTER` / `_DESK` / `_DESK_PLUS` | For live Checkout | Stripe Price IDs |
 | `STRIPE_SECRET_KEY` | Server | sk_test — server/:8787 only |
 | `STRIPE_WEBHOOK_SECRET` | Optional | Webhook signing secret |
+| `HOODSTREET_MCP_URL` | No | Hoodstreet MCP endpoint. **Default:** `https://agent.hoodstreet.capital/mcp` |
 
 Explorer: [robinhoodchain.blockscout.com](https://robinhoodchain.blockscout.com)
+
+## Hoodstreet MCP integration (Neon / CCFF00 TBA)
+
+**Live read-only agent** — resolves CCFF00 ERC-6551 token-bound accounts via Hoodstreet's MCP server.
+
+### Server-side proxy
+
+The Express server (`server/index.js`) acts as an MCP client proxy so the browser never talks MCP SSE directly. Endpoints under `/api/hoodstreet/...`:
+
+| Endpoint | MCP tool | Description |
+|----------|----------|-------------|
+| `GET /api/hoodstreet/neon/:tokenId` | `get_neon_wallet` | Resolve CCFF00 TBA address |
+| `GET /api/hoodstreet/neon/:tokenId/assets` | `get_neon_assets` | Get assets in TBA |
+| `GET /api/hoodstreet/neon/:tokenId/balances` | `get_neon_balances` | Get token balances |
+| `GET /api/hoodstreet/neon/:tokenId/activity` | `get_neon_activity` | Get transaction activity |
+| `GET /api/hoodstreet/neon/:tokenId/token/:tokenAddress` | `get_wallet_token` | Get specific token (e.g. `$HOOD`) |
+
+All endpoints support optional `?walletType=ccff00-erc6551` (default) or `eoa`.
+
+### Agent skill
+
+**`neon_tba`** — terminal skill that resolves a CCFF00 token ID → TBA address → `$HOOD` balance.
+
+Examples: `neon tba 1`, `ccff00 tba 42`, `neon wallet 1000`
+
+### Read-only v1
+
+Only read tools are wired:
+- ✅ `get_neon_wallet`, `get_neon_assets`, `get_neon_balances`, `get_neon_activity`
+- ✅ `get_wallet_token`, `discover_wallet_tokens`, `get_wallet_nft`, `discover_wallet_nfts`
+- ❌ Write/trade/mint flows (`prepare_*`, `confirm_*`, `execute_neon_trade`, mint) — out until product policy + Uni pool
+
+### Environment
+
+Set `HOODSTREET_MCP_URL` to override (e.g. local MCP server):
+
+```bash
+# .env
+HOODSTREET_MCP_URL=http://localhost:3001/mcp
+```
+
+Default: `https://agent.hoodstreet.capital/mcp` (live production MCP endpoint).
+
+### Local dev
+
+Vite proxies `/api` → `:8787` automatically. Start both:
+
+```bash
+npm run server   # terminal 1 — Express :8787
+npm run dev      # terminal 2 — Vite :5182
+```
+
+Open Terminal (`#/terminal`) → say **neon tba 1** to test.
 
 ## Sections (hash SPA)
 

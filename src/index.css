@@ -5596,6 +5596,186 @@ a.nft-gallery-tile:hover {
   margin-bottom: 18px;
 }
 
+.hood-rite {
+  max-width: 720px;
+  margin: 8px auto 0;
+  gap: 0;
+}
+
+.hood-rite-kicker {
+  margin: 0;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  color: var(--accent);
+}
+
+.hood-rite-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.hood-rite-title h1 {
+  margin: 0;
+  font-family: Palatino, 'Palatino Linotype', 'Iowan Old Style', Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(3.4rem, 9vw, 5.6rem);
+  letter-spacing: -0.04em;
+  line-height: 0.88;
+}
+
+.hood-rite-lede {
+  margin: 18px 0 0;
+  max-width: 28ch;
+  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  font-size: 1.35rem;
+  line-height: 1.35;
+  color: var(--text-dim);
+}
+
+.hood-rite-address {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.hood-rite-address code {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  word-break: break-all;
+}
+
+.hood-rite-figures {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 36px 0 28px;
+  background: rgba(204, 255, 0, 0.16);
+  border: 1px solid rgba(204, 255, 0, 0.2);
+}
+
+.hood-rite-figures article {
+  background: #070807;
+  padding: 16px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hood-rite-figures span {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  color: var(--muted);
+}
+
+.hood-rite-figures strong {
+  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+}
+
+.hood-rite-figures em {
+  font-style: italic;
+  font-family: Palatino, Georgia, serif;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.hood-rite-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hood-rite .btn {
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.hood-rite .btn-primary {
+  background: var(--accent);
+  color: #14160c;
+  box-shadow: none;
+}
+
+.hood-rite .btn-primary:hover:not(:disabled) {
+  background: #e7ff70;
+  box-shadow: none;
+  filter: none;
+}
+
+.hood-rite .btn-ghost {
+  background: transparent;
+  border-color: rgba(204, 255, 0, 0.35);
+  color: var(--text);
+}
+
+.hood-seed {
+  margin-top: 42px;
+  padding: 22px 20px 20px;
+  background:
+    linear-gradient(180deg, rgba(204, 255, 0, 0.05), transparent 42%),
+    #080a06;
+  border-color: rgba(204, 255, 0, 0.16);
+}
+
+.hood-seed h2 {
+  margin: 10px 0 8px;
+  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.7rem;
+  letter-spacing: -0.02em;
+}
+
+.hood-seed-line,
+.hood-seed-quote {
+  margin: 0 0 16px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  max-width: 46ch;
+}
+
+.hood-seed-quote {
+  font-family: Palatino, Georgia, serif;
+  font-style: italic;
+}
+
+.hood-seed .field {
+  max-width: 280px;
+}
+
+.hood-keeper {
+  margin-top: 18px;
+  color: var(--muted);
+}
+
+.hood-keeper summary {
+  cursor: pointer;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+}
+
+.hood-keeper .field {
+  margin-top: 12px;
+}
+
+@media (max-width: 640px) {
+  .hood-rite-figures {
+    grid-template-columns: 1fr;
+  }
+}
+
 .tba-panel {
   margin-bottom: 18px;
 }

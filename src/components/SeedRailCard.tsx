@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useAccount, usePublicClient, useWriteContract } from 'wagmi'
 import { formatUnits, parseEther, parseUnits, type Address } from 'viem'
+import { EXPLORER_BASE } from '../lib/chain'
 import { erc20Abi } from '../lib/hoodToken'
 import { HOOD_LP_TOKEN_ID, HOOD_POSITION_MANAGER } from '../lib/trade/uniswap'
 import {
@@ -51,7 +52,6 @@ export function SeedRailCard() {
   const [facts, setFacts] = useState<RailFacts | null>(null)
   const [quote, setQuote] = useState<{ ethUsed: bigint; hoodPull: bigint; causesCut: bigint } | null>(null)
   const [causesEth, setCausesEth] = useState<bigint | null>(null)
-  const [causesBps, setCausesBps] = useState<number>(200)
   const [status, setStatus] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
@@ -62,7 +62,7 @@ export function SeedRailCard() {
     if (!rail || !publicClient) return
     let cancelled = false
     const load = async () => {
-      const [budget, treasury, owner, paused, approved, bps, pot] = await Promise.all([
+      const [budget, treasury, owner, paused, approved, pot] = await Promise.all([
         publicClient.readContract({ address: rail, abi: seedRailAbi, functionName: 'hoodBudget' }),
         publicClient.readContract({ address: rail, abi: seedRailAbi, functionName: 'treasury' }),
         publicClient.readContract({ address: rail, abi: seedRailAbi, functionName: 'owner' }),
@@ -73,7 +73,6 @@ export function SeedRailCard() {
           functionName: 'getApproved',
           args: [HOOD_LP_TOKEN_ID],
         }),
-        publicClient.readContract({ address: rail, abi: seedRailAbi, functionName: 'causesBps' }),
         publicClient.getBalance({ address: HOOD_CAUSES }),
       ])
       const allowance = await publicClient.readContract({
@@ -83,7 +82,6 @@ export function SeedRailCard() {
         args: [treasury, rail],
       })
       if (!cancelled) {
-        setCausesBps(Number(bps))
         setCausesEth(pot)
         setFacts({
           budget,
@@ -189,84 +187,70 @@ export function SeedRailCard() {
   )
 
   return (
-    <article className="card">
-      <h2>Seed the pool</h2>
-      <p className="muted">
-        Send ETH. {causesBps / 100}% goes to the causes pot. The rest is paired with treasury $HOOD on
-        position #{HOOD_LP_TOKEN_ID.toString()}, up to 100,000,000 HOOD. A large deposit uses the same
-        price as a small one. Extra ETH comes back when the budget cannot match the full amount.
+    <article className="card hood-seed">
+      <p className="hood-rite-kicker">Lay a seed</p>
+      <h2>The wood matches what you bring.</h2>
+      <p className="hood-seed-line">
+        The treasury meets you in the pool
+        {facts ? `, up to ${hoodText(spendable)} HOOD` : ''}.{' '}
+        <a href={`${EXPLORER_BASE}/address/${HOOD_CAUSES}`} target="_blank" rel="noreferrer">
+          The cause
+        </a>
+        {causesEth !== null ? ` holds ${ethText(causesEth)} ETH` : ''}.
       </p>
       {rail === null ? (
-        <p className="muted mt">
-          The rail contract is ready. It deploys from {short(HOOD_DEPLOYER)} and then that wallet approves
-          position #{HOOD_LP_TOKEN_ID.toString()}. The $HOOD budget stays at zero until it is set on purpose.
-        </p>
+        <p className="muted">The path is cut. It opens from {short(HOOD_DEPLOYER)}.</p>
       ) : (
         <>
-          <ul className="hood-contract-list">
-            <li>
-              <span className="rail-label">Rail</span>
-              <span className="mono">{rail}</span>
-            </li>
-            <li>
-              <span className="rail-label">Treasury budget</span>
-              <span className="mono">{facts ? `${hoodText(spendable)} HOOD` : '…'}</span>
-            </li>
-            <li>
-              <span className="rail-label">Causes ({causesBps / 100}%)</span>
-              <span className="mono">
-                {causesEth === null ? '…' : `${ethText(causesEth)} ETH`} · {HOOD_CAUSES}
-              </span>
-            </li>
-            <li>
-              <span className="rail-label">Position approval</span>
-              <span className="mono">{facts ? (facts.approved ? 'Approved to add' : 'Not approved') : '…'}</span>
-            </li>
-          </ul>
-          <label className="field mt">
-            <span className="rail-label">ETH to add</span>
+          {facts && !facts.approved ? (
+            <p className="muted">The pool has not taken this hand yet.</p>
+          ) : null}
+          <label className="field">
+            <span className="hood-rite-kicker">ETH</span>
             <input
-              className="input mono"
+              className="input"
               inputMode="decimal"
               value={amount}
-              placeholder="0.0"
+              placeholder="0.00"
               onChange={(e) => setAmount(e.target.value)}
             />
           </label>
-          {quote && quote.ethUsed > 0n && (
-            <p className="muted mt">
-              Causes {ethText(quote.causesCut)} ETH. Pool {ethText(quote.ethUsed)} ETH and up to {hoodText(quote.hoodPull)}{' '}
-              HOOD.
+          {quote && quote.ethUsed > 0n ? (
+            <p className="hood-seed-quote">
+              Cause {ethText(quote.causesCut)} ETH · Pool {ethText(quote.ethUsed)} ETH · {hoodText(quote.hoodPull)} HOOD
             </p>
-          )}
-          <div className="cta-row mt">
+          ) : null}
+          <div className="hood-rite-actions">
             <button type="button" className="btn btn-primary" disabled={!canSeed} onClick={() => void seed()}>
-              {busy ? 'Waiting for wallet…' : 'Seed liquidity'}
+              {busy ? 'One moment' : 'Seed'}
             </button>
           </div>
-          {isOwner && (
-            <label className="field mt">
-              <span className="rail-label">Treasury $HOOD this rail may pair. Sets the cap and approves that amount.</span>
-              <input
-                className="input mono"
-                inputMode="decimal"
-                value={budgetInput}
-                placeholder="0"
-                onChange={(e) => setBudgetInput(e.target.value)}
-              />
+          {isOwner ? (
+            <details className="hood-keeper">
+              <summary>Keeper</summary>
+              <label className="field">
+                <span className="hood-rite-kicker">Treasury match</span>
+                <input
+                  className="input"
+                  inputMode="decimal"
+                  value={budgetInput}
+                  placeholder="100000000"
+                  onChange={(e) => setBudgetInput(e.target.value)}
+                />
+              </label>
               <button
                 type="button"
-                className="btn btn-ghost mt"
+                className="btn btn-ghost"
                 disabled={busy || budgetInput.trim() === ''}
                 onClick={() => void setBudget()}
               >
-                Set budget
+                Set the match
               </button>
-            </label>
-          )}
+            </details>
+          ) : null}
         </>
       )}
-      {status && <p className="muted mt">{status}</p>}
+      {status ? <p className="hood-seed-quote">{status}</p> : null}
     </article>
   )
 }

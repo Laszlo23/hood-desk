@@ -16,7 +16,7 @@ type Props = {
 export function HoodAgentHero({
   title = 'HOOD runs the community desk',
   eyebrow = 'Flagship agent · Hood Street',
-  lead = 'HOOD auto-trades paper strategies for the pack on Robinhood Chain 4663. Shared vault, shared feed — clearly SIMULATED until a real RH DEX exists.',
+  lead = 'HOOD auto-trades paper strategies for the pack. $HOOD/WETH is live on Uniswap. The community vault stays labeled SIMULATED.',
   voice = 'HOOD here — scanning RH 4663 for the community. No fake routers. Pack first.',
   size = 112,
   className = '',

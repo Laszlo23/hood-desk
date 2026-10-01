@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useAccount } from 'wagmi'
-import { isAddress } from 'viem'
+import { useAccount, usePublicClient, useSendTransaction, useWriteContract } from 'wagmi'
+import { formatUnits, isAddress } from 'viem'
 import { OrdersPanel } from '../components/trade/OrdersPanel'
 import { TokenPicker } from '../components/trade/TokenPicker'
 import { TradeChart } from '../components/trade/TradeChart'
@@ -12,7 +12,10 @@ import {
   DEMO_TOKENS,
   stubTokenFromAddress,
 } from '../lib/trade/demoTokens'
-import { listOrders, placeSimulatedOrder } from '../lib/trade/orders'
+import { HOOD_SWAP_SLIPPAGE_BPS, planHoodMarketSwap } from '../lib/trade/hoodSwap'
+import { listOrders, placeOnchainOrder, placeSimulatedOrder } from '../lib/trade/orders'
+import { hoodHasPool } from '../lib/trade/uniswap'
+import { erc20Abi } from '../lib/hoodToken'
 import type {
   SimulatedOrder,
   Timeframe,
@@ -30,8 +33,20 @@ import { HOOD_TOKEN_ADDRESS } from '../lib/hoodToken'
 
 type Props = { onNavigate: (id: ViewId, projectId?: string) => void }
 
+function swapError(err: unknown): string {
+  if (err && typeof err === 'object' && 'shortMessage' in err) {
+    const message = String((err as { shortMessage?: string }).shortMessage || '')
+    if (message) return message
+  }
+  if (err instanceof Error && err.message) return err.message
+  return 'Swap failed'
+}
+
 export function Trade({ onNavigate }: Props) {
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
+  const publicClient = usePublicClient()
+  const { sendTransactionAsync } = useSendTransaction()
+  const { writeContractAsync } = useWriteContract()
   const tokens = useMemo(() => collectTradeTokens(address), [address])
   const [token, setToken] = useState<TradeToken>(DEMO_TOKENS[0])
   const [timeframe, setTimeframe] = useState<Timeframe>('15m')
@@ -43,6 +58,8 @@ export function Trade({ onNavigate }: Props) {
   const [pendingDraft, setPendingDraft] = useState<TradeDraft | null>(null)
   const [flash, setFlash] = useState<string | null>(null)
   const [panelKey, setPanelKey] = useState(0)
+  const [swapBusy, setSwapBusy] = useState(false)
+  const [poolExists, setPoolExists] = useState<boolean | null>(null)
 
   const refreshOrders = useCallback(() => {
     setOrders(listOrders())
@@ -51,6 +68,24 @@ export function Trade({ onNavigate }: Props) {
   useEffect(() => {
     refreshOrders()
   }, [refreshOrders])
+
+  useEffect(() => {
+    if (!HOOD_TOKEN_ADDRESS) {
+      setPoolExists(false)
+      return
+    }
+    let cancelled = false
+    hoodHasPool(HOOD_TOKEN_ADDRESS)
+      .then((exists) => {
+        if (!cancelled) setPoolExists(exists)
+      })
+      .catch(() => {
+        if (!cancelled) setPoolExists(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   // Keep selected token in sync if list refreshes with same address
   useEffect(() => {
@@ -92,7 +127,97 @@ export function Trade({ onNavigate }: Props) {
     [token, refreshOrders],
   )
 
+  const executeHoodSwap = useCallback(
+    async (draft: TradeDraft) => {
+      if (!isConnected || !address || !publicClient || !HOOD_TOKEN_ADDRESS) {
+        setFlash('Connect a wallet on Robinhood Chain to swap.')
+        window.setTimeout(() => setFlash(null), 3200)
+        return
+      }
+      setSwapBusy(true)
+      try {
+        const planned = await planHoodMarketSwap({
+          side: draft.side,
+          amount: draft.amount,
+          recipient: address,
+        })
+        if (!planned.ok) {
+          setFlash(planned.error)
+          return
+        }
+        const { plan } = planned
+        if (plan.approveAmount) {
+          const allowance = await publicClient.readContract({
+            address: HOOD_TOKEN_ADDRESS,
+            abi: erc20Abi,
+            functionName: 'allowance',
+            args: [address, plan.router],
+          })
+          if (allowance < plan.approveAmount) {
+            const approveHash = await writeContractAsync({
+              address: HOOD_TOKEN_ADDRESS,
+              abi: erc20Abi,
+              functionName: 'approve',
+              args: [plan.router, plan.approveAmount],
+            })
+            await publicClient.waitForTransactionReceipt({ hash: approveHash })
+          }
+        }
+        const hash = await sendTransactionAsync({
+          to: plan.router,
+          data: plan.data,
+          value: plan.value,
+        })
+        await publicClient.waitForTransactionReceipt({ hash })
+        const outLabel =
+          draft.side === 'buy'
+            ? `${formatUnits(plan.quotedOut, 18)} HOOD`
+            : `${formatUnits(plan.quotedOut, 18)} ETH`
+        placeOnchainOrder({
+          tokenAddress: token.address,
+          tokenSymbol: token.symbol,
+          quote: token.quote,
+          side: draft.side,
+          type: draft.type,
+          mode: draft.mode,
+          amount: draft.amount,
+          price: draft.price,
+          txHash: hash,
+          note: `Uniswap V3 ${plan.fee / 10000}% · quoted ${outLabel} · min ${HOOD_SWAP_SLIPPAGE_BPS / 100}% slippage`,
+        })
+        refreshOrders()
+        recordSkillUsage('order')
+        awardXp('simulate_trade', { once: false })
+        setOrdersTab('trades')
+        setFlash(`Swap confirmed · ${hash.slice(0, 10)}…`)
+        setPanelKey((k) => k + 1)
+      } catch (err) {
+        setFlash(swapError(err))
+      } finally {
+        setSwapBusy(false)
+        window.setTimeout(() => setFlash(null), 4200)
+      }
+    },
+    [
+      address,
+      isConnected,
+      publicClient,
+      refreshOrders,
+      sendTransactionAsync,
+      token,
+      writeContractAsync,
+    ],
+  )
+
   const onRequestSimulate = (draft: TradeDraft) => {
+    const liveMarket =
+      Boolean(isHoodToken) &&
+      poolExists === true &&
+      (draft.mode === 'instant' || draft.type === 'market')
+    if (liveMarket) {
+      void executeHoodSwap(draft)
+      return
+    }
     const vetOk =
       lastVet &&
       lastVet.address.toLowerCase() === token.address.toLowerCase() &&
@@ -123,12 +248,16 @@ export function Trade({ onNavigate }: Props) {
 
       <div className="trade-center">
         <WeeklyBanner compact />
-        <TradeStatusBar tokenSymbol={token.symbol} />
-        {isHoodToken && (
+        <TradeStatusBar
+          mode={isHoodToken && poolExists ? 'uniswap' : 'simulate'}
+          live={Boolean(isHoodToken && poolExists)}
+          tokenSymbol={token.symbol}
+        />
+        {isHoodToken && poolExists === false && (
           <div className="trade-pool-notice">
             <strong>No $HOOD Uniswap pool yet</strong>
             <p className="tiny muted">
-              Checked all fee tiers — no liquidity created. Simulated trades stay labeled DEMO. Open on Uniswap or Oku to check live pool status with token address.
+              Checked WETH and USDG fee tiers. Market swaps stay off until a pool exists.
             </p>
             <div className="cta-row">
               <a href={uniswapTokenUrl} target="_blank" rel="noreferrer" className="btn btn-primary btn-sm">
@@ -140,6 +269,22 @@ export function Trade({ onNavigate }: Props) {
               <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('hood')}>
                 $HOOD info
               </button>
+            </div>
+          </div>
+        )}
+        {isHoodToken && poolExists === true && (
+          <div className="trade-pool-notice">
+            <strong>$HOOD/WETH is live on Uniswap V3</strong>
+            <p className="tiny muted">
+              Market buy and sell sign in your wallet. The pool holds 0.00015 WETH and 150,000 $HOOD at a 1% fee, so a large size will not fill. Limit, stop, TWAP, and DCA stay on this desk.
+            </p>
+            <div className="cta-row">
+              <a href={uniswapTokenUrl} target="_blank" rel="noreferrer" className="btn btn-primary btn-sm">
+                Open on Uniswap →
+              </a>
+              <a href={okuTokenUrl} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm">
+                Open on Oku →
+              </a>
             </div>
           </div>
         )}
@@ -208,6 +353,8 @@ export function Trade({ onNavigate }: Props) {
           setVetGate(false)
           setVetOpen(true)
         }}
+        busy={swapBusy}
+        poolLive={Boolean(isHoodToken && poolExists)}
         onRequestSimulate={onRequestSimulate}
       />
 

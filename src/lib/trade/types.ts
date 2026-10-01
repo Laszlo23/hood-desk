@@ -1,4 +1,4 @@
-/** Trade UI types — local/simulated only until RH DEX is confirmed. */
+/** Trade UI types. $HOOD market swaps are on-chain. Other order types stay on the desk. */
 
 export type QuoteAsset = 'ETH' | 'USDC'
 
@@ -59,6 +59,7 @@ export type SimulatedOrder = {
   price?: string
   status: OrderStatus
   note: string
+  txHash?: string
 }
 
 export type VetVerdict = 'Likely real' | 'Caution' | 'High risk'

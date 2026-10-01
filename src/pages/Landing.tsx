@@ -53,8 +53,8 @@ export function Landing({ onNavigate }: Props) {
         <FeaturedTxRow compact className="landing-featured-tx" />
 
         <div className="demo-banner landing-honesty" role="note">
-          <strong>Honest desk.</strong> Trade fills are <em>simulated</em> (<code className="inline-code">local_ord_*</code>).
-          $HOOD is deployed (transparent ERC-20). Green check = Blockscout-verified only — explorer verify may lag behind Cloudflare.
+          <strong>Honest desk.</strong> $HOOD market swaps sign on Uniswap V3. Limit, TWAP, auto-trade, and the rewards ledger stay on this desk.
+          $HOOD is deployed (transparent ERC-20). Green check means Sourcify or Blockscout verified the contract.
           Featured hash stays labeled <em>not found on RH</em>.
         </div>
 

@@ -1,4 +1,5 @@
 import { HoodSeal } from '../HoodSeal'
+import { EXPLORER_TX } from '../../lib/chain'
 import type { SimulatedOrder } from '../../lib/trade/types'
 
 type Props = {
@@ -36,7 +37,9 @@ export function OrdersPanel({ orders, tab, onTab }: Props) {
         <div className="orders-empty">
           <HoodSeal size={40} decorative className="empty-seal" />
           <p className="muted">No {tab === 'trades' ? 'trades' : 'orders'} yet</p>
-          <p className="tiny muted">SIMULATED desk — Market / Limit in the right panel. No live RH DEX.</p>
+          <p className="tiny muted">
+            $HOOD market swaps sign on Uniswap. Other orders stay on this desk.
+          </p>
         </div>
       ) : (
         <div className="orders-table-wrap">
@@ -55,7 +58,13 @@ export function OrdersPanel({ orders, tab, onTab }: Props) {
               {rows.map((o) => (
                 <tr key={o.id}>
                   <td className="mono tiny" title={o.note}>
-                    {o.id}
+                    {o.txHash ? (
+                      <a href={EXPLORER_TX(o.txHash)} target="_blank" rel="noreferrer">
+                        {o.txHash.slice(0, 10)}…
+                      </a>
+                    ) : (
+                      o.id
+                    )}
                   </td>
                   <td className={o.side === 'buy' ? 'side-buy' : 'side-sell'}>
                     {o.side.toUpperCase()}

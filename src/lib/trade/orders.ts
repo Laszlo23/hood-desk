@@ -48,8 +48,32 @@ export function placeSimulatedOrder(input: PlaceOrderInput): SimulatedOrder {
     mode: input.mode,
     amount: input.amount,
     price: input.price,
-    status: input.type === 'market' ? 'filled' : 'simulated',
-    note: 'SIMULATED — no on-chain swap. RH DEX router TBD.',
+    status: 'simulated',
+    note: 'Desk order — not sent to Uniswap. Limit, stop, TWAP, and DCA stay here.',
+  }
+  const all = listOrders()
+  all.unshift(order)
+  write(all)
+  return order
+}
+
+export function placeOnchainOrder(
+  input: PlaceOrderInput & { txHash: string; note: string },
+): SimulatedOrder {
+  const order: SimulatedOrder = {
+    id: input.txHash,
+    createdAt: new Date().toISOString(),
+    tokenAddress: input.tokenAddress,
+    tokenSymbol: input.tokenSymbol,
+    quote: input.quote,
+    side: input.side,
+    type: input.type,
+    mode: input.mode,
+    amount: input.amount,
+    price: input.price,
+    status: 'filled',
+    note: input.note,
+    txHash: input.txHash,
   }
   const all = listOrders()
   all.unshift(order)

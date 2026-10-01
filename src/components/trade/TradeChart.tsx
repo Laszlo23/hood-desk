@@ -131,11 +131,13 @@ export function TradeChart({ token, timeframe, onTimeframe }: Props) {
             {token.symbol}/{token.quote}
           </h2>
           <p className="muted tiny">
-            {shouldShowNoPool 
-              ? 'No Uniswap pool found — cannot show price chart' 
-              : isCheckingPool 
+            {shouldShowNoPool
+              ? 'No Uniswap pool found — cannot show price chart'
+              : isCheckingPool
                 ? 'Checking pool status...'
-                : 'Demo OHLCV · not a live RH DEX feed'}
+                : isHoodToken
+                  ? 'Candles are a desk drawing. $HOOD/WETH is live — market swaps sign on Uniswap.'
+                  : 'Demo OHLCV · not a live RH DEX feed'}
           </p>
         </div>
         <div className="tf-row" role="tablist" aria-label="Timeframes">

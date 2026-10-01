@@ -105,7 +105,7 @@ export function collectTradeTokens(wallet?: string | null): TradeToken[] {
       change24h: 0,
       marketCap: 0,
       volume24h: 0,
-      badges: ['Robinhood', 'No pool'],
+      badges: ['Robinhood', 'HOOD/WETH'],
       isDemo: false,
       fairLaunchAttached: true,
     })

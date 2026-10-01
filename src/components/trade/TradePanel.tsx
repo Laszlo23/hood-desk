@@ -1,5 +1,9 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useAccount, useBalance, useReadContract } from 'wagmi'
+import { formatUnits } from 'viem'
 import { formatPrice, formatUsdCompact } from '../../lib/trade/demoTokens'
+import { erc20Abi, HOOD_TOKEN_ADDRESS } from '../../lib/hoodToken'
+import { HOOD_SWAP_SLIPPAGE_BPS } from '../../lib/trade/hoodSwap'
 import type {
   OrderSide,
   OrderType,
@@ -8,7 +12,6 @@ import type {
   VetResult,
 } from '../../lib/trade/types'
 import { VerifiedBadge } from '../VerifiedBadge'
-import { HOOD_TOKEN_ADDRESS } from '../../lib/hoodToken'
 import { hoodHasPool } from '../../lib/trade/uniswap'
 
 export type TradeDraft = {
@@ -23,13 +26,35 @@ type Props = {
   token: TradeToken
   lastVet: VetResult | null
   onOpenVet: () => void
+  busy?: boolean
+  /** $HOOD market orders sign on Uniswap when this is true. */
+  poolLive?: boolean
   /** Called when user clicks simulate; parent may gate via vet modal */
   onRequestSimulate: (draft: TradeDraft) => void
 }
 
 const ORDER_TYPES: OrderType[] = ['market', 'limit', 'stop', 'twap', 'dca']
 
-export function TradePanel({ token, lastVet, onOpenVet, onRequestSimulate }: Props) {
+export function TradePanel({
+  token,
+  lastVet,
+  onOpenVet,
+  busy = false,
+  poolLive = false,
+  onRequestSimulate,
+}: Props) {
+  const { address } = useAccount()
+  const { data: ethBal } = useBalance({
+    address,
+    query: { enabled: Boolean(address && poolLive) },
+  })
+  const { data: hoodBal } = useReadContract({
+    address: HOOD_TOKEN_ADDRESS ?? undefined,
+    abi: erc20Abi,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: { enabled: Boolean(address && poolLive && HOOD_TOKEN_ADDRESS) },
+  })
   const [mode, setMode] = useState<TradeMode>('pro')
   const [side, setSide] = useState<OrderSide>('buy')
   const [type, setType] = useState<OrderType>('market')
@@ -80,7 +105,20 @@ export function TradePanel({ token, lastVet, onOpenVet, onRequestSimulate }: Pro
     return true
   }, [amount, limitPrice, needsPrice, hasNoPool])
 
+  const liveMarket = poolLive && (mode === 'instant' || type === 'market')
+
   const setPct = (pct: number) => {
+    if (poolLive && address) {
+      const bal = side === 'buy' ? ethBal?.value : hoodBal
+      if (bal && bal > 0n) {
+        const bps = BigInt(Math.round(pct * 10_000))
+        let amt = (bal * bps) / 10_000n
+        const gasReserve = 50_000_000_000_000n
+        if (side === 'buy' && pct === 1 && bal > gasReserve) amt = bal - gasReserve
+        setAmount(formatUnits(amt, 18))
+        return
+      }
+    }
     const demoBal = side === 'buy' ? 1.25 : 50_000
     const v = demoBal * pct
     setAmount(side === 'buy' ? v.toFixed(4) : v.toFixed(0))
@@ -204,7 +242,9 @@ export function TradePanel({ token, lastVet, onOpenVet, onRequestSimulate }: Pro
       )}
 
       {mode === 'instant' && (
-        <p className="tiny muted instant-note">Instant = Market simulate, one tap.</p>
+        <p className="tiny muted instant-note">
+          {poolLive ? 'Instant = market swap on Uniswap. Your wallet signs it.' : 'Instant = market simulate, one tap.'}
+        </p>
       )}
 
       <div className="side-tabs">
@@ -266,12 +306,16 @@ export function TradePanel({ token, lastVet, onOpenVet, onRequestSimulate }: Pro
       <button
         type="button"
         className="btn btn-primary trade-submit"
-        disabled={!canSubmit || hasNoPool || undefined}
+        disabled={!canSubmit || hasNoPool || busy || undefined}
         onClick={submit}
       >
-        {hasNoPool 
-          ? `No pool — cannot trade ${token.symbol}` 
-          : `Simulate ${side === 'buy' ? 'Buy' : 'Sell'} ${token.symbol}`}
+        {busy
+          ? 'Waiting for wallet…'
+          : hasNoPool
+            ? `No pool — cannot trade ${token.symbol}`
+            : liveMarket
+              ? `${side === 'buy' ? 'Buy' : 'Sell'} ${token.symbol}`
+              : `Simulate ${side === 'buy' ? 'Buy' : 'Sell'} ${token.symbol}`}
       </button>
 
       <p className="tiny muted trade-disclaimer">
@@ -283,10 +327,13 @@ export function TradePanel({ token, lastVet, onOpenVet, onRequestSimulate }: Pro
             </a>{' '}
             to enable trading.
           </>
+        ) : liveMarket ? (
+          <>
+            Signs a Uniswap V3 swap on Robinhood Chain. Slippage {HOOD_SWAP_SLIPPAGE_BPS / 100}%. The pool is thin.
+          </>
         ) : (
           <>
-            Real on-chain swaps are <strong>TODO</strong> until RH DEX is confirmed. Fills are local (
-            <code className="inline-code">local_ord_*</code>) — no fake routers or tx hashes.
+            This order stays on the desk. $HOOD market swaps are the wallet-signed path.
           </>
         )}
       </p>

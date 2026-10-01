@@ -13,8 +13,11 @@ export const UNISWAP_V3_ADDRESSES = {
   Permit2: '0x000000000022D473030F116dDEE9F6B43aC78BA3',
 } as const
 
-export const WETH_ADDRESS: Address = '0x4200000000000000000000000000000000000006'
-export const USDG_ADDRESS: Address = '0x46D7C72B0E0E181b1783E5A30c2e0fB15A2F2f5B'
+/** Official Robinhood Chain WETH. The OP-stack predeploy 0x4200…0006 has no code here. */
+export const WETH_ADDRESS: Address = '0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73'
+/** Official USDG on Robinhood Chain. 6 decimals. */
+export const USDG_ADDRESS: Address = '0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168'
+export const USDG_DECIMALS = 6
 
 const FEE_TIERS = [100, 500, 3000, 10000] as const
 
@@ -211,26 +214,20 @@ export async function getTokenPrice(
   // Try WETH first (1e18 = 1 WETH)
   const wethPool = await checkPoolExists(tokenAddress, WETH_ADDRESS)
   if (wethPool.exists && wethPool.fee) {
-    const quote = await getQuote(
-      WETH_ADDRESS,
-      tokenAddress,
-      10n ** 18n, // 1 WETH
-      wethPool.fee,
-    )
-    if (quote.success && quote.amountOut) {
-      // Price = how much token you get for 1 WETH
-      // Invert to get token/WETH price
-      return 1 / (Number(quote.amountOut) / 1e18)
+    // Probe a tiny size so a thin pool can still quote.
+    const probe = 10n ** 10n
+    const quote = await getQuote(WETH_ADDRESS, tokenAddress, probe, wethPool.fee)
+    if (quote.success && quote.amountOut && quote.amountOut > 0n) {
+      return Number(probe) / Number(quote.amountOut)
     }
   }
 
-  // Try USDG (assuming 18 decimals)
   const usdgPool = await checkPoolExists(tokenAddress, USDG_ADDRESS)
   if (usdgPool.exists && usdgPool.fee) {
     const quote = await getQuote(
       USDG_ADDRESS,
       tokenAddress,
-      10n ** 18n, // 1 USDG
+      10n ** BigInt(USDG_DECIMALS), // 1 USDG
       usdgPool.fee,
     )
     if (quote.success && quote.amountOut) {

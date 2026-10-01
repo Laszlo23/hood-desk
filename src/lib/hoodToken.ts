@@ -28,7 +28,7 @@ export const HOOD_META = {
   totalSupplyNote: '1,000,000,000 HOOD (1B fixed supply, mint-once)',
 } as const
 
-/** Minimal ERC-20 ABI for balanceOf / decimals / symbol / name */
+/** Minimal ERC-20 ABI for balances, allowance, and approve. */
 export const erc20Abi = [
   {
     type: 'function',
@@ -64,6 +64,26 @@ export const erc20Abi = [
     stateMutability: 'nonpayable',
     inputs: [
       { name: 'to', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
+    type: 'function',
+    name: 'allowance',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'owner', type: 'address' },
+      { name: 'spender', type: 'address' },
+    ],
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    type: 'function',
+    name: 'approve',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'spender', type: 'address' },
       { name: 'amount', type: 'uint256' },
     ],
     outputs: [{ name: '', type: 'bool' }],

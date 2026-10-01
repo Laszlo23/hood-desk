@@ -1,4 +1,5 @@
 import { getAddress, isAddress } from 'viem'
+import { HOOD_TOKEN_ADDRESS } from '../hoodToken'
 import { listProjects } from '../projects'
 import { DEMO_TOKENS, HOOD_DEMO_ADDRESS } from './demoTokens'
 import type { TradeToken, VetResult, VetVerdict } from './types'
@@ -134,8 +135,13 @@ export function vetToken(input: VetInput): VetResult {
   reasons.push('On-chain age / holder analytics unknown (no RH indexer wired).')
   score -= 8
 
-  reasons.push('Live RH DEX pool / router not confirmed — trade stays simulated.')
-  score -= 5
+  if (HOOD_TOKEN_ADDRESS && raw.toLowerCase() === HOOD_TOKEN_ADDRESS.toLowerCase()) {
+    reasons.push('$HOOD/WETH is live on Uniswap V3. Market swaps on Trade are wallet-signed. The pool is thin.')
+    score += 6
+  } else {
+    reasons.push('No confirmed Uniswap pool for this token — desk orders stay local.')
+    score -= 5
+  }
 
   score = Math.max(0, Math.min(100, Math.round(score)))
 

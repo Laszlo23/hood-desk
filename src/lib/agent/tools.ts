@@ -14,6 +14,7 @@ import {
   type Project,
 } from '../projects'
 import { generateDemoCandles } from '../trade/chartData'
+import { getTokenPrice } from '../trade/uniswap'
 import { collectTradeTokens, findToken, formatPrice, HOOD_DEMO_ADDRESS } from '../trade/demoTokens'
 import { listOrders, placeSimulatedOrder } from '../trade/orders'
 import { formatVetSummary, vetToken } from '../trade/vet'
@@ -242,9 +243,20 @@ export function explainFairLaunch(): ToolResult {
 
 /** Honest TODO — no invented DEX / router addresses. Demo chart on #/trade. */
 export async function getPrice(_ctx: ToolContext): Promise<ToolResult> {
+  if (!HOOD_TOKEN_ADDRESS) {
+    return { ok: false, text: '$HOOD is not configured.' }
+  }
+  const wethPerHood = await getTokenPrice(HOOD_TOKEN_ADDRESS)
+  if (wethPerHood == null || !(wethPerHood > 0)) {
+    return {
+      ok: false,
+      text: `**Price**\n\nThe $HOOD/WETH pool did not quote. Open **#/trade**.\n\nExplorer: ${EXPLORER_BASE}`,
+    }
+  }
+  const hoodPerEth = 1 / wethPerHood
   return {
-    ok: false,
-    text: `**Price — demo only**\n\nRobinhood Chain DEX / oracle wiring is not known yet. Desk will not invent a router or pool address.\n\nOpen **#/trade** for seeded HOOD/ETH candles (labeled demo). Live quote after DEX is picked.\nExplorer: ${EXPLORER_BASE}`,
+    ok: true,
+    text: `**$HOOD / WETH**\n\nAbout **${hoodPerEth.toLocaleString(undefined, { maximumFractionDigits: 0 })} HOOD** per 1 ETH, from a tiny Uniswap quote. A real swap moves this because the pool is thin.\n\nMarket swaps sign on **#/trade**. Candles there are still a desk drawing.`,
   }
 }
 
@@ -252,7 +264,7 @@ export async function getPrice(_ctx: ToolContext): Promise<ToolResult> {
 export async function swapStub(_ctx: ToolContext): Promise<ToolResult> {
   return {
     ok: false,
-    text: `**Swap — simulated on Trade UI**\n\nNo RH DEX router is configured. Use **#/trade** to place **local simulated** orders (\`local_ord_*\` ids).\n\nWhen a real DEX exists:\n1. You approve in your wallet\n2. You sign the swap tx\n3. Desk never holds private keys\n4. DEX fee → agent treasury (runway)\n\nUntil then: no fake routers, no silent failures.`,
+    text: `**Swap**\n\n$HOOD market buy and sell on **#/trade** sign in your wallet through Uniswap V3 SwapRouter02. The desk does not hold your key.\n\nLimit, stop, TWAP, DCA, and auto-trade stay on this desk. The $HOOD/WETH pool is thin.`,
   }
 }
 
@@ -396,7 +408,7 @@ export function dailyBrief(ctx: ToolContext): ToolResult {
   const onRh = ctx.chainId === 4663 ? 'on RH 4663 ✓' : ctx.chainId ? `chain ${ctx.chainId}` : 'wallet disconnected'
   return {
     ok: true,
-    text: `**Daily brief** 🦊\n\n• Desk online · ${onRh}\n• Projects stored: **${projects.length}**\n• $HOOD: ${HOOD_TOKEN_DEPLOYED ? `\`${HOOD_TOKEN_ADDRESS}\`` : 'not deployed'}\n• Stripe Checkout is live on the desk\n• Trade stays simulated until a confirmed $HOOD pool exists\n• Ask **list skills** for the full catalog\n\nGM. What are we building?`,
+    text: `**Daily brief** 🦊\n\n• Desk online · ${onRh}\n• Projects stored: **${projects.length}**\n• $HOOD: ${HOOD_TOKEN_DEPLOYED ? `\`${HOOD_TOKEN_ADDRESS}\`` : 'not deployed'}\n• Stripe Checkout is live on the desk\n• $HOOD/WETH market swaps sign on Uniswap. Auto-trade stays paper.\n• Ask **list skills** for the full catalog\n\nGM. What are we building?`,
   }
 }
 
@@ -514,7 +526,7 @@ export function tradeChartSkill(ctx: ToolContext, raw?: string): ToolResult {
   recordSkillUsage('chart')
   return {
     ok: true,
-    text: `**Demo chart** — ${token.symbol}/${token.quote}\n\n• Candles: **${candles.length}** × 15m (seeded, not live DEX)\n• Last close: **${formatPrice(last.close)}**\n• Window change: **${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%**\n• Address: \`${token.address}\`\n\nOpen **#/trade** for the candlestick UI. Live RH feed = TODO.`,
+    text: `**Desk chart** — ${token.symbol}/${token.quote}\n\n• Candles: **${candles.length}** × 15m (desk drawing, not the pool)\n• Last close: **${formatPrice(last.close)}**\n• Window change: **${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%**\n• Address: \`${token.address}\`\n\nOpen **#/trade**. $HOOD market swaps there are wallet-signed.`,
   }
 }
 
@@ -522,6 +534,12 @@ export function tradeChartSkill(ctx: ToolContext, raw?: string): ToolResult {
 export function tradeOrderSkill(ctx: ToolContext, raw?: string): ToolResult {
   const addr = extractTradeAddress(raw) || HOOD_DEMO_ADDRESS
   const token = findToken(addr, ctx.address) || collectTradeTokens(ctx.address)[0]
+  if (HOOD_TOKEN_ADDRESS && token.address.toLowerCase() === HOOD_TOKEN_ADDRESS.toLowerCase()) {
+    return {
+      ok: false,
+      text: `**$HOOD swaps are wallet-signed.**\n\nOpen **#/trade**, connect on Robinhood Chain, and press Buy or Sell. This agent will not invent a fill.`,
+    }
+  }
   const side = /\bsell\b/i.test(raw || '') ? 'sell' : 'buy'
   const amtMatch = raw?.match(/(\d+(?:\.\d+)?)/)
   const amount = amtMatch?.[1] || (side === 'buy' ? '0.1' : '1000')
@@ -540,7 +558,7 @@ export function tradeOrderSkill(ctx: ToolContext, raw?: string): ToolResult {
   const via = bot ? `\nVia primary bot **${bot.name}** (usage share → demo ledger).` : ''
   return {
     ok: true,
-    text: `**Simulated ${side}** (local only)\n\n• ID: \`${order.id}\`\n• ${token.symbol}/${token.quote} · amount **${amount}**\n• Status: **${order.status}**\n• ${order.note}\n\nRecent local orders: ${recent.map((o) => o.id).join(', ') || 'none'}\n\nNo router / tx hash invented. UI: **#/trade**.${via}`,
+    text: `**Desk ${side}** (not sent)\n\n• ID: \`${order.id}\`\n• ${token.symbol}/${token.quote} · amount **${amount}**\n• Status: **${order.status}**\n• ${order.note}\n\nRecent local orders: ${recent.map((o) => o.id).join(', ') || 'none'}\n\nUI: **#/trade**.${via}`,
   }
 }
 

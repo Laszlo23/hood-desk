@@ -2672,6 +2672,20 @@ a:hover {
   -webkit-backdrop-filter: blur(22px) saturate(1.35);
 }
 
+/* Mobile: Make header sticky so nav is always accessible */
+@media (max-width: 1079px) {
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-radius: 0;
+    margin-bottom: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+  }
+}
+
 .top-bar-glow {
   pointer-events: none;
   position: absolute;
@@ -2716,6 +2730,14 @@ a:hover {
   padding: 7px 12px;
 }
 
+/* Mobile: Optimize vertical space */
+@media (max-width: 1079px) {
+  .top-bar-inner {
+    min-height: 50px;
+    padding: 6px 10px;
+  }
+}
+
 .top-bar-left {
   display: flex;
   align-items: center;
@@ -2748,6 +2770,14 @@ a:hover {
   box-shadow:
     0 0 0 1px rgba(204, 255, 0, 0.28),
     0 0 16px rgba(204, 255, 0, 0.18);
+}
+
+/* Mobile: Slightly smaller mark */
+@media (max-width: 1079px) {
+  .brand-mark-wrap {
+    width: 30px;
+    height: 30px;
+  }
 }
 
 .top-bar .brand-mark-img {
@@ -2900,6 +2930,15 @@ a:hover {
   transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
 }
 
+/* Mobile: Smaller Subscribe button */
+@media (max-width: 1079px) {
+  .nav-cta {
+    padding: 6px 11px;
+    font-size: 0.7rem;
+    gap: 5px;
+  }
+}
+
 .nav-cta:hover {
   filter: brightness(1.06);
   box-shadow:
@@ -2948,6 +2987,16 @@ a:hover {
   letter-spacing: 0.05em;
   padding: 7px 12px;
   min-height: 32px;
+}
+
+/* Mobile: Smaller Connect button */
+@media (max-width: 1079px) {
+  .nav-connect .btn,
+  .top-bar-right .connect-wrap .btn {
+    font-size: 0.68rem;
+    padding: 6px 10px;
+    min-height: 30px;
+  }
 }
 
 .nav-connect .btn-primary,
@@ -2999,6 +3048,16 @@ a:hover {
   transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 
+/* Mobile: Optimize burger button size */
+@media (max-width: 1079px) {
+  .nav-burger {
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+    gap: 4px;
+  }
+}
+
 .nav-burger:hover {
   border-color: rgba(204, 255, 0, 0.45);
   box-shadow: 0 0 14px rgba(204, 255, 0, 0.15);
@@ -3027,6 +3086,31 @@ a:hover {
 }
 
 /* Mobile drawer — glass panel, not bare */
+.top-nav-drawer-backdrop {
+  display: none;
+}
+
+@media (max-width: 1079px) {
+  .top-nav-drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    animation: fadeIn 0.2s ease;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .top-nav-drawer {
   position: relative;
   z-index: 1;
@@ -3041,6 +3125,37 @@ a:hover {
     0 12px 32px rgba(0, 0, 0, 0.45),
     inset 0 1px 0 rgba(204, 255, 0, 0.08),
     0 0 24px rgba(204, 255, 0, 0.06);
+}
+
+/* Mobile: Remove horizontal margins on small screens, enable scroll */
+@media (max-width: 1079px) {
+  .top-nav-drawer {
+    margin: 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    max-height: calc(100vh - 50px);
+    max-height: calc(100dvh - 50px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 0;
+    z-index: 95;
+    animation: slideDown 0.25s ease;
+  }
+
+  @keyframes slideDown {
+    from {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
 }
 
 .top-nav-drawer-sheen {

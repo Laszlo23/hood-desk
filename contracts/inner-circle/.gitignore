@@ -1,0 +1,17 @@
+# Foundry
+out/
+cache/
+cache_hardhat/
+cache_forge/
+
+# Dotenv
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+artifacts/
+broadcast/
+
+# Dependencies
+node_modules/

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { DogiHoodCard } from '../components/DogiHoodCard'
 import { HoodSeederCard } from '../components/HoodSeederCard'
+import { InnerCircleCard } from '../components/InnerCircleCard'
 import {
   ALL_GALLERY_ITEMS,
   CCFF00_NFT_ADDRESS,
@@ -156,6 +157,11 @@ export function Nfts({ onNavigate }: Props) {
           <DogiHoodCard variant="featured" showHolderToggle />
           <HoodSeederCard variant="featured" showHolderToggle />
         </div>
+      </div>
+
+      <div className="nfts-featured-list">
+        <p className="rail-label">Inner Circle · soulbound membership</p>
+        <InnerCircleCard variant="featured" showHolderToggle />
       </div>
 
       <article className="card mt nft-gallery-section">

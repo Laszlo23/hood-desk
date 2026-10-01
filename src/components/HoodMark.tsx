@@ -1,3 +1,5 @@
+import { HoodLogo } from './HoodLogo'
+
 type Props = {
   size?: number
   /** mark = icon only; logo = square with HOOD; avatar = circular chat; photo = raster mascot */
@@ -22,6 +24,10 @@ export function HoodMark({
   bounce,
   alt = 'HOOD agent',
 }: Props) {
+  if (variant === 'logo') {
+    return <HoodLogo size={size} className={className} alt={alt} />
+  }
+
   return (
     <img
       src={SRC[variant]}

@@ -2775,6 +2775,108 @@ a:hover {
 .hood-mark.bounce {
   animation: foxbounce 1.6s ease-in-out infinite;
 }
+
+.hood-logo-visor {
+  stroke-dasharray: 100;
+  animation: hood-visor-draw 1.3s ease forwards, hood-visor 3.6s ease-in-out 1.3s infinite;
+}
+
+.hood-logo-orbit {
+  stroke-opacity: 0.45;
+  stroke-dasharray: 7 18;
+  animation: hood-orbit 18s linear infinite;
+}
+
+.hood-logo-ring {
+  animation: hood-ring 3.6s ease-in-out infinite;
+}
+
+.hood-logo-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hood-node 2.4s ease-in-out infinite;
+}
+
+.hood-logo-node.n2 {
+  animation-delay: 0.4s;
+}
+
+.hood-logo-node.n3 {
+  animation-delay: 0.8s;
+}
+
+.hood-logo-lift {
+  animation: hood-lift 5.6s ease-in-out infinite;
+}
+
+@keyframes hood-visor-draw {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes hood-visor {
+  0%,
+  100% {
+    stroke-opacity: 0.65;
+  }
+  50% {
+    stroke-opacity: 1;
+  }
+}
+
+@keyframes hood-orbit {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+@keyframes hood-ring {
+  0%,
+  100% {
+    stroke-opacity: 0.28;
+  }
+  50% {
+    stroke-opacity: 0.7;
+  }
+}
+
+@keyframes hood-node {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  45% {
+    opacity: 1;
+  }
+}
+
+@keyframes hood-lift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hood-logo-visor,
+  .hood-logo-orbit,
+  .hood-logo-ring,
+  .hood-logo-node,
+  .hood-logo-lift {
+    animation: none;
+  }
+
+  .hood-logo-visor {
+    stroke-dashoffset: 0;
+  }
+}
 .brand-mark-img {
   border-radius: 10px;
 }

@@ -3117,7 +3117,7 @@ a:hover {
     display: block;
     position: fixed;
     inset: 0;
-    z-index: 90;
+    z-index: 90 !important;
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(2px);
     animation: fadeIn 0.2s ease;
@@ -3168,8 +3168,9 @@ a:hover {
     height: calc(100dvh - 50px);
     min-height: 400px;
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    z-index: 999;
+    z-index: 999 !important;
     animation: slideDown 0.25s ease;
   }
 

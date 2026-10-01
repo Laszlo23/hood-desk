@@ -254,18 +254,17 @@ export const HOOD_SEEDER_STORY: NftProjectStory = {
   name: HOOD_SEEDER.name,
   tagline: HOOD_SEEDER.tagline,
   story:
-    'Hood Seeder Pass honors early supporters who help seed $HOOD liquidity on Robinhood Chain. Robin Hood / forest / fox theme with #CCFF00 accent. On-chain lore: holder "seeded the desk". Future utility stub: optional $HOOD drip claim (off by default — owner must enable + fund separately). No fake promises, no invented verified status — deploy contract, mint pass, build liquidity together.',
+    'Hood Seeder Pass honors early supporters who help seed $HOOD liquidity on Robinhood Chain. Robin Hood / forest / fox theme with #CCFF00 accent. The desk wallet mints each pass, up to 3,333. The $HOOD drip stays off until the desk enables it.',
   confidence: 'community-lore',
-  confidenceNote:
-    HOOD_SEEDER_NFT_ADDRESS
-      ? `Hood Desk community collection. Contract deployed at ${shortAddr(HOOD_SEEDER_NFT_ADDRESS)} — see contracts/hood-seeder/ for deploy script.`
-      : 'Hood Desk community collection. Deploy contract via contracts/hood-seeder/ and set VITE_HOOD_SEEDER_NFT env var.',
+  confidenceNote: HOOD_SEEDER_NFT_ADDRESS
+    ? `Hood Desk collection. Live at ${shortAddr(HOOD_SEEDER_NFT_ADDRESS)}. The desk wallet mints the next pass.`
+    : 'Hood Desk collection. The contract address is not set on this desk.',
   badges: ['Seeder Pass', 'Forest Guardian', 'Early Supporter'],
   standard: HOOD_SEEDER.standard,
   chainId: HOOD_SEEDER.chainId,
   contract: HOOD_SEEDER_NFT_ADDRESS,
   erc20Note:
-    '$HOOD drip claim is a future utility stub — OFF by default. Owner must deploy + fund separate claim contract. Do not claim live airdrops without actual funding. Liquidity seeding (micro HOOD/WETH pool) is separate from the NFT contract.',
+    'The $HOOD drip on this pass stays off. The pool is separate from the pass.',
   sampleTokenId: HOOD_SEEDER.sampleTokenId,
   coverImage: '/nfts/hood-seeder/1.svg',
   gallery: HOOD_SEEDER_GALLERY,

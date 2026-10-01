@@ -129,15 +129,13 @@ export function Nfts({ onNavigate }: Props) {
         <p className="eyebrow">The wood</p>
         <h1>Marks</h1>
         <p className="muted">
-          DogiHood, Hood Seeder, and CCFF00. A mark can hold its own wallet. DogiHood and CCFF00
-          belong to Hood Street. Hood Seeder belongs to this desk.
+          DogiHood and CCFF00 belong to Hood Street. Hood Seeder and Inner Circle belong to this
+          desk. The desk wallet mints those two.
         </p>
         <div className="demo-banner">
-          <strong>Honest labels.</strong> Contracts shown were checked via OpenSea / official
-          HoodStreet pages / RH RPC. Hood Seeder is a desk community collection (deploy via
-          contracts/hood-seeder/). Sibling RH collections (e.g. DotHood) exist but are{' '}
-          <em>not</em> claimed as Hoodstreet-supported here. $CCFF00 ERC-20 transfers may be
-          disabled — culture &amp; membership first.
+          <strong>Mint.</strong> Connect the desk wallet on this page to mint the next Seeder pass
+          or the next Inner Circle badge. A pass can move. A badge stays in the wallet that
+          received it. Hood Street mints DogiHood and CCFF00.
         </div>
       </div>
 

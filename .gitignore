@@ -16,3 +16,6 @@ contracts/hood-seed-rail/out/
 contracts/hood-seed-rail/cache/
 contracts/hood-seed-rail/broadcast/
 contracts/hood-seed-rail/.env
+
+# Generated at build: scripts/seeder-metadata.mjs
+public/nfts/hood-seeder/*.json

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
+import { DeskMint } from './DeskMint'
 import { VerifiedBadge } from './VerifiedBadge'
 import {
   INNER_CIRCLE,
@@ -34,6 +35,10 @@ export function InnerCircleCard({
     }
   }, [address])
 
+  const refreshHold = () => {
+    void resolveInnerCircleHold(address).then(setHold)
+  }
+
   const onManual = (on: boolean) => {
     setManualInnerCircleHold(on)
     setHold((prev) => ({
@@ -67,8 +72,7 @@ export function InnerCircleCard({
           <p className="muted inner-circle-tagline">{INNER_CIRCLE.tagline}</p>
           {variant !== 'compact' && (
             <p className="tiny muted inner-circle-copy">
-              Soulbound membership badge for Hood Desk Inner Circle — owner-only mint, non-transferable.
-              Contract not yet deployed.
+              Soulbound membership badge for Hood Desk Inner Circle. One per wallet.
             </p>
           )}
 
@@ -82,21 +86,7 @@ export function InnerCircleCard({
             ))}
           </div>
 
-          <p className="tiny muted">Set VITE_INNER_CIRCLE_SBT after deploying contracts/src/InnerCircleSBT.sol</p>
-
-          <div className="cta-row inner-circle-actions">
-            <button type="button" className="btn btn-ghost btn-sm" disabled>
-              Mint (owner only)
-            </button>
-            <a
-              className="btn btn-ghost btn-sm"
-              href="https://github.com/yourusername/hood-desk/tree/main/contracts"
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              Contracts →
-            </a>
-          </div>
+          <p className="tiny muted">The Inner Circle address is not set on this desk.</p>
         </div>
       </article>
     )
@@ -150,8 +140,7 @@ export function InnerCircleCard({
         <p className="muted inner-circle-tagline">{INNER_CIRCLE.tagline}</p>
         {variant !== 'compact' && (
           <p className="tiny muted inner-circle-copy">
-            Non-transferable proof of Hood Desk Inner Circle membership. Owner-only mint, no transfers after mint.
-            Culture first, no promises.
+            One badge per wallet. The desk wallet mints it, and it stays in that wallet.
           </p>
         )}
 
@@ -175,10 +164,11 @@ export function InnerCircleCard({
           </p>
         ) : null}
 
+        {INNER_CIRCLE.contract ? (
+          <DeskMint contract={INNER_CIRCLE.contract} kind="inner" onMinted={refreshHold} />
+        ) : null}
+
         <div className="cta-row inner-circle-actions">
-          <button type="button" className="btn btn-primary btn-sm" disabled title="Owner-only mint">
-            Mint (owner only)
-          </button>
           {INNER_CIRCLE.explorerUrl ? (
             <a
               className="btn btn-ghost btn-sm"
@@ -189,14 +179,6 @@ export function InnerCircleCard({
               Explorer
             </a>
           ) : null}
-          <a
-            className="btn btn-ghost btn-sm"
-            href="https://github.com/yourusername/hood-desk/tree/main/contracts"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            Contracts →
-          </a>
         </div>
 
         {showHolderToggle && hold?.source !== 'onchain' ? (

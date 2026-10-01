@@ -6219,6 +6219,18 @@ a.nft-gallery-tile:hover {
   margin-top: 2px;
 }
 
+.desk-mint {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px 0 4px;
+}
+
+.desk-mint .field input {
+  width: 100%;
+  font-size: 12px;
+}
+
 .site-footer {
   margin-top: 12px;
   padding: 28px 4px 8px;

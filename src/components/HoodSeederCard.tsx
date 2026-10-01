@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
+import { DeskMint } from './DeskMint'
 import { VerifiedBadge } from './VerifiedBadge'
 import {
   HOOD_SEEDER,
@@ -37,6 +38,10 @@ export function HoodSeederCard({
       cancelled = true
     }
   }, [address])
+
+  const refreshHold = () => {
+    void resolveHoodSeederHold(address).then(setHold)
+  }
 
   const onManual = (on: boolean) => {
     setManualHoodSeederHold(on)
@@ -119,10 +124,16 @@ export function HoodSeederCard({
           <p className="tiny muted">Set VITE_HOOD_SEEDER_NFT for on-chain holder checks.</p>
         )}
 
+        {HOOD_SEEDER.contract ? (
+          <DeskMint contract={HOOD_SEEDER.contract} kind="seeder" onMinted={refreshHold} />
+        ) : (
+          <p className="tiny muted">Hood Seeder address is not set on this desk.</p>
+        )}
+
         <div className="cta-row dogihood-actions">
           {HOOD_SEEDER.contract ? (
             <a
-              className="btn btn-primary btn-sm"
+              className="btn btn-ghost btn-sm"
               href={hoodSeederItemUrl()}
               target="_blank"
               rel="noreferrer noopener"

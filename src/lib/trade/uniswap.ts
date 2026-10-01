@@ -1,4 +1,5 @@
-import { createPublicClient, http, type Address } from 'viem'
+import { createPublicClient, formatEther, formatUnits, http, type Address } from 'viem'
+import { HOOD_TOKEN_CONFIRMED } from '../hoodToken'
 import { robinhoodChain, RH_RPC } from '../chain'
 
 /**
@@ -21,6 +22,9 @@ export const USDG_DECIMALS = 6
 
 /** $HOOD/WETH 1% pool created on Uniswap V3. */
 export const HOOD_WETH_POOL: Address = '0xf27827ca8600e5c79b371f5b30e5a0e889bc7c44'
+/** Position NFT for that pool. Owner can still remove the liquidity. */
+export const HOOD_LP_TOKEN_ID = 1359889n
+export const HOOD_POSITION_MANAGER: Address = '0x73991a25C818Bf1f1128dEAaB1492D45638DE0D3'
 
 /** Swap URL selects the token by address. Explore pages stay empty until Uniswap indexes it. */
 export function uniswapSwapUrl(token: string): string {
@@ -252,4 +256,64 @@ export async function getTokenPrice(
   }
 
   return null
+}
+
+const BALANCE_ABI = [
+  {
+    type: 'function',
+    name: 'balanceOf',
+    stateMutability: 'view',
+    inputs: [{ name: 'account', type: 'address' }],
+    outputs: [{ name: 'balance', type: 'uint256' }],
+  },
+] as const
+
+const OWNER_ABI = [
+  {
+    type: 'function',
+    name: 'ownerOf',
+    stateMutability: 'view',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [{ name: 'owner', type: 'address' }],
+  },
+] as const
+
+export type HoodLaunchFacts = {
+  poolWeth: string
+  poolHood: string
+  lpOwner: Address
+}
+
+/** Reserves in the live pool, and the wallet that holds the position NFT. */
+export async function readHoodLaunch(): Promise<HoodLaunchFacts | null> {
+  try {
+    const c = getClient()
+    const [poolWeth, poolHood, lpOwner] = await Promise.all([
+      c.readContract({
+        address: WETH_ADDRESS,
+        abi: BALANCE_ABI,
+        functionName: 'balanceOf',
+        args: [HOOD_WETH_POOL],
+      }),
+      c.readContract({
+        address: HOOD_TOKEN_CONFIRMED,
+        abi: BALANCE_ABI,
+        functionName: 'balanceOf',
+        args: [HOOD_WETH_POOL],
+      }),
+      c.readContract({
+        address: HOOD_POSITION_MANAGER,
+        abi: OWNER_ABI,
+        functionName: 'ownerOf',
+        args: [HOOD_LP_TOKEN_ID],
+      }),
+    ])
+    return {
+      poolWeth: formatEther(poolWeth),
+      poolHood: formatUnits(poolHood, 18),
+      lpOwner,
+    }
+  } catch {
+    return null
+  }
 }

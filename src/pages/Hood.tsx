@@ -4,6 +4,13 @@ import { TokenBoundPanel } from '../components/TokenBoundPanel'
 import { VerifiedBadge } from '../components/VerifiedBadge'
 import { EXPLORER_BASE, EXPLORER_TOKEN, EXPLORER_TX } from '../lib/chain'
 import { HOOD_META, HOOD_TOKEN_DEPLOYED, HOOD_TOKEN_ADDRESS } from '../lib/hoodToken'
+import {
+  HOOD_LP_TOKEN_ID,
+  HOOD_WETH_POOL,
+  readHoodLaunch,
+  uniswapPoolUrl,
+  type HoodLaunchFacts,
+} from '../lib/trade/uniswap'
 import { checkOnchainVerified, sourcifyUrl, type VerifyStatus } from '../lib/verify/onchainVerified'
 import type { ViewId } from '../lib/nav'
 
@@ -45,6 +52,7 @@ function xPostIntent(text: string): string {
 export function Hood({ onNavigate }: Props) {
   const [copied, setCopied] = useState('')
   const [verify, setVerify] = useState<VerifyStatus | null>(null)
+  const [launch, setLaunch] = useState<HoodLaunchFacts | null>(null)
   const hoodAddr = HOOD_TOKEN_ADDRESS || ''
 
   useEffect(() => {
@@ -57,6 +65,16 @@ export function Hood({ onNavigate }: Props) {
       cancelled = true
     }
   }, [hoodAddr])
+
+  useEffect(() => {
+    let cancelled = false
+    void readHoodLaunch().then((facts) => {
+      if (!cancelled) setLaunch(facts)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const shareText = HOOD_TOKEN_DEPLOYED
     ? `$HOOD is live on ${CHAIN_NAME} (${CHAIN_ID})\n\n${hoodAddr}\n\nDeployed · 1B supply · companion token for Hood Desk\n\nhttps://doghood.aibusiness.fun`
@@ -163,7 +181,7 @@ export function Hood({ onNavigate }: Props) {
                   target="_blank"
                   rel="noreferrer"
                   className="btn btn-ghost btn-sm"
-                  title="View token on Uniswap (pool not confirmed)"
+                  title="Swap $HOOD on Uniswap"
                 >
                   Open on Uniswap →
                 </a>
@@ -172,7 +190,7 @@ export function Hood({ onNavigate }: Props) {
                   target="_blank"
                   rel="noreferrer"
                   className="btn btn-ghost btn-sm"
-                  title="View token on Oku (pool not confirmed)"
+                  title="View $HOOD on Oku"
                 >
                   Open on Oku →
                 </a>
@@ -181,7 +199,7 @@ export function Hood({ onNavigate }: Props) {
                   className="btn btn-ghost btn-sm"
                   onClick={() => onNavigate('trade')}
                 >
-                  Trade (demo) →
+                  Trade →
                 </button>
               </div>
             </article>
@@ -280,8 +298,30 @@ export function Hood({ onNavigate }: Props) {
           <article className="card hood-dex-card">
             <h2>Uniswap on Robinhood Chain</h2>
             <p className="muted">
-              Uniswap V3 is live on {CHAIN_NAME} at official contract addresses below. $HOOD pool status: <strong>not confirmed</strong> — no invented liquidity. If no pool exists, UI will link to Uniswap/Oku with the token address for honest discovery.
+              Fair launch: mint-once, no tax, and one public $HOOD/WETH pool. The pool is live.
+              Liquidity grows when someone adds ETH and the treasury matches $HOOD at the pool
+              price. The position can still be removed by its owner until it is locked.
             </p>
+            <ul className="hood-contract-list">
+              <li>
+                <span className="rail-label">Pool</span>
+                <a href={uniswapPoolUrl()} target="_blank" rel="noreferrer" className="mono hood-contract-link">
+                  {HOOD_WETH_POOL}
+                </a>
+              </li>
+              <li>
+                <span className="rail-label">In the pool</span>
+                <span className="mono">
+                  {launch
+                    ? `${Number(launch.poolWeth).toFixed(6)} ETH · ${Number(launch.poolHood).toLocaleString(undefined, { maximumFractionDigits: 0 })} HOOD`
+                    : 'Reading the pool…'}
+                </span>
+              </li>
+              <li>
+                <span className="rail-label">Position #{HOOD_LP_TOKEN_ID.toString()}</span>
+                <span className="mono">{launch ? launch.lpOwner : '…'}</span>
+              </li>
+            </ul>
             <ul className="hood-contract-list">
               {Object.entries(UNISWAP_ADDRESSES).map(([name, addr]) => (
                 <li key={name}>

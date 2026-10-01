@@ -77,6 +77,13 @@ a:hover {
     linear-gradient(180deg, #070807 0%, #050505 45%, #040504 100%);
 }
 
+/* Mobile: Remove padding to allow sticky header to work properly */
+@media (max-width: 1079px) {
+  .app-shell {
+    padding: 0;
+  }
+}
+
 .grid-bg {
   pointer-events: none;
   position: absolute;
@@ -129,11 +136,26 @@ a:hover {
   min-height: 0;
 }
 
+/* Mobile: Add padding to account for sticky header */
+@media (max-width: 1079px) {
+  .desk-layout {
+    gap: 0;
+    padding: 0;
+  }
+}
+
 .desk-main {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
+}
+
+/* Mobile: Add padding for sticky header and content spacing */
+@media (max-width: 1079px) {
+  .desk-main {
+    padding: 12px;
+  }
 }
 
 .page {
@@ -2677,7 +2699,7 @@ a:hover {
   .top-bar {
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
     border-radius: 0;
     margin-bottom: 0;
     border-left: none;
@@ -3127,21 +3149,23 @@ a:hover {
     0 0 24px rgba(204, 255, 0, 0.06);
 }
 
-/* Mobile: Remove horizontal margins on small screens, enable scroll */
+/* Mobile: Drawer slides down from below sticky header */
 @media (max-width: 1079px) {
   .top-nav-drawer {
-    margin: 0;
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-    max-height: calc(100vh - 50px);
-    max-height: calc(100dvh - 50px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
     position: fixed;
     top: 50px;
     left: 0;
     right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 12px;
+    border-radius: 0;
+    border: none;
+    border-top: 1px solid rgba(204, 255, 0, 0.18);
+    max-height: calc(100vh - 50px);
+    max-height: calc(100dvh - 50px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     z-index: 95;
     animation: slideDown 0.25s ease;
   }

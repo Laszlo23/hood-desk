@@ -196,6 +196,8 @@ export function TopNav({ view, onNavigate }: Props) {
     setSubLabel(getSubscription().label)
     setDrawerOpen(false)
     setMoreOpen(false)
+    // Scroll to top on navigation for mobile
+    window.scrollTo(0, 0)
   }, [view])
 
   useEffect(() => {
@@ -209,6 +211,16 @@ export function TopNav({ view, onNavigate }: Props) {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [drawerOpen, moreOpen])
+
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (drawerOpen && window.innerWidth < 1080) {
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = ''
+      }
+    }
+  }, [drawerOpen])
 
   useEffect(() => {
     if (!moreOpen) return
@@ -341,7 +353,13 @@ export function TopNav({ view, onNavigate }: Props) {
       </div>
 
       {drawerOpen && (
-        <div className="top-nav-drawer">
+        <>
+          <div
+            className="top-nav-drawer-backdrop"
+            onClick={() => setDrawerOpen(false)}
+            aria-hidden
+          />
+          <div className="top-nav-drawer">
           <div className="top-nav-drawer-sheen" aria-hidden />
           <nav className="top-nav-mobile" aria-label="Mobile primary">
             {DRAWER_SECTIONS.map((section) => {
@@ -412,6 +430,7 @@ export function TopNav({ view, onNavigate }: Props) {
             </a>
           </nav>
         </div>
+        </>
       )}
       <div className="top-bar-hairline" aria-hidden />
     </header>

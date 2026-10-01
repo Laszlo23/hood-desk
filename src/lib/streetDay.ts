@@ -3,7 +3,8 @@
  * Update the posts when the day changes. Do not invent likes or a space transcript.
  */
 
-export const GM_FARCASTER_APP = 'https://farcaster.xyz/miniapps/RWk7UVoMf6vW/gm-farcaster'
+/** The show site. The mini app URL only offers an app download outside Farcaster. */
+export const GM_FARCASTER_APP = 'https://www.gmfarcaster.com/'
 
 export const STREET_DAY = {
   readAt: '2026-10-01T19:00:00.000Z',

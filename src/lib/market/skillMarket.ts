@@ -91,208 +91,50 @@ function writeJson(key: string, value: unknown): void {
   localStorage.setItem(key, JSON.stringify(value))
 }
 
-const DEMO_CREATORS: CreatorProfile[] = [
-  {
-    id: 'creator_leonardo',
-    handle: '@0xleonardo',
-    wallet: undefined,
-    packsPublished: ['bot_hood_vet_pro'],
-    followerCount: 128,
-    followCredits: 640,
-    usageCredits: 420,
-    earningsSim: 186.4,
-    perks: ['Creator', 'Featured slot', 'FID 873944'],
-    feeSharePct: DEMO_FEE_SPLIT.creatorPct,
-  },
-  {
-    id: 'creator_dca',
-    handle: '@dca_desk',
-    packsPublished: ['bot_dca_desk'],
-    followerCount: 64,
-    followCredits: 280,
-    usageCredits: 190,
-    earningsSim: 72.1,
-    perks: ['Creator'],
-    feeSharePct: DEMO_FEE_SPLIT.creatorPct,
-  },
-  {
-    id: 'creator_scout',
-    handle: '@fairscout',
-    packsPublished: ['bot_fair_scout'],
-    followerCount: 41,
-    followCredits: 160,
-    usageCredits: 88,
-    earningsSim: 38.5,
-    perks: ['Creator'],
-    feeSharePct: DEMO_FEE_SPLIT.creatorPct,
-  },
-  {
-    id: 'creator_chart',
-    handle: '@charthawk',
-    packsPublished: ['bot_chart_hawk'],
-    followerCount: 55,
-    followCredits: 210,
-    usageCredits: 140,
-    earningsSim: 51.2,
-    perks: ['Creator'],
-    feeSharePct: DEMO_FEE_SPLIT.creatorPct,
-  },
-  {
-    id: 'creator_neon',
-    handle: '@neonops',
-    packsPublished: ['bot_neon_ops'],
-    followerCount: 33,
-    followCredits: 120,
-    usageCredits: 60,
-    earningsSim: 24.0,
-    perks: ['Creator'],
-    feeSharePct: DEMO_FEE_SPLIT.creatorPct,
-  },
-  {
-    id: 'creator_hood_agent',
-    handle: '@hood',
-    packsPublished: ['bot_hood_community'],
-    followerCount: 420,
-    followCredits: 2400,
-    usageCredits: 1800,
-    earningsSim: 466.3,
-    perks: ['Flagship agent', 'Community desk', 'Featured slot'],
-    feeSharePct: DEMO_FEE_SPLIT.creatorPct,
-  },
-]
+const DROPPED_PACK_IDS = new Set([
+  'bot_hood_community',
+  'bot_hood_vet_pro',
+  'bot_dca_desk',
+  'bot_fair_scout',
+  'bot_chart_hawk',
+  'bot_neon_ops',
+])
 
-const DEMO_BOTS: SkillPack[] = [
-  {
-    id: 'bot_hood_community',
-    name: 'HOOD Community Desk',
-    authorHandle: '@hood',
-    description:
-      'The desk agent. It can read the pool, list skills, and answer a fair-launch question. It does not place a swap.',
-    skillTags: ['community', 'auto-trade', 'DCA', 'HOOD agent', 'trade.order'],
-    skillConfig: ['trade_order', 'trade_chart', 'portfolio', 'daily_brief', 'fox_coach', 'help'],
-    followerCount: 420,
-    rating: 5.0,
-    featured: true,
-    createdAt: '2026-09-20T12:00:00.000Z',
-    isDemo: true,
-    creatorId: 'creator_hood_agent',
-  },
-  {
-    id: 'bot_hood_vet_pro',
-    name: 'Hood Vet Pro',
-    authorHandle: '@0xleonardo',
-    description:
-      'Checks a token before you trade it. @0xleonardo · FID 873944.',
-    skillTags: ['trade.vet', 'trade.order', 'portfolio', 'ensure_chain'],
-    skillConfig: ['trade_vet', 'trade_order', 'portfolio', 'ensure_chain', 'help'],
-    followerCount: 128,
-    rating: 4.8,
-    featured: true,
-    createdAt: '2026-09-01T12:00:00.000Z',
-    isDemo: true,
-    creatorId: 'creator_leonardo',
-  },
-  {
-    id: 'bot_dca_desk',
-    name: 'DCA Desk',
-    authorHandle: '@dca_desk',
-    description: 'Sizing notes for a calm buy. The swap still signs in your wallet.',
-    skillTags: ['DCA', 'trade.order', 'trade.chart', 'portfolio'],
-    skillConfig: ['trade_order', 'trade_chart', 'portfolio', 'daily_brief', 'help'],
-    followerCount: 64,
-    rating: 4.5,
-    featured: false,
-    createdAt: '2026-09-05T12:00:00.000Z',
-    isDemo: true,
-    creatorId: 'creator_dca',
-  },
-  {
-    id: 'bot_fair_scout',
-    name: 'Fair Launch Scout',
-    authorHandle: '@fairscout',
-    description: 'Scouts fair-launch status, project pitch, and social drafts before you ship.',
-    skillTags: ['fair_launch', 'projects', 'draft_tweet', 'pitch'],
-    skillConfig: [
-      'fair_launch_status',
-      'explain_fair_launch',
-      'list_projects',
-      'summarize_project_pitch',
-      'draft_tweet',
-      'help',
-    ],
-    followerCount: 41,
-    rating: 4.3,
-    featured: false,
-    createdAt: '2026-09-08T12:00:00.000Z',
-    isDemo: true,
-    creatorId: 'creator_scout',
-  },
-  {
-    id: 'bot_chart_hawk',
-    name: 'Chart Hawk',
-    authorHandle: '@charthawk',
-    description: 'Reads the $HOOD chart, which is built from pool swaps.',
-    skillTags: ['trade.chart', 'price', 'neon_tips'],
-    skillConfig: ['trade_chart', 'price', 'neon_tips', 'portfolio', 'help'],
-    followerCount: 55,
-    rating: 4.4,
-    featured: false,
-    createdAt: '2026-09-10T12:00:00.000Z',
-    isDemo: true,
-    creatorId: 'creator_chart',
-  },
-  {
-    id: 'bot_neon_ops',
-    name: 'Neon Ops',
-    authorHandle: '@neonops',
-    description: 'Explains how the desk stays up, and what is actually paid.',
-    skillTags: ['ops', 'treasury', 'revenue', 'fox_coach'],
-    skillConfig: [
-      'how_desk_runs',
-      'treasury_explain',
-      'revenue_demo_stats',
-      'fox_coach',
-      'daily_brief',
-      'help',
-    ],
-    followerCount: 33,
-    rating: 4.2,
-    featured: false,
-    createdAt: '2026-09-12T12:00:00.000Z',
-    isDemo: true,
-    creatorId: 'creator_neon',
-  },
-]
+const DROPPED_CREATOR_IDS = new Set([
+  'creator_leonardo',
+  'creator_dca',
+  'creator_scout',
+  'creator_chart',
+  'creator_neon',
+  'creator_hood_agent',
+])
 
-function ensureSeeded(): void {
+function dropDemoCatalog(): void {
   const bots = readJson<SkillPack[] | null>(KEY_BOTS, null)
-  if (!bots || bots.length === 0) {
-    writeJson(KEY_BOTS, DEMO_BOTS)
-  } else {
-    // Merge any missing demo bots by id
-    let changed = false
-    for (const d of DEMO_BOTS) {
-      const existing = bots.find((b) => b.id === d.id)
-      if (!existing) {
-        bots.push(d)
-        changed = true
-      } else if (existing.isDemo && existing.description !== d.description) {
-        existing.description = d.description
-        changed = true
-      }
-    }
-    if (changed) writeJson(KEY_BOTS, bots)
+  if (bots) {
+    const next = bots.filter((bot) => !bot.isDemo && !DROPPED_PACK_IDS.has(bot.id))
+    if (next.length !== bots.length) writeJson(KEY_BOTS, next)
   }
 
   const creators = readJson<CreatorProfile[] | null>(KEY_CREATORS, null)
-  if (!creators || creators.length === 0) {
-    writeJson(KEY_CREATORS, DEMO_CREATORS)
+  if (creators) {
+    const next = creators.filter((creator) => !DROPPED_CREATOR_IDS.has(creator.id))
+    if (next.length !== creators.length) writeJson(KEY_CREATORS, next)
   }
+
+  const follows = readJson<FollowState>(KEY_FOLLOWS, { followedIds: [] })
+  const kept = follows.followedIds.filter((id) => !DROPPED_PACK_IDS.has(id))
+  if (kept.length !== follows.followedIds.length) writeJson(KEY_FOLLOWS, { followedIds: kept })
+
+  const active = readJson<string | null>(KEY_ACTIVE, null)
+  if (active && DROPPED_PACK_IDS.has(active)) writeJson(KEY_ACTIVE, null)
 }
 
 export function listSkillPacks(): SkillPack[] {
-  ensureSeeded()
-  const bots = readJson<SkillPack[]>(KEY_BOTS, DEMO_BOTS)
+  dropDemoCatalog()
+  const bots = readJson<SkillPack[]>(KEY_BOTS, []).filter(
+    (bot) => !bot.isDemo && !DROPPED_PACK_IDS.has(bot.id),
+  )
   // Project-derived packs (optional, from local projects with persona)
   const projectPacks: SkillPack[] = []
   try {
@@ -376,7 +218,7 @@ function bumpCreatorFollowers(creatorId: string, delta: number): void {
 }
 
 function bumpBotFollowers(botId: string, delta: number): void {
-  ensureSeeded()
+  dropDemoCatalog()
   const bots = readJson<SkillPack[]>(KEY_BOTS, [])
   const b = bots.find((x) => x.id === botId)
   if (b) {
@@ -400,9 +242,10 @@ export function listLedger(): LedgerEntry[] {
 }
 
 export function listCreators(): CreatorProfile[] {
-  ensureSeeded()
-  const seeded = new Set(DEMO_CREATORS.map((creator) => creator.id))
-  return readJson<CreatorProfile[]>(KEY_CREATORS, []).filter((creator) => !seeded.has(creator.id))
+  dropDemoCatalog()
+  return readJson<CreatorProfile[]>(KEY_CREATORS, []).filter(
+    (creator) => !DROPPED_CREATOR_IDS.has(creator.id),
+  )
 }
 
 export function getCreator(id: string): CreatorProfile | undefined {
@@ -461,7 +304,7 @@ export function followBot(botId: string): { ok: boolean; text: string } {
       botId,
       creatorId: bot.creatorId,
       amount: FOLLOW_BONUS_CREDITS,
-      note: `Follow bonus → ${bot.authorHandle} (+${FOLLOW_BONUS_CREDITS} perk pts, demo ledger)`,
+      note: `Followed ${bot.authorHandle}`,
     })
   }
 
@@ -540,7 +383,7 @@ export function publishBot(input: PublishInput): { ok: boolean; text: string; bo
   if (!name) return { ok: false, text: 'Name required.' }
   if (!input.skillConfig.length) return { ok: false, text: 'Pick at least one skill.' }
 
-  ensureSeeded()
+  dropDemoCatalog()
   const existingBots = readJson<SkillPack[]>(KEY_BOTS, [])
   const owned = countOwnedPublishedBots(existingBots, input.authorWallet)
   const maxB = maxPublishedBots()
@@ -599,13 +442,13 @@ export function publishBot(input: PublishInput): { ok: boolean; text: string; bo
     botId: bot.id,
     creatorId: creator.id,
     amount: 0,
-    note: `Published **${bot.name}** — Creator perk unlocked (demo ledger)`,
+    note: `Published ${bot.name}`,
   })
 
   return {
     ok: true,
     bot,
-    text: `Published **${bot.name}**. You now have the **Creator** perk. Fee-share stub: ${DEMO_FEE_SPLIT.creatorPct}% creator / ${DEMO_FEE_SPLIT.treasuryPct}% desk treasury (demo until RH DEX).`,
+    text: `Published **${bot.name}**. Saved in this browser. Following it changes Ask. It does not pay a trading fee.`,
   }
 }
 
@@ -650,7 +493,7 @@ export function recordSkillUsage(
     botId: bot.id,
     creatorId: creator.id,
     amount,
-    note: `Usage share (${skillKind}) via **${bot.name}** → +${amount} credits (demo)`,
+    note: `Used ${bot.name}`,
   })
 }
 

@@ -343,7 +343,7 @@ export function Status({ onNavigate }: Props) {
                   {rankedPacks.length === 0 && (
                     <tr>
                       <td colSpan={5} className="muted">
-                        No skill packs yet. Publish one from the Skill Market.
+                        No lists published from this browser. The desk earns on the pool.
                       </td>
                     </tr>
                   )}

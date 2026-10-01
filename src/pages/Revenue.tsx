@@ -66,7 +66,7 @@ export function Revenue({ onNavigate }: Props) {
       what: `Signed swaps in this browser`,
       amount: String(orders.length),
     },
-    { when: 'Waiting', what: 'Uniswap LP fee stays in the position. Not routed to the desk.', amount: 'TBD' },
+    { when: 'Live', what: '1% of each $HOOD/WETH swap stays in the desk position', amount: 'pool fee' },
   ]
 
   return (
@@ -75,8 +75,8 @@ export function Revenue({ onNavigate }: Props) {
         <p className="eyebrow">Business dashboard</p>
         <h1>Revenue</h1>
         <p className="muted">
-          Signed swaps are the trades this browser has confirmed. The Uniswap fee stays in the
-          liquidity position.
+          The desk earns when $HOOD trades. Each swap pays 1% into the desk&apos;s pool position.
+          Stripe is the other paid path.
         </p>
       </div>
 
@@ -112,7 +112,7 @@ export function Revenue({ onNavigate }: Props) {
         </table>
 
         <p className="muted mt">
-          The pool fee is not routed to a desk treasury. Stripe subscriptions are the paid plans.
+          The trading fee sits in the liquidity position until it is collected. Stripe plans are separate.
         </p>
         <div className="cta-row mt">
           <button type="button" className="btn btn-primary" onClick={() => onNavigate('ops')}>

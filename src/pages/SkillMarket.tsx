@@ -136,14 +136,14 @@ export function SkillMarket({ onNavigate }: Props) {
   return (
     <section className="page skills-market-page">
       <div className="page-intro">
-        <DeskStory line="The desk answers what the street asks." onLegend={() => onNavigate('lore')} />
+        <DeskStory line="The bow draws when the wallet signs." onLegend={() => onNavigate('lore')} />
         <p className="eyebrow">The desk</p>
         <h1>
           Skills <DogiHoodHolderBadge className="skills-holder-inline" />
         </h1>
         <p className="muted">
-          A skill pack is a list of questions the desk can answer. Follow one to copy that list
-          into Ask. Swaps stay on Trade, and the rows stay on the ledger.
+          The desk earns when a wallet swaps $HOOD. The 1% pool fee stays in the position. A list
+          you publish here only changes what Ask can answer.
         </p>
         {flash && <div className="trade-flash mt">{flash}</div>}
         {activeBot && (
@@ -185,19 +185,25 @@ export function SkillMarket({ onNavigate }: Props) {
         <div className="card skills-featured-hood row-gap">
           <HoodMark size={64} variant="photo" className="skills-hood-mascot" />
           <div>
-            <p className="eyebrow">Flagship · HOOD agent · not a generic bot</p>
-            <h2 className="section-title">Hood Street Skill Market</h2>
+            <p className="eyebrow">The pool</p>
+            <h2 className="section-title">Trade is the product</h2>
             <p className="muted">
-              These packs are questions the desk can answer. Following one copies its skill list into
-              Ask. It does not place a swap.
+              A swap on the $HOOD/WETH pool pays 1% into the desk position. That is the trading
+              income. Lists here are ones published from this browser.
             </p>
             <div className="cta-row mt">
-              <button type="button" className="btn btn-primary btn-sm" onClick={() => onNavigate('community')}>
+              <button type="button" className="btn btn-primary btn-sm" onClick={() => onNavigate('trade')}>
+                Trade
+              </button>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('community')}>
                 The pool
               </button>
             </div>
           </div>
         </div>
+        {packs.length === 0 ? (
+          <p className="muted mt">No lists published from this browser yet.</p>
+        ) : null}
         <div className="market-grid">
           {packs.map((bot) => {
             const following = isFollowing(bot.id)

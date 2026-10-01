@@ -31,6 +31,22 @@ function slugify(title: string): string {
 
 const SEED: BlogPost[] = [
   {
+    id: 'post_seed_wl_live',
+    slug: 'minis-whitelist-drop-is-live',
+    title: 'Hood Street Minis: the whitelist drop is live again',
+    body: `Taken from the public [@HoodStreetMini](https://x.com/HoodStreetMini) profile on the evening of 1 Oct 2026.
+
+The account posted that the site had gone to a 404 and was back, and that the **GTD and FCFS whitelist drop is live** at [hoodstreetmini.com](https://hoodstreetmini.com). Earlier the same day they said the next shipment was about half an hour out, and that those packs sell through in minutes. Through the night they ran surprise shipments, posted a sold-out, and said another shipment was coming after a guaranteed package missed transit.
+
+They also added an honorary Mini for Adam Weitsman, a tribute piece in the collection.
+
+The [claim page](https://hoodstreetmini.com/claim), read at the same time, still shows 384 guaranteed spots across 294 wallets, 1,054 first-come spots across 420 wallets, and 496 wallets on the list. A guaranteed spot is still 4,269 Hood Bucks with an original post that tags @HoodStreetMini and uses #hoodstreet, then 10,000 for the second. Skip the post and a guaranteed spot is 42,690. A first-come spot is 420. Hood Bucks are play money with no cash value. The mint page still says soon. Timing comes from that account.
+
+The HoodStreet Media room is the standing space on X. The last one with a public title ended 29 Sep 2026: [Unvault alpha](https://x.com/i/spaces/1dxYlaOgyzYJX).`,
+    date: '2026-10-01T17:20:00.000Z',
+    updatedAt: '2026-10-01T17:20:00.000Z',
+  },
+  {
     id: 'post_seed_street_now',
     slug: 'what-hood-street-is-minting',
     title: 'What Hood Street is minting right now',

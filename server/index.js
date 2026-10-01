@@ -195,13 +195,11 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), (req,
 
   let event
   try {
-    if (WEBHOOK_SECRET) {
-      const sig = req.headers['stripe-signature']
-      event = stripe.webhooks.constructEvent(req.body, sig, WEBHOOK_SECRET)
-    } else {
-      event = JSON.parse(req.body.toString('utf8'))
-      console.warn('[stripe webhook] STRIPE_WEBHOOK_SECRET unset — accepting unsigned JSON (local only)')
+    if (!WEBHOOK_SECRET) {
+      return res.status(503).json({ error: 'Webhook secret is not configured' })
     }
+    const sig = req.headers['stripe-signature']
+    event = stripe.webhooks.constructEvent(req.body, sig, WEBHOOK_SECRET)
   } catch (err) {
     console.error('[stripe webhook]', err.message)
     return res.status(400).send(`Webhook Error: ${err.message}`)
@@ -235,20 +233,51 @@ function requireStripe(res) {
 
 const PAID = new Set(['starter', 'desk', 'desk_plus'])
 
+function priceForTier(tier) {
+  const map = {
+    starter: process.env.STRIPE_PRICE_STARTER || process.env.VITE_STRIPE_PRICE_STARTER,
+    desk: process.env.STRIPE_PRICE_DESK || process.env.VITE_STRIPE_PRICE_DESK,
+    desk_plus: process.env.STRIPE_PRICE_DESK_PLUS || process.env.VITE_STRIPE_PRICE_DESK_PLUS,
+  }
+  return String(map[tier] || '').trim()
+}
+
+function allowedReturnUrl(raw) {
+  if (typeof raw !== 'string' || raw.length > 500) return false
+  let url
+  try {
+    url = new URL(raw)
+  } catch {
+    return false
+  }
+  const host = url.host
+  if (host === 'doghood.aibusiness.fun') return url.protocol === 'https:'
+  if (
+    host === 'localhost:5182' ||
+    host === '127.0.0.1:5182' ||
+    host === 'localhost:4000' ||
+    host === '127.0.0.1:4000'
+  ) {
+    return url.protocol === 'http:'
+  }
+  return false
+}
+
 /** Create Checkout Session (subscription mode) */
 app.post('/api/stripe/checkout', async (req, res) => {
   const stripe = requireStripe(res)
   if (!stripe) return
 
-  const { tier, priceId, successUrl, cancelUrl } = req.body || {}
+  const { tier, successUrl, cancelUrl } = req.body || {}
   if (!PAID.has(tier)) {
     return res.status(400).json({ error: 'tier must be starter | desk | desk_plus' })
   }
-  if (!priceId || typeof priceId !== 'string') {
-    return res.status(400).json({ error: 'priceId required (VITE_STRIPE_PRICE_*)' })
+  const priceId = priceForTier(tier)
+  if (!priceId) {
+    return res.status(503).json({ error: 'Stripe price for this plan is not configured' })
   }
-  if (!successUrl || !cancelUrl) {
-    return res.status(400).json({ error: 'successUrl and cancelUrl required' })
+  if (!allowedReturnUrl(successUrl) || !allowedReturnUrl(cancelUrl)) {
+    return res.status(400).json({ error: 'Return URL must be this desk' })
   }
 
   try {
@@ -277,6 +306,9 @@ app.get('/api/stripe/session/:id', async (req, res) => {
 
   try {
     const session = await stripe.checkout.sessions.retrieve(req.params.id)
+    if (session.metadata?.product !== 'hood-desk') {
+      return res.status(404).json({ error: 'Session is not a Hood Desk checkout' })
+    }
     res.json({
       id: session.id,
       payment_status: session.payment_status,

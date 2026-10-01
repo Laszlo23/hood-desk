@@ -38,7 +38,7 @@ export function Subscribe({ onNavigate }: Props) {
     const canceled = params.get('canceled') === '1'
 
     if (canceled) {
-      setFlash('Checkout canceled — no charge. You can try again or use demo activate.')
+      setFlash('Checkout canceled. No charge.')
       window.setTimeout(() => setFlash(null), 4000)
       window.history.replaceState(null, '', '#/subscribe')
       return
@@ -108,7 +108,7 @@ export function Subscribe({ onNavigate }: Props) {
       setFlash(
         e instanceof Error
           ? e.message
-          : 'Checkout failed — add Stripe keys or use demo activate.',
+          : 'Checkout did not open. Try again in a moment.',
       )
       window.setTimeout(() => setFlash(null), 5000)
     } finally {
@@ -123,12 +123,11 @@ export function Subscribe({ onNavigate }: Props) {
       <div className="page-intro subscribe-hero">
         <HoodMark size={72} variant="photo" bounce className="subscribe-mascot" />
         <div>
-          <p className="eyebrow">Pricing · Automated trading + deployers</p>
+          <p className="eyebrow">Plans</p>
           <h1>Subscribe</h1>
           <p className="muted">
-            Cheap plans for <strong>automated trading agents</strong>,{' '}
-            <strong>token deployer agents</strong>, <strong>social growth</strong>, and{' '}
-            <strong>6 months of continuous product updates</strong> on Desk / Desk+.
+            Free covers the swap, the ledger, and a few question lists. Desk and Desk+ add more
+            lists in this browser, drafts you post yourself, and six months of product updates.
           </p>
           <p className="tiny muted mt">
             Current plan: <strong className="accent-text">{state.label}</strong>
@@ -152,8 +151,8 @@ export function Subscribe({ onNavigate }: Props) {
             <code className="inline-code">.env</code>, plus{' '}
             <code className="inline-code">STRIPE_SECRET_KEY</code> for the local server on{' '}
             <code className="inline-code">:8787</code>. See <code className="inline-code">.env.example</code>{' '}
-            and <code className="inline-code">server/README.md</code>. Demo activate stays available
-            below.
+            and <code className="inline-code">server/README.md</code>. Until then, a preview button
+            can open a plan in this browser. It does not charge.
           </p>
         </div>
       )}
@@ -203,20 +202,18 @@ export function Subscribe({ onNavigate }: Props) {
                       {busy === tier.id ? 'Redirecting…' : `Subscribe · ${tier.price}`}
                     </button>
                   ) : null}
-                  <button
-                    type="button"
-                    className={`btn ${stripeOk ? 'btn-ghost' : 'btn-primary'}`}
-                    onClick={() => activateDemo(tier.id)}
-                  >
-                    Activate {tier.name} (demo)
-                  </button>
+                  {stripeOk ? null : (
+                    <button type="button" className="btn btn-primary" onClick={() => activateDemo(tier.id)}>
+                      Preview {tier.name}
+                    </button>
+                  )}
                 </div>
               )}
               {paid && !active ? (
                 <p className="tiny muted mt">
                   {stripeOk
-                    ? 'Stripe Checkout (subscription) · demo fallback labeled'
-                    : 'Demo only until Stripe keys are set'}
+                    ? 'Stripe Checkout. The plan unlocks after the receipt is paid.'
+                    : 'Preview only until Stripe keys are set.'}
                 </p>
               ) : null}
             </article>
@@ -228,9 +225,8 @@ export function Subscribe({ onNavigate }: Props) {
         <p className="eyebrow">Included on Desk / Desk+</p>
         <h2 className="section-title">Social media growth</h2>
         <p className="muted">
-          X and Farcaster playbooks via agent skills (<code className="inline-code">social.growth</code>
-          ). Draft tweets/casts, ticker tips, and launch cadence — wired into the Desk skill catalog.
-          Starter gets basic tips; Desk+ unlocks the full growth pack.
+          Ask can draft a post for X or Farcaster. You publish it. Starter includes the drafts.
+          Desk and Desk+ keep the drafts and add six months of product updates.
         </p>
         <p className="tiny muted mt">
           Desk &amp; Desk+ also set entitlement <code className="inline-code">updatesUntil</code> = now +
@@ -240,9 +236,8 @@ export function Subscribe({ onNavigate }: Props) {
 
       <div className="card mt subscribe-note">
         <p className="muted">
-          Entitlements live in <code className="inline-code">hood-desk:sub:v1</code> (tier, Stripe ids
-          when present, <code className="inline-code">updatesUntil</code>). Real Checkout needs the
-          Express helper on <code className="inline-code">:8787</code>. Never commit secret keys.
+          A paid plan is saved in this browser after Stripe confirms the receipt. The desk does
+          not trade for you.
         </p>
         <div className="cta-row mt">
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('rewards')}>

@@ -1,7 +1,6 @@
 /**
- * Hood Desk subscriptions — cheap automated trading + deployer agents.
- * Entitlements in localStorage (`hood-desk:sub:v1`).
- * Stripe Checkout when keys exist; demo activate otherwise.
+ * Hood Desk plans. Entitlements stay in this browser (`hood-desk:sub:v1`).
+ * Stripe Checkout when keys exist. A local preview activate exists only when they do not.
  */
 
 const KEY = 'hood-desk:sub:v1'
@@ -59,12 +58,12 @@ export const TIERS: TierDef[] = [
     name: 'Free',
     price: '$0',
     priceUsd: 0,
-    tagline: 'Browse the desk and sign a $HOOD swap',
+    tagline: 'Trade, read the books, follow a question list',
     perks: [
-      'Wallet-signed $HOOD market swap',
-      'Browse Skill Market',
-      '1 published bot',
-      'Follow up to 3 bots',
+      'Wallet-signed $HOOD swap',
+      'Pool ledger and notes',
+      'Follow up to 3 question lists',
+      '1 list published from this browser',
     ],
   },
   {
@@ -73,13 +72,13 @@ export const TIERS: TierDef[] = [
     price: fmtMo(PRICE_STARTER),
     priceUsd: PRICE_STARTER,
     paid: true,
-    tagline: 'Auto-trade skills + 1 deployer agent',
+    tagline: 'More lists, and drafts you can post yourself',
     perks: [
       'Wallet-signed $HOOD swaps',
-      '1 deployer agent slot',
-      'Basic social growth tips (X / Farcaster)',
-      'Follow up to 5 bots',
-      '+10% XP boost',
+      'Ask drafts for X and Farcaster',
+      'Follow up to 5 question lists',
+      '1 list published from this browser',
+      '+10% XP on this browser',
     ],
   },
   {
@@ -89,15 +88,14 @@ export const TIERS: TierDef[] = [
     priceUsd: PRICE_DESK,
     paid: true,
     highlight: true,
-    tagline: 'Full trading + deployer agents · 6 mo updates',
+    tagline: 'A fuller desk, with six months of updates',
     perks: [
-      'Full automated trading agents',
-      'Token deployer agents (multi-slot)',
-      'Social media growth pack (X / Farcaster playbooks)',
-      'Constant product updates for 6 months',
-      'Featured Skill Market badge',
-      'Up to 5 published bots · 12 follow slots',
-      '+25% XP boost',
+      'Ask drafts for X and Farcaster',
+      'Featured mark on a list you publish',
+      'Follow up to 12 question lists',
+      'Up to 5 lists published from this browser',
+      'Product updates for 6 months',
+      '+25% XP on this browser',
     ],
   },
   {
@@ -106,14 +104,13 @@ export const TIERS: TierDef[] = [
     price: fmtMo(PRICE_DESK_PLUS),
     priceUsd: PRICE_DESK_PLUS,
     paid: true,
-    tagline: 'Priority deploy · unlimited follows · multi-agent',
+    tagline: 'Unlimited lists on this browser, plus six months of updates',
     perks: [
       'Everything in Desk',
-      'Priority deploy queue (stub)',
-      'Unlimited bot follows + multi-agent',
-      'Unlimited published bots',
-      'Higher XP (+50%)',
-      'Social growth + 6 months continuous updates',
+      'Unlimited follows',
+      'Unlimited lists published from this browser',
+      '+50% XP on this browser',
+      'Product updates for 6 months',
     ],
   },
 ]

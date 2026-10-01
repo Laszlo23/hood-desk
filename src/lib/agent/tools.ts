@@ -25,7 +25,6 @@ import {
   recordSkillUsage,
   setActiveBot,
   unfollowBot,
-  DEMO_FEE_SPLIT,
 } from '../market/skillMarket'
 
 export type ToolContext = {
@@ -574,7 +573,7 @@ export function marketFollowSkill(raw?: string): ToolResult {
 export function marketPublishHelp(): ToolResult {
   return {
     ok: true,
-    text: `**Publish a bot** → Skill Market\n\n1. Open **#/skills** → Publish bot\n2. Name + skill tags + skill config\n3. You unlock **Creator** perk\n4. Demo compensation: follow bonus + usage share\n5. Fee-share stub: **${DEMO_FEE_SPLIT.creatorPct}%** creator / **${DEMO_FEE_SPLIT.treasuryPct}%** desk treasury\n\nHonest local sim — no mainnet transfers until RH DEX + real fee split.\n\nAlso: Terminal → ask **skill market** / **follow Hood Vet Pro**.`,
+    text: `**Publish a list** → Skills\n\n1. Open **#/skills** → Publish bot\n2. Name the list and pick the questions\n3. It is saved in this browser\n4. Follow copies it into Ask\n\nA list does not move tokens.\n\nAlso: Ask **skill market** or **follow Hood Vet Pro**.`,
   }
 }
 

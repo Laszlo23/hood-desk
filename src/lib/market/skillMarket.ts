@@ -327,7 +327,7 @@ export function listSkillPacks(): SkillPack[] {
   } catch {
     /* ignore */
   }
-  return [...bots, ...projectPacks].filter((bot) => !bot.isDemo).sort((a, b) => {
+  return [...bots, ...projectPacks].sort((a, b) => {
     if (a.featured && !b.featured) return -1
     if (!a.featured && b.featured) return 1
     return b.followerCount - a.followerCount
@@ -683,10 +683,11 @@ export function marketBrowseSummary(): string {
       const star = b.featured ? '★ ' : ''
       const fol = follows.followedIds.includes(b.id) ? ' · following' : ''
       const prim = active?.id === b.id ? ' · **primary**' : ''
-      return `• ${star}**${b.name}** (${b.authorHandle}) — ${b.skillTags.slice(0, 3).join(', ')} · ★${b.rating} · ${b.followerCount} followers${fol}${prim}`
+      const crowd = b.isDemo ? 'question list' : `${b.followerCount} followers`
+      return `• ${star}**${b.name}** (${b.authorHandle}) — ${b.skillTags.slice(0, 3).join(', ')} · ${crowd}${fol}${prim}`
     }),
     '',
-    'Open **#/skills** to follow / unfollow / publish. Demo ledger until RH DEX fee split.',
+    'Open **#/skills**. Follow copies the list into Ask. It does not place a swap.',
   ]
   return lines.join('\n')
 }

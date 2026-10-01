@@ -260,7 +260,7 @@ export function TradePanel({
       <p className="tiny muted trade-disclaimer">
         {poolLive ? (
           <>
-            Only swap an amount you can afford to lose. Your wallet signs a Uniswap swap. Slippage {HOOD_SWAP_SLIPPAGE_BPS / 100}%. The pool is thin.
+            Only swap an amount you can afford to lose. Your wallet signs a Uniswap swap. Slippage {HOOD_SWAP_SLIPPAGE_BPS / 100}%. The pool is thin. A large amount belongs on the $HOOD seed rail, which pairs ETH with treasury $HOOD at the pool price.
           </>
         ) : (
           <>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { HoodMark } from '../components/HoodMark'
+import { SeedRailCard } from '../components/SeedRailCard'
 import { TokenBoundPanel } from '../components/TokenBoundPanel'
 import { VerifiedBadge } from '../components/VerifiedBadge'
 import { EXPLORER_BASE, EXPLORER_TOKEN, EXPLORER_TX } from '../lib/chain'
@@ -299,8 +300,8 @@ export function Hood({ onNavigate }: Props) {
             <h2>Uniswap on Robinhood Chain</h2>
             <p className="muted">
               Fair launch: mint-once, no tax, and one public $HOOD/WETH pool. The pool is live.
-              Liquidity grows when someone adds ETH and the treasury matches $HOOD at the pool
-              price. The position can still be removed by its owner until it is locked.
+              Liquidity grows through the seed rail: ETH in, treasury $HOOD matched at the pool
+              price, both added to the same position. The position can still be removed by its owner until it is locked.
             </p>
             <ul className="hood-contract-list">
               <li>
@@ -340,6 +341,8 @@ export function Hood({ onNavigate }: Props) {
           </article>
         </>
       )}
+
+      <SeedRailCard />
 
       <TokenBoundPanel initialCollection="dogihood" />
 

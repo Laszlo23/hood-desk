@@ -12,3 +12,7 @@ contracts/hood-seeder/out/
 contracts/hood-seeder/cache/
 contracts/hood-seeder/broadcast/
 contracts/hood-seeder/.env
+contracts/hood-seed-rail/out/
+contracts/hood-seed-rail/cache/
+contracts/hood-seed-rail/broadcast/
+contracts/hood-seed-rail/.env

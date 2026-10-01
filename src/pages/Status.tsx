@@ -11,9 +11,13 @@ import { listSkillPacks } from '../lib/market/skillMarket'
 import { DOGIHOOD_NFT_ADDRESS } from '../lib/nfts/dogihood'
 import { shortHash } from '../lib/status/featured'
 import { HoodSeal } from '../components/HoodSeal'
+import { HOOD_TOKEN_ADDRESS, HOOD_TOKEN_DEPLOYED } from '../lib/hoodToken'
+import { EXPLORER_TX } from '../lib/chain'
 
 type Props = { onNavigate: (id: ViewId, projectId?: string) => void }
 type RankTab = 'top' | 'trending' | 'tokens'
+
+const DEPLOY_TX = '0xe148725110ccf28f6411c90aac0de7b6cbe1708dc2c1e4d8dc9f8b305c97f26b'
 
 function relTime(iso: string): string {
   try {
@@ -135,6 +139,20 @@ export function Status({ onNavigate }: Props) {
                 {DOGIHOOD_NFT_ADDRESS ? shortHash(DOGIHOOD_NFT_ADDRESS, 3, 3) : '—'}
               </strong>
             </div>
+            {HOOD_TOKEN_DEPLOYED && HOOD_TOKEN_ADDRESS && (
+              <div className="status-kpi">
+                <span className="status-kpi-label">$HOOD</span>
+                <a
+                  href={EXPLORER_TX(DEPLOY_TX)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="status-kpi-value mono"
+                  title="View deploy tx"
+                >
+                  {shortHash(HOOD_TOKEN_ADDRESS, 4, 3)}
+                </a>
+              </div>
+            )}
           </div>
         </div>
         <div className="cta-row">

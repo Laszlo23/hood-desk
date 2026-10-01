@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { formatPrice, formatUsdCompact } from '../../lib/trade/demoTokens'
 import type {
   OrderSide,
@@ -8,6 +8,8 @@ import type {
   VetResult,
 } from '../../lib/trade/types'
 import { VerifiedBadge } from '../VerifiedBadge'
+import { HOOD_TOKEN_ADDRESS } from '../../lib/hoodToken'
+import { hoodHasPool } from '../../lib/trade/uniswap'
 
 export type TradeDraft = {
   side: OrderSide
@@ -33,17 +35,50 @@ export function TradePanel({ token, lastVet, onOpenVet, onRequestSimulate }: Pro
   const [type, setType] = useState<OrderType>('market')
   const [amount, setAmount] = useState('')
   const [limitPrice, setLimitPrice] = useState('')
+  const [poolExists, setPoolExists] = useState<boolean | null>(null)
+
+  const isHoodToken = HOOD_TOKEN_ADDRESS && 
+    token.address.toLowerCase() === HOOD_TOKEN_ADDRESS.toLowerCase()
+
+  // Check if $HOOD has a pool
+  useEffect(() => {
+    if (!isHoodToken || !HOOD_TOKEN_ADDRESS) {
+      setPoolExists(null)
+      return
+    }
+
+    let cancelled = false
+
+    hoodHasPool(HOOD_TOKEN_ADDRESS)
+      .then((exists) => {
+        if (!cancelled) {
+          setPoolExists(exists)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPoolExists(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [isHoodToken])
+
+  const hasNoPool = isHoodToken && poolExists === false
 
   const changeCls = token.change24h >= 0 ? 'up' : 'down'
   const effectiveType: OrderType = mode === 'instant' ? 'market' : type
   const needsPrice = effectiveType === 'limit' || effectiveType === 'stop'
 
   const canSubmit = useMemo(() => {
+    if (hasNoPool) return false
     const n = Number(amount)
     if (!amount || !(n > 0)) return false
     if (needsPrice && !(Number(limitPrice) > 0)) return false
     return true
-  }, [amount, limitPrice, needsPrice])
+  }, [amount, limitPrice, needsPrice, hasNoPool])
 
   const setPct = (pct: number) => {
     const demoBal = side === 'buy' ? 1.25 : 50_000
@@ -89,29 +124,46 @@ export function TradePanel({ token, lastVet, onOpenVet, onRequestSimulate }: Pro
       <div className="token-stats">
         <div>
           <span className="rail-label">Price</span>
-          <strong className="mono">{formatPrice(token.price)}</strong>
-          {token.isDemo && <span className="demo-tag">demo</span>}
+          <strong className="mono">
+            {hasNoPool ? '—' : formatPrice(token.price)}
+          </strong>
+          {token.isDemo && !hasNoPool && <span className="demo-tag">demo</span>}
+          {hasNoPool && <span className="demo-tag">no pool</span>}
         </div>
         <div>
           <span className="rail-label">24h</span>
           <strong className={`mono ${changeCls}`}>
-            {token.change24h >= 0 ? '+' : ''}
-            {token.change24h.toFixed(1)}%
+            {hasNoPool ? '—' : `${token.change24h >= 0 ? '+' : ''}${token.change24h.toFixed(1)}%`}
           </strong>
         </div>
         <div>
           <span className="rail-label">MC</span>
-          <strong className="mono">{formatUsdCompact(token.marketCap)}</strong>
+          <strong className="mono">
+            {hasNoPool ? '—' : formatUsdCompact(token.marketCap)}
+          </strong>
         </div>
         <div>
           <span className="rail-label">24h vol</span>
-          <strong className="mono">{formatUsdCompact(token.volume24h)}</strong>
+          <strong className="mono">
+            {hasNoPool ? '—' : formatUsdCompact(token.volume24h)}
+          </strong>
         </div>
       </div>
 
-      <button type="button" className="btn btn-ghost vet-btn" onClick={onOpenVet}>
-        🔍 Is this real? · Vet
-      </button>
+      {hasNoPool && (
+        <div className="trade-pool-warning">
+          <strong>⚠️ No Uniswap pool</strong>
+          <p className="tiny muted">
+            ${token.symbol} has no liquidity pool on Uniswap V3. Trading is not possible until a pool is created.
+          </p>
+        </div>
+      )}
+
+      {!hasNoPool && (
+        <button type="button" className="btn btn-ghost vet-btn" onClick={onOpenVet}>
+          🔍 Is this real? · Vet
+        </button>
+      )}
 
       {lastVet && lastVet.address.toLowerCase() === token.address.toLowerCase() && (
         <p className={`vet-chip verdict-${lastVet.verdict.replace(/\s+/g, '-').toLowerCase()}`}>
@@ -214,15 +266,29 @@ export function TradePanel({ token, lastVet, onOpenVet, onRequestSimulate }: Pro
       <button
         type="button"
         className="btn btn-primary trade-submit"
-        disabled={!canSubmit}
+        disabled={!canSubmit || hasNoPool || undefined}
         onClick={submit}
       >
-        Simulate {side === 'buy' ? 'Buy' : 'Sell'} {token.symbol}
+        {hasNoPool 
+          ? `No pool — cannot trade ${token.symbol}` 
+          : `Simulate ${side === 'buy' ? 'Buy' : 'Sell'} ${token.symbol}`}
       </button>
 
       <p className="tiny muted trade-disclaimer">
-        Real on-chain swaps are <strong>TODO</strong> until RH DEX is confirmed. Fills are local (
-        <code className="inline-code">local_ord_*</code>) — no fake routers or tx hashes.
+        {hasNoPool ? (
+          <>
+            <strong>${token.symbol} has no Uniswap pool.</strong> Create liquidity on{' '}
+            <a href={`https://app.uniswap.org/add/${token.address}`} target="_blank" rel="noreferrer">
+              Uniswap
+            </a>{' '}
+            to enable trading.
+          </>
+        ) : (
+          <>
+            Real on-chain swaps are <strong>TODO</strong> until RH DEX is confirmed. Fills are local (
+            <code className="inline-code">local_ord_*</code>) — no fake routers or tx hashes.
+          </>
+        )}
       </p>
     </aside>
   )

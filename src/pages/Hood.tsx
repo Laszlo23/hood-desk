@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { HoodCard } from '../components/HoodCard'
 import { HoodMark } from '../components/HoodMark'
 import { EXPLORER_BASE, EXPLORER_TOKEN, EXPLORER_TX } from '../lib/chain'
 import { HOOD_META, HOOD_TOKEN_DEPLOYED, HOOD_TOKEN_ADDRESS } from '../lib/hoodToken'

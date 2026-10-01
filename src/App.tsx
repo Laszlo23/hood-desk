@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { TopNav } from './components/TopNav'
 import { WeeklyBanner } from './components/WeeklyBanner'
 import { hashForView, routeFromHash, type ViewId } from './lib/nav'
+import { usePageSeo } from './lib/seo'
 import { Account } from './pages/Account'
 import { Blog } from './pages/Blog'
 import { CreateProject } from './pages/CreateProject'
@@ -50,6 +51,8 @@ export default function App() {
     }
   }, [])
 
+  usePageSeo(view, blogSlug)
+
   const tradeMode = view === 'trade'
   const showShellBanner =
     view === 'landing' || view === 'status' || view === 'skills' || view === 'rewards' || view === 'subscribe' || view === 'community' || view === 'lore' || view === 'nfts'
@@ -72,7 +75,7 @@ export default function App() {
       {loreVariant && <LoreBackdrop variant={loreVariant} />}
 
       <div className={`desk-layout${tradeMode ? ' desk-layout-trade' : ''}`}>
-        {!tradeMode && <TopNav view={view} onNavigate={navigate} />}
+        <TopNav view={view} onNavigate={navigate} />
         {!tradeMode && showShellBanner && (
           <div className="shell-banner-wrap">
             <WeeklyBanner compact />

@@ -396,7 +396,7 @@ export function dailyBrief(ctx: ToolContext): ToolResult {
   const onRh = ctx.chainId === 4663 ? 'on RH 4663 ✓' : ctx.chainId ? `chain ${ctx.chainId}` : 'wallet disconnected'
   return {
     ok: true,
-    text: `**Daily brief** 🦊 _(canned)_\n\n• Desk online · ${onRh}\n• Projects stored: **${projects.length}**\n• $HOOD env: ${HOOD_TOKEN_DEPLOYED ? 'set' : 'not deployed'}\n• Focus: ship fair launches, no unfair allocs, no invented DEX routers\n• Ask **list skills** for the full catalog\n\nGM. What are we building?`,
+    text: `**Daily brief** 🦊\n\n• Desk online · ${onRh}\n• Projects stored: **${projects.length}**\n• $HOOD: ${HOOD_TOKEN_DEPLOYED ? `\`${HOOD_TOKEN_ADDRESS}\`` : 'not deployed'}\n• Stripe Checkout is live on the desk\n• Trade stays simulated until a confirmed $HOOD pool exists\n• Ask **list skills** for the full catalog\n\nGM. What are we building?`,
   }
 }
 

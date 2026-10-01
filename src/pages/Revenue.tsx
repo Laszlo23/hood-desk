@@ -59,30 +59,30 @@ export function Revenue({ onNavigate }: Props) {
       label: 'Plan',
       value: sub.label,
       note: stripeConfigured()
-        ? 'Stripe keys present'
+        ? 'Stripe Checkout is live'
         : 'Demo activate until Stripe keys are set',
     },
     {
       label: '$HOOD',
-      value: HOOD_TOKEN_DEPLOYED ? 'Env set' : 'Not deployed',
-      note: 'Live on RH 4663 — transparent mint-once',
+      value: HOOD_TOKEN_DEPLOYED ? 'Live' : 'Not deployed',
+      note: '0xC774…320c · 1B mint-once · Sourcify exact match',
     },
   ]
 
   const runway = [
-    { when: 'Now', what: 'Demo ops + local ledgers online', amount: 'live UI' },
+    { when: 'Live', what: '$HOOD on Robinhood Chain', amount: '1B' },
     {
-      when: 'Local',
-      what: `Sim orders ${orders.length} · reward entries ${ledger.length}+`,
+      when: 'Live',
+      what: 'Stripe Checkout · Starter / Desk / Desk+',
+      amount: stripeConfigured() ? 'on' : 'keys missing',
+    },
+    { when: 'Live', what: 'NFT wallets · CCFF00 and DogiHood', amount: 'ERC-6551' },
+    {
+      when: 'Sim',
+      what: `Orders ${orders.length} · reward entries ${ledger.length}+`,
       amount: `${simFeeTotal.toFixed(1)} credits`,
     },
-    { when: 'Blocked', what: 'DEX fee → treasury (no RH router yet)', amount: 'TBD' },
-    { when: 'Blocked', what: '$HOOD deploy (hood-token + key)', amount: '1B mint' },
-    {
-      when: 'Blocked',
-      what: 'Stripe Checkout (needs publishable + price IDs)',
-      amount: stripeConfigured() ? 'ready' : 'keys missing',
-    },
+    { when: 'Waiting', what: 'DEX fee → treasury (no confirmed $HOOD pool)', amount: 'TBD' },
   ]
 
   return (

@@ -31,6 +31,71 @@ function slugify(title: string): string {
 
 const SEED: BlogPost[] = [
   {
+    id: 'post_seed_street_now',
+    slug: 'what-hood-street-is-minting',
+    title: 'What Hood Street is minting right now',
+    body: `Checked 1 Oct 2026 against the official sites and Robinhood Chain.
+
+**CCFF00 is minted out.** The founding collection at \`0x505A22Ffed8d37ebE580FfD98d2Cdb0021189146\` reads a total supply of 10,000 on chain. That is the full set: 9,750 public, 20 founder reserve, 230 project reserve. Each Square is the same neon color, fully onchain, and controls its own ERC-6551 wallet with 10,000 $CCFF00 inside. HoodStreet still says $CCFF00 transfers stay off until the public mint condition is met and the official token is live. The NFT itself can move. Check [My Neon](https://hoodstreet.capital/my-neon) before you assume the token can.
+
+**The live queue is Hood Street Minis.** [hoodstreetmini.com](https://hoodstreetmini.com/) is a free mint of 4,269 pixel Minis on Robinhood Chain, including 55 one-of-ones. The mint page says **soon**. What is open today is the claim: Hood Bucks (play money, no cash value) turn into mint spots, max 5 per wallet and up to 3 guaranteed. On the claim page this afternoon: 384 guaranteed spots claimed across 294 wallets, 1,054 first-come spots across 420 wallets, 496 wallets on the list. CCFF00 Squares are listed as a 1,000 Hood Buck holder bonus, paid once per NFT. Gas is the only mint cost they publish. Official mint timing comes from [@HoodStreetMini](https://x.com/HoodStreetMini).
+
+**The mint that just cleared is VAMPS.** [OpenSea](https://opensea.io/collection/vampsonchain) shows 4,444 / 4,444 on Robinhood Chain. The project said the free mint sold through in about four minutes, with CCFF00 on the allowlist. A floor on OpenSea was around 0.0014 ETH when this was written. Floors move. That number is a snapshot, not a promise.
+
+Hood Desk can already read a CCFF00 or DogiHood wallet and send $HOOD into it. Minis do not have a contract on the desk until the mint is actually live.`,
+    date: '2026-10-01T13:10:00.000Z',
+    updatedAt: '2026-10-01T13:10:00.000Z',
+  },
+  {
+    id: 'post_seed_minis',
+    slug: 'hood-street-minis-spots',
+    title: 'Hood Street Minis: spots are open, the mint is not',
+    body: `Hood Street Minis is the collection people are lining up for while CCFF00 sits at a full 10,000.
+
+4,269 Minis. 13 base models (Gorilla, Drank Jug, Reaper, Alien, plus tributes). 289 traits. 55 one-of-ones, and they say #420 is rank 1. Art is pixel, the mint is free, and the site still says Robinhood Chain · soon.
+
+The claim desk is the part that is actually running:
+
+- First guaranteed spot is 4,269 Hood Bucks if you post an original with a Mini, tag @HoodStreetMini, and use #hoodstreet. The second is 10,000. Skip the post and a guaranteed spot is 42,690.
+- A first-come spot is 420 Hood Bucks and only works while supply lasts.
+- Welcome package is 1,000 Hood Bucks for a follow and a reply to the pinned post.
+- Holder bonuses they list include 1,000 for a CCFF00 Square, a StonkBroker, or a Chain Mancer.
+
+Hood Bucks are free play money. They say they have no cash value. Spots lock to a wallet. Read the terms on [hoodstreetmini.com/claim](https://hoodstreetmini.com/claim) before you spend them. This desk does not sell Minis and does not hold a mint button for a contract that is not deployed yet.`,
+    date: '2026-10-01T13:05:00.000Z',
+    updatedAt: '2026-10-01T13:05:00.000Z',
+  },
+  {
+    id: 'post_seed_vamps',
+    slug: 'vamps-minted-out',
+    title: 'VAMPS minted out: 4,444 of 4,444',
+    body: `VAMPS is the Hood Street launch that already finished. OpenSea collection [vampsonchain](https://opensea.io/collection/vampsonchain) shows the full 4,444 supply on Robinhood Chain. The project’s own line: minted out in about four minutes. Different fits, same fangs. Site: [vamps.wtf](https://vamps.wtf).
+
+CCFF00 holders were on that allowlist. A community post from the Hood Street space put secondary volume near $700 in the first stretch and a floor that jumped off free. By the time this note was written, OpenSea’s floor title was about 0.0014 ETH. Treat both as timestamps. The useful part is the shape of these launches: a CCFF00 Square is the membership that gets you into the next free mint, and the mint itself can be gone in minutes.
+
+If you still hold a Square, the wallet inside it is the thing Hood Desk binds to. VAMPS is a separate collection. We are not marking it verified, and we are not routing a trade through it.`,
+    date: '2026-10-01T13:00:00.000Z',
+    updatedAt: '2026-10-01T13:00:00.000Z',
+  },
+  {
+    id: 'post_seed_hood_live',
+    slug: 'hood-is-live',
+    title: '$HOOD is live on Robinhood Chain',
+    body: `Hood Desk is on the server at https://doghood.aibusiness.fun.
+
+**$HOOD** is the companion token: \`0xC7749BCFDC8d06FC246be556f4EAD75Ac7E1320c\`. Fixed supply 1,000,000,000. Mint-once. No transfer tax. Source is an exact match on Sourcify.
+
+**NFT wallets.** DogiHood and CCFF00 use the HoodStreet ERC-6551 registry. Each NFT has its own wallet. Send $HOOD into that wallet and it moves with the NFT. CCFF00 Square #1 already holds 10,000 official $CCFF00. DogiHood wallets start empty — nothing is preloaded.
+
+**Plans.** Starter $4.99 / Desk $9.99 / Desk+ $19.99 per month. Checkout is live Stripe on the desk. Demo activate is still labeled, for when you want to look around without paying.
+
+**Trade.** There is still no confirmed $HOOD pool on Robinhood Chain. The trade screen stays a simulator until a real pool exists. No invented routers, no fake fills.
+
+Hold the coin. Bind it to a Shiba. Subscribe if you want the desk.`,
+    date: '2026-10-01T12:00:00.000Z',
+    updatedAt: '2026-10-01T12:00:00.000Z',
+  },
+  {
     id: 'post_seed_build',
     slug: 'build-on-hood-street',
     title: 'Build on Hood Street',
@@ -80,7 +145,12 @@ function readAll(): BlogPost[] {
       writeAll(SEED)
       return [...SEED]
     }
-    return parsed
+    const have = new Set(parsed.map((p) => p.id))
+    const missing = SEED.filter((s) => !have.has(s.id))
+    if (missing.length === 0) return parsed
+    const merged = [...missing, ...parsed]
+    writeAll(merged)
+    return merged
   } catch {
     writeAll(SEED)
     return [...SEED]

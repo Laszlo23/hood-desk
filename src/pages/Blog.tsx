@@ -36,21 +36,42 @@ function formatDate(iso: string): string {
   }
 }
 
-/** Very light markdown-ish: paragraphs + **bold** */
+function renderInline(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/g)
+  return parts.map((part, j) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={j}>{part.slice(2, -2)}</strong>
+    }
+    if (part.startsWith('`') && part.endsWith('`')) {
+      return <code key={j}>{part.slice(1, -1)}</code>
+    }
+    const link = part.match(/^\[([^\]]+)\]\((https?:\/\/[^)]+)\)$/)
+    if (link) {
+      return (
+        <a key={j} href={link[2]} target="_blank" rel="noreferrer">
+          {link[1]}
+        </a>
+      )
+    }
+    return <span key={j}>{part}</span>
+  })
+}
+
+/** Paragraphs, lists, bold, code, and links. */
 function renderBody(body: string) {
   return body.split(/\n\n+/).map((para, i) => {
-    const parts = para.split(/(\*\*[^*]+\*\*)/g)
-    return (
-      <p key={i}>
-        {parts.map((p, j) =>
-          p.startsWith('**') && p.endsWith('**') ? (
-            <strong key={j}>{p.slice(2, -2)}</strong>
-          ) : (
-            <span key={j}>{p}</span>
-          ),
-        )}
-      </p>
-    )
+    const lines = para.split('\n').map((line) => line.trim()).filter(Boolean)
+    const list = lines.length > 0 && lines.every((line) => /^[-*]\s+/.test(line))
+    if (list) {
+      return (
+        <ul key={i}>
+          {lines.map((line, j) => (
+            <li key={j}>{renderInline(line.replace(/^[-*]\s+/, ''))}</li>
+          ))}
+        </ul>
+      )
+    }
+    return <p key={i}>{renderInline(lines.join(' '))}</p>
   })
 }
 

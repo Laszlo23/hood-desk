@@ -11,7 +11,7 @@
  * ERC-20 note: several similarly named CCFF00 tokens exist on RH 4663.
  * HoodStreet docs say each NFT TBA received 10,000 $CCFF00 at mint.
  * Do NOT claim live trading — transfers may be disabled / markets unclear.
- * User hint 0x73cb…ec97 could not be independently confirmed — omitted.
+ * Official $CCFF00 is 0x73CB…ec97 (HoodStreet app + 10,000 tokens inside NFT #1's TBA).
  */
 
 import type { Address } from 'viem'
@@ -28,6 +28,7 @@ import {
   HOOD_SEEDER_NFT_ADDRESS,
   hoodSeederItemUrl,
 } from './hoodseeder'
+import { CCFF00_TOKEN_ADDRESS } from './tokenBound'
 
 export type StoryConfidence = 'confirmed' | 'community-lore'
 
@@ -73,12 +74,11 @@ export const CCFF00_SITE = 'https://hoodstreet.capital/ccff00'
 export const CCFF00_HOODSTREET = 'https://hoodstreet.capital/'
 
 /**
- * One of several similarly named ERC-20s on RH (name/symbol #ccff00, 1B supply).
- * Listed as reference only — not a live trading recommendation.
- * Robinscout: https://robinscout.gitlawb.com/token/0x899c0d46b93e6cc016230d0be82470f4f189ed23
+ * Official $CCFF00 from the HoodStreet app.
+ * NFT #1's ERC-6551 wallet holds 10,000 of this token on RH 4663.
+ * Transfers may still be disabled during the public mint — not a buy signal.
  */
-export const CCFF00_ERC20_REFERENCE =
-  '0x899c0d46b93e6cc016230d0be82470f4f189ed23' as Address
+export const CCFF00_ERC20_REFERENCE = CCFF00_TOKEN_ADDRESS
 
 export function ccff00ItemUrl(tokenId: number | string = 1): string {
   return `https://opensea.io/item/robinhood/${CCFF00_NFT_ADDRESS}/${tokenId}`
@@ -198,7 +198,7 @@ export const CCFF00_STORY: NftProjectStory = {
   chainId: 4663,
   contract: CCFF00_NFT_ADDRESS,
   erc20Note:
-    'Docs: each TBA loaded with 10,000 $CCFF00 at mint (1B fixed from 10k×10k). Multiple similarly named ERC-20 contracts exist on RH — trading may be disabled; we do not claim a live market. Reference explorer token #ccff00 (0x899c…ed23) is listed only as a community pointer, not a buy signal.',
+    'Each TBA was loaded with 10,000 official $CCFF00 at mint (0x73CB…ec97). Hood Desk reads that balance live. Transfers may stay disabled until the public mint finishes — not a buy signal.',
   sampleTokenId: 1,
   coverImage: '/nfts/ccff00-1.svg',
   gallery: CCFF00_GALLERY,

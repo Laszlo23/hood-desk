@@ -4,35 +4,21 @@
  */
 
 import { EXPLORER_ADDRESS, EXPLORER_BASE } from '../chain'
-import { HOOD_DEMO_ADDRESS } from '../trade/demoTokens'
-import { HOOD_TOKEN_ADDRESS } from '../hoodToken'
 
-const CACHE_KEY = 'hood-desk:verify:v1'
+const CACHE_KEY = 'hood-desk:verify:v2'
 const OVERRIDE_KEY = 'hood-desk:verify:override:v1'
 const CACHE_TTL_MS = 1000 * 60 * 60 * 6 // 6h
 
 export type VerifyStatus = {
   address: string
   verified: boolean
-  source: 'blockscout' | 'override' | 'known' | 'cache' | 'unknown'
+  source: 'blockscout' | 'sourcify' | 'override' | 'known' | 'cache' | 'unknown'
   checkedAt: string
   name?: string
 }
 
 type CacheMap = Record<string, VerifyStatus & { expiresAt: number }>
 type OverrideMap = Record<string, boolean>
-
-/** Known demo / env addresses treated as verified for local UX. */
-const KNOWN_VERIFIED = new Set<string>(
-  [
-    HOOD_DEMO_ADDRESS,
-    '0xCcFf00000000000000000000000000000000a11e',
-    '0xCcFf00000000000000000000000000000000b007',
-    HOOD_TOKEN_ADDRESS || '',
-  ]
-    .filter(Boolean)
-    .map((a) => a.toLowerCase()),
-)
 
 function norm(addr: string): string {
   return addr.trim().toLowerCase()
@@ -81,16 +67,6 @@ export function getCachedVerified(address: string): VerifyStatus | null {
     }
   }
 
-  if (KNOWN_VERIFIED.has(a)) {
-    return {
-      address: a,
-      verified: true,
-      source: 'known',
-      checkedAt: new Date().toISOString(),
-      name: 'Known verified (demo/env)',
-    }
-  }
-
   const cache = readCache()
   const hit = cache[a]
   if (hit && hit.expiresAt > Date.now()) {
@@ -129,6 +105,25 @@ export function explorerVerifyUrl(address: string): string {
   return `${EXPLORER_ADDRESS(address)}?tab=contract`
 }
 
+export function sourcifyUrl(address: string): string {
+  return `https://sourcify.dev/server/v2/contract/4663/${address}`
+}
+
+async function checkSourcify(address: string): Promise<{ verified: boolean; name?: string }> {
+  try {
+    const res = await fetch(`https://sourcify.dev/server/v2/contract/4663/${address}`, {
+      headers: { Accept: 'application/json' },
+    })
+    if (!res.ok) return { verified: false }
+    const data = (await res.json()) as { match?: string | null; runtimeMatch?: string | null }
+    const match = data.runtimeMatch || data.match
+    const verified = match === 'exact_match' || match === 'match'
+    return { verified, name: verified ? 'Sourcify exact match' : undefined }
+  } catch {
+    return { verified: false }
+  }
+}
+
 export function explorerBase(): string {
   return EXPLORER_BASE
 }
@@ -149,14 +144,11 @@ export async function checkOnchainVerified(address: string): Promise<VerifyStatu
   }
 
   const cached = getCachedVerified(a)
-  if (cached && (cached.source === 'override' || cached.source === 'known' || cached.source === 'cache')) {
-    if (cached.source !== 'cache' || cached.verified) return cached
-    // stale false from cache still returned above if not expired — ok
-    if (cached.source === 'cache') return cached
-  }
+  if (cached && (cached.source === 'override' || cached.verified)) return cached
 
   let verified = false
   let name: string | undefined
+  let source: VerifyStatus['source'] = 'blockscout'
 
   try {
     const v2 = `${EXPLORER_BASE}/api/v2/smart-contracts/${a}`
@@ -186,17 +178,22 @@ export async function checkOnchainVerified(address: string): Promise<VerifyStatu
       }
     }
   } catch {
-    // Network / CORS — keep known/override only; do not invent true
-    if (KNOWN_VERIFIED.has(a)) {
+    verified = false
+  }
+
+  if (!verified) {
+    const sourcify = await checkSourcify(a)
+    if (sourcify.verified) {
       verified = true
-      name = 'Known verified (offline)'
+      name = sourcify.name
+      source = 'sourcify'
     }
   }
 
   const status: VerifyStatus = {
     address: a,
     verified,
-    source: verified && KNOWN_VERIFIED.has(a) && !name ? 'known' : 'blockscout',
+    source,
     checkedAt: new Date().toISOString(),
     name,
   }

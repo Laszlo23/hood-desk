@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import {
   DRAWER_SECTIONS,
   DRAWER_SECTIONS_STORAGE_KEY,
@@ -186,11 +187,34 @@ export function TopNav({ view, onNavigate }: Props) {
   const [moreOpen, setMoreOpen] = useState(false)
   const [sectionOpen, setSectionOpen] = useState<SectionOpenState>(defaultSectionOpen)
   const [subLabel, setSubLabel] = useState(() => getSubscription().label)
+  const [navHeight, setNavHeight] = useState(56)
   const moreRef = useRef<HTMLDivElement>(null)
+  const barRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     setSectionOpen(loadSectionOpen())
   }, [])
+
+  useEffect(() => {
+    const el = barRef.current
+    if (!el) return
+    const measure = () => setNavHeight(Math.ceil(el.getBoundingClientRect().height))
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!drawerOpen) return
+    setSectionOpen((prev) => {
+      const next = { ...prev }
+      for (const section of DRAWER_SECTIONS) {
+        if (drawerSectionHasActive(view, section)) next[section.id] = true
+      }
+      return next
+    })
+  }, [drawerOpen, view])
 
   useEffect(() => {
     setSubLabel(getSubscription().label)
@@ -249,8 +273,98 @@ export function TopNav({ view, onNavigate }: Props) {
 
   const moreIsActive = moreNavActive(view)
 
+  const drawer =
+    drawerOpen &&
+    createPortal(
+      <>
+        <div
+          className="top-nav-drawer-backdrop"
+          onClick={() => setDrawerOpen(false)}
+          aria-hidden
+        />
+        <div
+          className="top-nav-drawer"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu"
+          style={{ top: navHeight, height: `calc(100dvh - ${navHeight}px)` }}
+        >
+          <div className="top-nav-drawer-sheen" aria-hidden />
+          <nav className="top-nav-mobile" aria-label="Mobile primary">
+            {DRAWER_SECTIONS.map((section) => {
+              const open = sectionOpen[section.id]
+              const sectionActive = drawerSectionHasActive(view, section)
+              return (
+                <div
+                  key={section.id}
+                  className={`nav-drawer-section${open ? ' is-open' : ''}${sectionActive ? ' has-active' : ''}`}
+                >
+                  <button
+                    type="button"
+                    className="nav-drawer-section-header"
+                    aria-expanded={open}
+                    aria-controls={`drawer-section-${section.id}`}
+                    id={`drawer-section-btn-${section.id}`}
+                    onClick={() => toggleSection(section.id)}
+                  >
+                    <span className="nav-drawer-section-title">{section.label}</span>
+                    <span className="nav-drawer-section-meta">
+                      <span className="nav-drawer-section-count">{section.items.length}</span>
+                      <Chevron open={open} />
+                    </span>
+                  </button>
+                  <div
+                    id={`drawer-section-${section.id}`}
+                    role="region"
+                    aria-labelledby={`drawer-section-btn-${section.id}`}
+                    className="nav-drawer-section-body"
+                    hidden={!open}
+                  >
+                    {section.items.map((v) => {
+                      const active = navActive(view, v.id)
+                      return (
+                        <a
+                          key={v.id}
+                          href={hashForView(v.id)}
+                          className={`nav-link nav-drawer-link${active ? ' active' : ''}`}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            go(v.id)
+                          }}
+                        >
+                          <span className="nav-drawer-link-main">
+                            <span className="nav-drawer-icon">
+                              <NavIcon name={v.icon} />
+                            </span>
+                            <span className="nav-link-label">{v.label}</span>
+                          </span>
+                          {active && <span className="nav-link-pip" aria-hidden />}
+                        </a>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
+            <a
+              href={hashForView('subscribe')}
+              className="nav-cta nav-cta-drawer"
+              onClick={(e) => {
+                e.preventDefault()
+                go('subscribe')
+              }}
+            >
+              <span className="nav-cta-dot" aria-hidden />
+              Subscribe
+            </a>
+          </nav>
+        </div>
+      </>,
+      document.body,
+    )
+
   return (
-    <header className={`top-bar${drawerOpen ? ' top-bar-open' : ''}`}>
+    <header ref={barRef} className={`top-bar${drawerOpen ? ' top-bar-open' : ''}`}>
       <div className="top-bar-glow" aria-hidden />
       <div className="top-bar-inner">
         <div className="top-bar-left">
@@ -330,7 +444,14 @@ export function TopNav({ view, onNavigate }: Props) {
             }}
           >
             <span className="nav-cta-dot" aria-hidden />
-            {subLabel === 'Free' ? 'Subscribe' : subLabel}
+            {subLabel === 'Free' ? (
+              <>
+                <span className="nav-cta-full">Subscribe</span>
+                <span className="nav-cta-short">Plans</span>
+              </>
+            ) : (
+              subLabel
+            )}
           </a>
           <div className="nav-connect">
             <ConnectButton />
@@ -352,86 +473,7 @@ export function TopNav({ view, onNavigate }: Props) {
         </div>
       </div>
 
-      {drawerOpen && (
-        <>
-          <div
-            className="top-nav-drawer-backdrop"
-            onClick={() => setDrawerOpen(false)}
-            aria-hidden
-          />
-          <div className="top-nav-drawer">
-          <div className="top-nav-drawer-sheen" aria-hidden />
-          <nav className="top-nav-mobile" aria-label="Mobile primary">
-            {DRAWER_SECTIONS.map((section) => {
-              const open = sectionOpen[section.id]
-              const sectionActive = drawerSectionHasActive(view, section)
-              return (
-                <div
-                  key={section.id}
-                  className={`nav-drawer-section${open ? ' is-open' : ''}${sectionActive ? ' has-active' : ''}`}
-                >
-                  <button
-                    type="button"
-                    className="nav-drawer-section-header"
-                    aria-expanded={open}
-                    aria-controls={`drawer-section-${section.id}`}
-                    id={`drawer-section-btn-${section.id}`}
-                    onClick={() => toggleSection(section.id)}
-                  >
-                    <span className="nav-drawer-section-title">{section.label}</span>
-                    <span className="nav-drawer-section-meta">
-                      <span className="nav-drawer-section-count">{section.items.length}</span>
-                      <Chevron open={open} />
-                    </span>
-                  </button>
-                  <div
-                    id={`drawer-section-${section.id}`}
-                    role="region"
-                    aria-labelledby={`drawer-section-btn-${section.id}`}
-                    className="nav-drawer-section-body"
-                    hidden={!open}
-                  >
-                    {section.items.map((v) => {
-                      const active = navActive(view, v.id)
-                      return (
-                        <a
-                          key={v.id}
-                          href={hashForView(v.id)}
-                          className={`nav-link nav-drawer-link${active ? ' active' : ''}`}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            go(v.id)
-                          }}
-                        >
-                          <span className="nav-drawer-link-main">
-                            <span className="nav-drawer-icon">
-                              <NavIcon name={v.icon} />
-                            </span>
-                            <span className="nav-link-label">{v.label}</span>
-                          </span>
-                          {active && <span className="nav-link-pip" aria-hidden />}
-                        </a>
-                      )
-                    })}
-                  </div>
-                </div>
-              )
-            })}
-            <a
-              href={hashForView('subscribe')}
-              className="nav-cta nav-cta-drawer"
-              onClick={(e) => {
-                e.preventDefault()
-                go('subscribe')
-              }}
-            >
-              <span className="nav-cta-dot" aria-hidden />
-              Subscribe
-            </a>
-          </nav>
-        </div>
-        </>
-      )}
+      {drawer}
       <div className="top-bar-hairline" aria-hidden />
     </header>
   )

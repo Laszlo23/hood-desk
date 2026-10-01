@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { HoodMark } from '../components/HoodMark'
+import { TokenBoundPanel } from '../components/TokenBoundPanel'
+import { VerifiedBadge } from '../components/VerifiedBadge'
 import { EXPLORER_BASE, EXPLORER_TOKEN, EXPLORER_TX } from '../lib/chain'
 import { HOOD_META, HOOD_TOKEN_DEPLOYED, HOOD_TOKEN_ADDRESS } from '../lib/hoodToken'
+import { checkOnchainVerified, sourcifyUrl, type VerifyStatus } from '../lib/verify/onchainVerified'
 import type { ViewId } from '../lib/nav'
 
 type Props = { onNavigate: (id: ViewId, projectId?: string) => void }
@@ -41,7 +44,19 @@ function xPostIntent(text: string): string {
 
 export function Hood({ onNavigate }: Props) {
   const [copied, setCopied] = useState('')
+  const [verify, setVerify] = useState<VerifyStatus | null>(null)
   const hoodAddr = HOOD_TOKEN_ADDRESS || ''
+
+  useEffect(() => {
+    if (!hoodAddr) return
+    let cancelled = false
+    void checkOnchainVerified(hoodAddr).then((next) => {
+      if (!cancelled) setVerify(next)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [hoodAddr])
 
   const shareText = HOOD_TOKEN_DEPLOYED
     ? `$HOOD is live on ${CHAIN_NAME} (${CHAIN_ID})\n\n${hoodAddr}\n\nDeployed · 1B supply · companion token for Hood Desk\n\nhttps://doghood.aibusiness.fun`
@@ -95,7 +110,13 @@ export function Hood({ onNavigate }: Props) {
                   <h2 className="hood-attention-symbol">
                     ${HOOD_META.symbol}
                     <span className="hood-verification-status">
-                      <span className="badge badge-warning">Verification pending</span>
+                      {verify?.verified ? (
+                        <VerifiedBadge address={hoodAddr} size="md" />
+                      ) : (
+                        <span className="badge badge-warning">
+                          {verify ? 'Not verified on explorer' : 'Checking verification…'}
+                        </span>
+                      )}
                     </span>
                   </h2>
                 </div>
@@ -113,7 +134,15 @@ export function Hood({ onNavigate }: Props) {
                 </button>
               </div>
               <p className="tiny muted mt">
-                Contract deployed on {CHAIN_NAME} (chain {CHAIN_ID}). Blockscout verification in progress — Cloudflare blocked forge-verify. Do not claim verified until confirmation.
+                Contract deployed on {CHAIN_NAME} (chain {CHAIN_ID}).
+                {verify?.verified
+                  ? ' Source matches on Sourcify (exact match). Blockscout still sits behind Cloudflare from this machine.'
+                  : ' Source check runs against Blockscout, then Sourcify. The badge appears only after a real match.'}{' '}
+                {hoodAddr ? (
+                  <a href={sourcifyUrl(hoodAddr)} target="_blank" rel="noreferrer">
+                    Sourcify
+                  </a>
+                ) : null}
               </p>
             </article>
 
@@ -272,7 +301,8 @@ export function Hood({ onNavigate }: Props) {
         </>
       )}
 
-      {/* How fees fund the desk */}
+      <TokenBoundPanel initialCollection="dogihood" />
+
       <article className="card">
         <h2>How fees fund the desk</h2>
         <ol className="fee-steps">

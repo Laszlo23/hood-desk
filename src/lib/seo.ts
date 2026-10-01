@@ -1,0 +1,140 @@
+import { useEffect } from 'react'
+import { getBlogPost } from './blog'
+import { hashForView, type ViewId } from './nav'
+
+const SITE = 'https://doghood.aibusiness.fun'
+const DEFAULT_IMAGE = `${SITE}/og.jpg?v=20261001`
+const STREET_IMAGE = `${SITE}/og-street.jpg?v=20261001`
+
+type PageMeta = {
+  title: string
+  description: string
+  image?: string
+}
+
+const PAGES: Record<ViewId, PageMeta> = {
+  landing: {
+    title: 'Hood Desk · AI trading desk on Robinhood Chain',
+    description:
+      'Hood Desk on Robinhood Chain. $HOOD is live, CCFF00 and DogiHood NFTs bind to their own wallets, and Stripe plans are open. Trade stays a labeled simulator until a real pool exists.',
+  },
+  trade: {
+    title: 'Trade · Hood Desk',
+    description:
+      'Simulate Hood Street pairs on Hood Desk. Fills are labeled simulated until a confirmed $HOOD pool exists on Robinhood Chain.',
+  },
+  community: {
+    title: 'Auto-Trade · Hood Desk',
+    description: 'Community auto-trade desk on Robinhood Chain. Follow the HOOD agent and keep every simulated fill labeled.',
+  },
+  status: {
+    title: 'Desk status · Hood Desk',
+    description: 'Live desk status for Hood Desk on Robinhood Chain: token, NFT wallets, and what is still simulated.',
+  },
+  skills: {
+    title: 'Skill Market · Hood Desk',
+    description: 'Follow trading bots on Hood Desk. Creator credits stay on a local ledger until chain fees are real.',
+  },
+  terminal: {
+    title: 'Terminal · Hood Desk',
+    description: 'Chat the HOOD agent. Fair-launch notes, wallet reads, and desk ops on Robinhood Chain.',
+  },
+  rewards: {
+    title: 'Rewards · Hood Desk',
+    description: 'Creator, platform, and referrer split of simulated desk fees. Nothing is paid on-chain until a real pool exists.',
+  },
+  blog: {
+    title: 'Hood Street notes · Hood Desk',
+    description:
+      'What Hood Street is minting, the $HOOD launch, and CCFF00 wallet notes. Written on the desk, checked against chain.',
+    image: STREET_IMAGE,
+  },
+  nfts: {
+    title: 'NFTs and token-bound wallets · Hood Desk',
+    description:
+      'DogiHood and CCFF00 on Robinhood Chain. Each NFT controls an ERC-6551 wallet. Send $HOOD in and it moves with the NFT.',
+  },
+  hood: {
+    title: '$HOOD token · Hood Desk',
+    description:
+      '$HOOD is live at 0xC7749BCFDC8d06FC246be556f4EAD75Ac7E1320c. Fixed 1B supply, mint-once, exact match on Sourcify.',
+  },
+  lore: {
+    title: 'The Legend · Hood Desk',
+    description: 'Sherwood to Hood Street. The HOOD fox, the mist, and the desk that keeps the books honest.',
+  },
+  account: {
+    title: 'Account · Hood Desk',
+    description: 'Your Hood Desk wallet, subscription, and NFT-bound balances on Robinhood Chain.',
+  },
+  projects: {
+    title: 'Projects · Hood Desk',
+    description: 'Fair-launch projects on Hood Desk. Fixed supply, no invented DEX routers.',
+  },
+  project: {
+    title: 'Project · Hood Desk',
+    description: 'Project detail on Hood Desk. Fair-launch checklist and token address when you have one.',
+  },
+  create: {
+    title: 'Create a project · Hood Desk',
+    description: 'Start a fair-launch project on Hood Desk. Supply, symbol, and the launch checklist.',
+  },
+  ops: {
+    title: 'Ops · Hood Desk',
+    description: 'How the Hood Desk business runs: agent, plans, and what is live versus simulated.',
+  },
+  revenue: {
+    title: 'Revenue · Hood Desk',
+    description: 'Desk revenue metrics. Simulated fee splits stay labeled until chain fees are real.',
+  },
+  subscribe: {
+    title: 'Subscribe · Hood Desk',
+    description: 'Starter $4.99, Desk $9.99, Desk+ $19.99 per month. Live Stripe Checkout on Hood Desk.',
+  },
+}
+
+function setMeta(attr: 'name' | 'property', key: string, content: string) {
+  let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`)
+  if (!el) {
+    el = document.createElement('meta')
+    el.setAttribute(attr, key)
+    document.head.appendChild(el)
+  }
+  el.setAttribute('content', content)
+}
+
+export function usePageSeo(view: ViewId, blogSlug?: string) {
+  useEffect(() => {
+    const page = PAGES[view]
+    let title = page.title
+    let description = page.description
+    let image = page.image ?? DEFAULT_IMAGE
+    let hash = hashForView(view)
+
+    if (view === 'blog' && blogSlug) {
+      const post = getBlogPost(blogSlug)
+      if (post) {
+        title = `${post.title} · Hood Desk`
+        description = post.body.replace(/[#*`[\]]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 180)
+        hash = hashForView('blog', blogSlug)
+        image = STREET_IMAGE
+      }
+    }
+
+    const url = view === 'landing' && !blogSlug ? `${SITE}/` : `${SITE}/${hash}`
+    document.title = title
+    setMeta('name', 'description', description)
+    setMeta('property', 'og:title', title)
+    setMeta('property', 'og:description', description)
+    setMeta('property', 'og:url', url)
+    setMeta('property', 'og:image', image)
+    setMeta('property', 'og:image:secure_url', image)
+    setMeta('property', 'og:image:alt', title)
+    setMeta('name', 'twitter:title', title)
+    setMeta('name', 'twitter:description', description)
+    setMeta('name', 'twitter:image', image)
+    setMeta('name', 'twitter:image:alt', title)
+    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+    if (canonical) canonical.href = url
+  }, [view, blogSlug])
+}

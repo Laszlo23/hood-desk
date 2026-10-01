@@ -33,6 +33,7 @@ import express from 'express'
 import Stripe from 'stripe'
 
 const PORT = Number(process.env.PORT || 8787)
+const HOST = process.env.HOST || '0.0.0.0'
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5182'
 const SECRET = (process.env.STRIPE_SECRET_KEY || '').trim()
 const WEBHOOK_SECRET = (process.env.STRIPE_WEBHOOK_SECRET || '').trim()
@@ -43,7 +44,13 @@ const app = express()
 
 app.use(
   cors({
-    origin: [CORS_ORIGIN, 'http://127.0.0.1:5182', 'http://0.0.0.0:5182', 'http://localhost:5182'],
+    origin: [
+      CORS_ORIGIN,
+      'https://doghood.aibusiness.fun',
+      'http://127.0.0.1:5182',
+      'http://0.0.0.0:5182',
+      'http://localhost:5182',
+    ],
   }),
 )
 
@@ -284,6 +291,6 @@ app.get('/api/stripe/session/:id', async (req, res) => {
   }
 })
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`[hood-desk stripe] http://0.0.0.0:${PORT}  secret=${SECRET ? 'yes' : 'NO — demo only'}`)
+app.listen(PORT, HOST, () => {
+  console.log(`[hood-desk stripe] http://${HOST}:${PORT}  secret=${SECRET ? 'yes' : 'NO — demo only'}`)
 })

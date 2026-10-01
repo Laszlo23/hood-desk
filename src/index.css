@@ -1834,6 +1834,12 @@ a:hover {
   gap: 8px;
 }
 
+@media (max-width: 899px) {
+  .trade-sidebar {
+    display: none;
+  }
+}
+
 @media (min-width: 900px) {
   .trade-page {
     grid-template-columns: 200px minmax(0, 1fr) 320px;
@@ -2437,6 +2443,24 @@ a:hover {
 .blog-article p:last-child {
   margin-bottom: 0;
 }
+.blog-article a {
+  color: var(--accent);
+  text-underline-offset: 2px;
+}
+.blog-article ul {
+  margin: 0 0 0.9em;
+  padding-left: 1.15em;
+}
+.blog-article li {
+  margin: 0.35em 0;
+  line-height: 1.45;
+}
+.blog-article code {
+  font-family: var(--mono);
+  font-size: 0.82em;
+  color: var(--accent);
+  word-break: break-all;
+}
 
 .trade-page .weekly-banner {
   grid-column: 1 / -1;
@@ -2736,11 +2760,13 @@ a:hover {
     position: sticky;
     top: 0;
     z-index: 1000;
+    overflow: visible;
     border-radius: 0;
     margin-bottom: 0;
     border-left: none;
     border-right: none;
     border-top: none;
+    padding-top: env(safe-area-inset-top);
   }
 }
 
@@ -2871,6 +2897,12 @@ a:hover {
   font-weight: 650;
   letter-spacing: -0.02em;
   opacity: 0.92;
+}
+
+@media (max-width: 1079px) {
+  .brand-desk {
+    display: none;
+  }
 }
 
 .top-bar .brand-sub {
@@ -3007,6 +3039,19 @@ a:hover {
   transform: translateY(-1px);
 }
 
+.nav-cta-short {
+  display: none;
+}
+
+@media (max-width: 420px) {
+  .nav-cta-full {
+    display: none;
+  }
+  .nav-cta-short {
+    display: inline;
+  }
+}
+
 .nav-cta-dot {
   width: 6px;
   height: 6px;
@@ -3094,26 +3139,19 @@ a:hover {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 5px;
-  width: 38px;
-  height: 38px;
-  padding: 9px;
+  gap: 4px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
   border-radius: 12px;
   border: 1px solid rgba(204, 255, 0, 0.22);
   background:
     linear-gradient(160deg, rgba(204, 255, 0, 0.08), rgba(0, 0, 0, 0.4));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
   transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
-}
-
-/* Mobile: Optimize burger button size */
-@media (max-width: 1079px) {
-  .nav-burger {
-    width: 36px;
-    height: 36px;
-    padding: 8px;
-    gap: 4px;
-  }
 }
 
 .nav-burger:hover {
@@ -3124,23 +3162,22 @@ a:hover {
 .nav-burger span {
   display: block;
   height: 2px;
-  width: 100%;
+  width: 18px;
   background: var(--accent);
   border-radius: 2px;
   box-shadow: 0 0 6px rgba(204, 255, 0, 0.45);
-  transition: transform 0.18s ease, opacity 0.18s ease, width 0.18s ease;
+  transition: transform 0.18s ease, opacity 0.18s ease;
   transform-origin: center;
 }
 
 .nav-burger.is-open span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
+  transform: translateY(6px) rotate(45deg);
 }
 .nav-burger.is-open span:nth-child(2) {
   opacity: 0;
-  width: 40%;
 }
 .nav-burger.is-open span:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
+  transform: translateY(-6px) rotate(-45deg);
 }
 
 /* Mobile drawer — glass panel, not bare */
@@ -3153,9 +3190,8 @@ a:hover {
     display: block;
     position: fixed;
     inset: 0;
-    z-index: 90 !important;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(2px);
+    z-index: 1100;
+    background: rgba(0, 0, 0, 0.62);
     animation: fadeIn 0.2s ease;
   }
 }
@@ -3185,28 +3221,27 @@ a:hover {
     0 0 24px rgba(204, 255, 0, 0.06);
 }
 
-/* Mobile: Drawer slides down from below sticky header */
+/* Mobile: Drawer is portaled to body so the glass header cannot clip it */
 @media (max-width: 1079px) {
   .top-nav-drawer {
     display: flex;
     flex-direction: column;
     position: fixed;
-    top: 50px;
     left: 0;
     right: 0;
     bottom: 0;
     margin: 0;
-    padding: 12px;
+    padding: 12px 12px calc(16px + env(safe-area-inset-bottom));
     border-radius: 0;
     border: none;
     border-top: 1px solid rgba(204, 255, 0, 0.18);
-    height: calc(100vh - 50px);
-    height: calc(100dvh - 50px);
-    min-height: 400px;
+    min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
+    overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
-    z-index: 999 !important;
+    z-index: 1101;
+    background: #070807;
     animation: slideDown 0.25s ease;
   }
 
@@ -3276,7 +3311,7 @@ a:hover {
   flex-direction: column;
   gap: 2px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.015);
+  background: #10140c;
   border: 1px solid rgba(255, 255, 255, 0.05);
   overflow: hidden;
 }
@@ -3292,7 +3327,7 @@ a:hover {
   justify-content: space-between;
   gap: 10px;
   width: 100%;
-  min-height: 42px;
+  min-height: 48px;
   padding: 10px 12px;
   margin: 0;
   border: none;
@@ -3381,7 +3416,7 @@ a:hover {
   font-size: 0.84rem;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  min-height: 42px;
+  min-height: 48px;
 }
 
 .nav-drawer-link-main {
@@ -5559,6 +5594,41 @@ a.nft-gallery-tile:hover {
 .hood-dex-card {
   background: var(--surface-1);
   margin-bottom: 18px;
+}
+
+.tba-panel {
+  margin-bottom: 18px;
+}
+
+.tba-collections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.tba-token-field {
+  max-width: 220px;
+}
+
+.tba-readout {
+  margin-top: 8px;
+}
+
+.tba-hood-line {
+  word-break: break-all;
+  margin-top: 8px;
+}
+
+.tba-send {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tba-note {
+  color: var(--accent);
 }
 
 .hood-contract-list {

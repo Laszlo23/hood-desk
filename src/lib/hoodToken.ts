@@ -7,9 +7,17 @@ const clean = (raw: unknown) =>
 
 const raw = clean(import.meta.env.VITE_HOOD_TOKEN)
 
-/** Optional $HOOD address from env. Empty / invalid → not deployed yet. */
+/**
+ * Live $HOOD on Robinhood Chain 4663.
+ * Deploy tx 0xe148725110ccf28f6411c90aac0de7b6cbe1708dc2c1e4d8dc9f8b305c97f26b.
+ * Env override wins when it is a valid address. An empty env uses this contract.
+ */
+export const HOOD_TOKEN_CONFIRMED =
+  '0xC7749BCFDC8d06FC246be556f4EAD75Ac7E1320c' as Address
+
+/** $HOOD address. Invalid env override → unset. Empty env → confirmed contract. */
 export const HOOD_TOKEN_ADDRESS: Address | null =
-  raw && isAddress(raw) ? (raw as Address) : null
+  raw && isAddress(raw) ? (raw as Address) : raw ? null : HOOD_TOKEN_CONFIRMED
 
 export const HOOD_TOKEN_DEPLOYED = Boolean(HOOD_TOKEN_ADDRESS)
 
@@ -49,5 +57,15 @@ export const erc20Abi = [
     stateMutability: 'view',
     inputs: [],
     outputs: [{ name: '', type: 'string' }],
+  },
+  {
+    type: 'function',
+    name: 'transfer',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'to', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    outputs: [{ name: '', type: 'bool' }],
   },
 ] as const

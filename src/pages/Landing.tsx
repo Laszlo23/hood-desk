@@ -202,8 +202,7 @@ export function Landing({ onNavigate }: Props) {
         <article className="card mini-card">
           <h3>Subscribe</h3>
           <p className="muted">
-            Starter $4.99 / Desk $9.99 / Desk+ $19.99 — trading + deployer agents, social growth, 6mo updates. Stripe Checkout is live; subs
-            feed treasury.
+            Starter $4.99, Desk $9.99, Desk+ $19.99. Paid plans on this desk.
           </p>
           <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('subscribe')}>
             Plans →
@@ -215,7 +214,7 @@ export function Landing({ onNavigate }: Props) {
             DogiHood, Hood Seeder, and CCFF00. Each mark can hold a wallet.
           </p>
           <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('nfts')}>
-            Pack pride →
+            Open marks
           </button>
         </article>
         <article className="card mini-card">

@@ -5243,3 +5243,203 @@ a.nft-gallery-tile:hover {
     opacity: 0.05;
   }
 }
+
+/* Hood Token Launch Surface Styles */
+
+.hood-launch-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 14px;
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.hood-launch-lead {
+  max-width: 68ch;
+  line-height: 1.55;
+  font-size: 1rem;
+}
+
+.hood-deploy-pending {
+  border-color: rgba(255, 184, 0, 0.4);
+  background: rgba(255, 184, 0, 0.08);
+  padding: 18px;
+}
+
+.hood-attention-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.hood-attention-card {
+  background: linear-gradient(135deg, rgba(204, 255, 0, 0.08) 0%, var(--surface-1) 100%);
+  border-color: rgba(204, 255, 0, 0.35);
+}
+
+.hood-attention-symbol {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 10px;
+  font-size: 1.8rem;
+  font-weight: 900;
+}
+
+.hood-verification-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge-warning {
+  background: rgba(255, 184, 0, 0.2);
+  color: #ffb800;
+  border: 1px solid rgba(255, 184, 0, 0.4);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.hood-address-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  border: 1px solid rgba(204, 255, 0, 0.15);
+}
+
+.hood-address-mono {
+  flex: 1 1 auto;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  word-break: break-all;
+}
+
+.hood-quick-actions,
+.hood-share-card {
+  background: var(--surface-1);
+}
+
+.hood-action-grid,
+.hood-share-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.hood-specs-card {
+  background: var(--surface-1);
+  margin-bottom: 18px;
+}
+
+.hood-specs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.hood-spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(204, 255, 0, 0.1);
+}
+
+.hood-spec-item:last-child {
+  border-bottom: none;
+}
+
+.hood-spec-value {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.hood-dex-card {
+  background: var(--surface-1);
+  margin-bottom: 18px;
+}
+
+.hood-contract-list {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hood-contract-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(204, 255, 0, 0.1);
+}
+
+.hood-contract-list li:last-child {
+  border-bottom: none;
+}
+
+.hood-contract-link {
+  font-size: 0.8rem;
+  word-break: break-all;
+  color: var(--accent);
+}
+
+.trade-pool-notice {
+  background: rgba(255, 184, 0, 0.12);
+  border: 1px solid rgba(255, 184, 0, 0.35);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.trade-pool-notice strong {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+  color: #ffb800;
+}
+
+.trade-pool-notice .cta-row {
+  margin-top: 10px;
+}
+
+@media (min-width: 640px) {
+  .hood-attention-grid {
+    grid-template-columns: 2fr 1fr;
+  }
+
+  .hood-share-card {
+    grid-column: 1 / -1;
+  }
+
+  .hood-specs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .hood-attention-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  .hood-share-card {
+    grid-column: 2 / 4;
+  }
+}

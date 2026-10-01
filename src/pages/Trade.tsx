@@ -26,6 +26,7 @@ import type { ViewId } from '../lib/nav'
 import { WeeklyBanner } from '../components/WeeklyBanner'
 import { ConnectButton } from '../components/ConnectButton'
 import { TradeStatusBar } from '../components/status/TradeStatusBar'
+import { HOOD_TOKEN_ADDRESS } from '../lib/hoodToken'
 
 type Props = { onNavigate: (id: ViewId, projectId?: string) => void }
 
@@ -112,6 +113,10 @@ export function Trade({ onNavigate }: Props) {
     setLastVet(null)
   }
 
+  const isHoodToken = HOOD_TOKEN_ADDRESS && token.address.toLowerCase() === HOOD_TOKEN_ADDRESS.toLowerCase()
+  const uniswapTokenUrl = `https://app.uniswap.org/explore/tokens/chain/4663/${token.address}`
+  const okuTokenUrl = `https://oku.trade/token/4663:${token.address}`
+
   return (
     <section className="trade-page lore-shell-page">
       <TradeSidebar active="trade" onNavigate={onNavigate} />
@@ -119,6 +124,25 @@ export function Trade({ onNavigate }: Props) {
       <div className="trade-center">
         <WeeklyBanner compact />
         <TradeStatusBar tokenSymbol={token.symbol} />
+        {isHoodToken && (
+          <div className="trade-pool-notice">
+            <strong>No $HOOD Uniswap pool yet</strong>
+            <p className="tiny muted">
+              Checked all fee tiers — no liquidity created. Simulated trades stay labeled DEMO. Open on Uniswap or Oku to check live pool status with token address.
+            </p>
+            <div className="cta-row">
+              <a href={uniswapTokenUrl} target="_blank" rel="noreferrer" className="btn btn-primary btn-sm">
+                Open on Uniswap →
+              </a>
+              <a href={okuTokenUrl} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm">
+                Open on Oku →
+              </a>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('hood')}>
+                $HOOD info
+              </button>
+            </div>
+          </div>
+        )}
         <div className="trade-center-top">
           <TokenPicker
             tokens={tokens}

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { HoodMark } from '../components/HoodMark'
 import { DogiHoodCard } from '../components/DogiHoodCard'
+import { HoodSeederCard } from '../components/HoodSeederCard'
+import { InnerCircleCard } from '../components/InnerCircleCard'
 import { WalletPanel } from '../components/WalletPanel'
 import { XpChip } from '../components/XpChip'
 import { formatUpdatesUntil, getSubscription } from '../lib/subscription'
@@ -42,6 +44,8 @@ export function Account({ onNavigate }: Props) {
           </button>
         </div>
         <DogiHoodCard variant="featured" showHolderToggle />
+        <HoodSeederCard variant="featured" showHolderToggle />
+        <InnerCircleCard variant="featured" showHolderToggle />
       </div>
 
       <div className="account-grid">

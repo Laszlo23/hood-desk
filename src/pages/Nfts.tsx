@@ -202,6 +202,16 @@ export function Nfts({ onNavigate }: Props) {
             <span className="mono">{shortAddr(CCFF00_NFT_ADDRESS)}</span>
           </li>
           <li>
+            <span className="rail-label">Hood Seeder</span>
+            <span className="mono">
+              {shortAddr(NFT_PROJECT_STORIES.find((s) => s.id === 'hood-seeder')?.contract)}
+            </span>
+          </li>
+          <li>
+            <span className="rail-label">Inner Circle</span>
+            <span className="tiny muted">Soulbound badge · shows a contract after deploy</span>
+          </li>
+          <li>
             <span className="rail-label">Sources</span>
             <span className="tiny muted">
               hoodstreet.capital · OpenSea · RH RPC — see story cards

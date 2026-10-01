@@ -11,7 +11,7 @@ import { EXPLORER_ADDRESS, robinhoodChain } from '../lib/chain'
 import { asEip1193, ensureRobinhoodChain } from '../lib/ensureChain'
 import { erc20Abi, HOOD_META, HOOD_TOKEN_ADDRESS } from '../lib/hoodToken'
 import {
-  BOUND_COLLECTIONS,
+  listBoundCollections,
   erc6551RegistryAbi,
   erc721OwnerAbi,
   ERC6551_REGISTRY,
@@ -37,7 +37,8 @@ function formatToken(value: bigint | undefined, digits = 2): string {
 
 export function TokenBoundPanel({ initialCollection = 'dogihood' }: Props) {
   const [collectionId, setCollectionId] = useState<BoundCollectionId>(initialCollection)
-  const collection = BOUND_COLLECTIONS[collectionId]
+  const collection =
+    listBoundCollections().find((item) => item.id === collectionId) ?? listBoundCollections()[0]
   const [tokenIdRaw, setTokenIdRaw] = useState(String(collection.sampleTokenId))
   const [amount, setAmount] = useState('')
   const [note, setNote] = useState<string | null>(null)
@@ -119,7 +120,8 @@ export function TokenBoundPanel({ initialCollection = 'dogihood' }: Props) {
 
   const onCollection = (id: BoundCollectionId) => {
     setCollectionId(id)
-    setTokenIdRaw(String(BOUND_COLLECTIONS[id].sampleTokenId))
+    const next = listBoundCollections().find((item) => item.id === id)
+    setTokenIdRaw(String(next?.sampleTokenId ?? 1n))
     setNote(null)
   }
 
@@ -204,16 +206,16 @@ export function TokenBoundPanel({ initialCollection = 'dogihood' }: Props) {
       <p className="tiny muted">{collection.preloadedNote}</p>
 
       <div className="tba-collections" role="tablist" aria-label="NFT collection">
-        {(Object.keys(BOUND_COLLECTIONS) as BoundCollectionId[]).map((id) => (
+        {listBoundCollections().map((item) => (
           <button
-            key={id}
+            key={item.id}
             type="button"
             role="tab"
-            aria-selected={id === collectionId}
-            className={`btn btn-sm ${id === collectionId ? 'btn-primary' : 'btn-ghost'}`}
-            onClick={() => onCollection(id)}
+            aria-selected={item.id === collectionId}
+            className={`btn btn-sm ${item.id === collectionId ? 'btn-primary' : 'btn-ghost'}`}
+            onClick={() => onCollection(item.id)}
           >
-            {BOUND_COLLECTIONS[id].name}
+            {item.name}
           </button>
         ))}
       </div>

@@ -9,6 +9,10 @@ interface ImportMetaEnv {
   readonly VITE_HOOD_TOKEN?: string
   /** DogiHood ERC-721 on RH 4663 (featured pack NFT) */
   readonly VITE_DOGIHOOD_NFT?: string
+  /** Hood Seeder ERC-721 after contracts/hood-seeder is deployed */
+  readonly VITE_HOOD_SEEDER_NFT?: string
+  /** Inner Circle soulbound badge after contracts/inner-circle is deployed */
+  readonly VITE_INNER_CIRCLE_SBT?: string
   /** Stripe publishable key (pk_test_… / pk_live_…) */
   readonly VITE_STRIPE_PUBLISHABLE_KEY?: string
   readonly VITE_STRIPE_PRICE_STARTER?: string

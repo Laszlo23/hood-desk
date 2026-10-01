@@ -12,6 +12,8 @@
 
 import type { Address, Hex } from 'viem'
 import { DOGIHOOD_NFT_ADDRESS } from './dogihood'
+import { HOOD_SEEDER_NFT_ADDRESS } from './hoodseeder'
+import { INNER_CIRCLE_SBT_ADDRESS } from './innerCircle'
 
 /** Canonical ERC-6551 registry. Code is present on chain 4663. */
 export const ERC6551_REGISTRY =
@@ -34,7 +36,7 @@ export const CCFF00_TOKEN_ADDRESS =
 export const CCFF00_NFT_ADDRESS =
   '0x505A22Ffed8d37ebE580FfD98d2Cdb0021189146' as Address
 
-export type BoundCollectionId = 'dogihood' | 'ccff00'
+export type BoundCollectionId = 'dogihood' | 'ccff00' | 'hood-seeder' | 'inner-circle'
 
 export type BoundCollection = {
   id: BoundCollectionId
@@ -48,7 +50,7 @@ export type BoundCollection = {
   preloadedNote: string
 }
 
-export const BOUND_COLLECTIONS: Record<BoundCollectionId, BoundCollection> = {
+export const BOUND_COLLECTIONS: Record<'dogihood' | 'ccff00', BoundCollection> = {
   dogihood: {
     id: 'dogihood',
     name: 'DogiHood',
@@ -70,6 +72,34 @@ export const BOUND_COLLECTIONS: Record<BoundCollectionId, BoundCollection> = {
     preloadedNote:
       'Each CCFF00 Square was minted with 10,000 $CCFF00 inside its own wallet. That balance is read live — not assumed.',
   },
+}
+
+/** Seeder and Inner Circle appear here only after their contracts are set. */
+export function listBoundCollections(): BoundCollection[] {
+  const list: BoundCollection[] = [BOUND_COLLECTIONS.dogihood, BOUND_COLLECTIONS.ccff00]
+  if (HOOD_SEEDER_NFT_ADDRESS) {
+    list.push({
+      id: 'hood-seeder',
+      name: 'Hood Seeder',
+      nft: HOOD_SEEDER_NFT_ADDRESS,
+      sampleTokenId: 1n,
+      preloadedToken: null,
+      preloadedSymbol: null,
+      preloadedNote: 'Hood Seeder wallets start empty. $HOOD sent here moves with the pass.',
+    })
+  }
+  if (INNER_CIRCLE_SBT_ADDRESS) {
+    list.push({
+      id: 'inner-circle',
+      name: 'Inner Circle',
+      nft: INNER_CIRCLE_SBT_ADDRESS,
+      sampleTokenId: 0n,
+      preloadedToken: null,
+      preloadedSymbol: null,
+      preloadedNote: 'Inner Circle is soulbound. Its wallet still follows the badge.',
+    })
+  }
+  return list
 }
 
 export const erc6551RegistryAbi = [

@@ -26,7 +26,10 @@ import {HoodSeeder} from "../src/HoodSeeder.sol";
 contract DeployHoodSeeder is Script {
     function run() external {
         // Read config from environment or use defaults
-        string memory baseURI = vm.envOr("BASE_URI", string("https://nft.example.com/hood-seeder/"));
+        string memory baseURI = vm.envOr(
+            "BASE_URI",
+            string("https://doghood.aibusiness.fun/nfts/hood-seeder/")
+        );
         address royaltyReceiver = vm.envOr("ROYALTY_RECEIVER", msg.sender);
         uint96 royaltyFee = uint96(vm.envOr("ROYALTY_FEE", uint256(500))); // 5% default
         

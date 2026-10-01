@@ -1,0 +1,9 @@
+{
+  "name": "Hood Seeder #42",
+  "description": "Early supporter pass for Hood Desk on Robinhood Chain. Forest fox, #CCFF00.",
+  "image": "https://doghood.aibusiness.fun/nfts/hood-seeder/42.svg",
+  "attributes": [
+    { "trait_type": "Role", "value": "Seeder" },
+    { "trait_type": "Chain", "value": "Robinhood" }
+  ]
+}

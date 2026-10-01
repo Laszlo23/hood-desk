@@ -101,12 +101,12 @@ export function collectTradeTokens(wallet?: string | null): TradeToken[] {
       quote: 'ETH',
       decimals: 18,
       avatarEmoji: '🦊',
-      price: 0.00042,
+      price: 0,
       change24h: 0,
       marketCap: 0,
       volume24h: 0,
-      badges: ['Robinhood', 'Env'],
-      isDemo: true,
+      badges: ['Robinhood', 'No pool'],
+      isDemo: false,
       fairLaunchAttached: true,
     })
     seen.add(HOOD_TOKEN_ADDRESS.toLowerCase())

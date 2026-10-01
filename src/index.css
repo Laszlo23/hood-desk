@@ -1305,6 +1305,42 @@ a:hover {
   width: 100%;
 }
 
+.trade-chart-empty {
+  flex: 1;
+  min-height: 280px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  border: 1px dashed rgba(204, 255, 0, 0.15);
+}
+
+.trade-chart-empty-content {
+  text-align: center;
+  max-width: 420px;
+  padding: 24px;
+}
+
+.trade-chart-empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 12px;
+  opacity: 0.6;
+}
+
+.trade-chart-empty-content h3 {
+  font-size: 1.1rem;
+  margin: 0 0 8px;
+  color: var(--text);
+}
+
+.trade-chart-empty-content .muted {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
 .orders-panel {
   border: 1px solid var(--glass-border);
   border-radius: var(--radius);
@@ -5418,6 +5454,26 @@ a.nft-gallery-tile:hover {
 
 .trade-pool-notice .cta-row {
   margin-top: 10px;
+}
+
+.trade-pool-warning {
+  background: rgba(255, 92, 92, 0.12);
+  border: 1px solid rgba(255, 92, 92, 0.35);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-top: 12px;
+}
+
+.trade-pool-warning strong {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+  color: var(--danger);
+}
+
+.trade-pool-warning .tiny {
+  margin: 4px 0 0;
+  line-height: 1.4;
 }
 
 @media (min-width: 640px) {

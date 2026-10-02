@@ -16,7 +16,7 @@ const PAGES: Record<ViewId, PageMeta> = {
   landing: {
     title: 'Hood Desk · $HOOD on Robinhood Chain',
     description:
-      'The home of $HOOD. One mint, one Uniswap pool, and a ledger of every wallet-signed swap.',
+      'A free app for the $HOOD pool. Your wallet signs the swap. The ledger writes it down. The story and the game are for fun.',
   },
   trade: {
     title: 'Trade · Hood Desk',
@@ -62,11 +62,11 @@ const PAGES: Record<ViewId, PageMeta> = {
   lore: {
     title: 'Legend · Hood Desk',
     description:
-      'From the wood to the desk: the coin, the bow, the pool, the seed, the book, the street, and the pack.',
+      'The Robin Hood story, told as a name. Each chapter opens a real page: the coin, the pool, the ledger, the marks.',
   },
   dark: {
     title: 'Stay dark · Hood Desk',
-    description: 'A pixel run. Take three purses from the lit rooms and slip back to the wood.',
+    description: 'A small game on Hood Desk, for fun. Points stay on the card. The coin and the pool are the useful part.',
   },
   account: {
     title: 'Account · Hood Desk',

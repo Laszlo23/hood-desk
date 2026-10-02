@@ -12,7 +12,7 @@ export type BannerOverride = {
 }
 
 const SEEDED: string[] = [
-  'Sherwood → Hood Street: take from the rich, feed the community desk. HOOD keeps the mist honest.',
+  'A free app for a real pool. The story is the name. Stay dark is a game, for fun.',
   'Ship fair launches on RH 4663 — creators earn when the street trades.',
   'A swap happens when your wallet signs it. The ledger writes the row.',
   'One pool. A seed pairs what you bring. Two percent of that ETH goes to the cause.',

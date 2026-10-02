@@ -3686,6 +3686,11 @@ a:hover {
 }
 
 @media (min-width: 1080px) {
+  .top-bar {
+    overflow: visible;
+    z-index: 40;
+  }
+
   .top-nav-desktop {
     display: flex;
   }

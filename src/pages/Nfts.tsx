@@ -126,7 +126,7 @@ export function Nfts({ onNavigate }: Props) {
   return (
     <section className="page nfts-page">
       <div className="page-intro">
-        <DeskStory line="The marks of the pack live in the wood." onLegend={() => onNavigate('lore')} />
+        <DeskStory line="Seeder and Inner Circle are marks this desk minted. The game score is not one of them." onLegend={() => onNavigate('lore')} />
         <p className="eyebrow">The wood</p>
         <h1>Marks</h1>
         <p className="muted">

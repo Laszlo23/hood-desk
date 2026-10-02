@@ -7,9 +7,9 @@
 export const GM_FARCASTER_APP = 'https://www.gmfarcaster.com/'
 
 export const STREET_DAY = {
-  readAt: '2026-10-01T19:00:00.000Z',
+  readAt: '2026-10-02T12:00:00.000Z',
   profile: 'https://x.com/HoodStreetMini',
-  line: 'The site came back from a 404. The guaranteed and first-come whitelist drop is live, and shipments have been selling through. This morning the account posted Hood morning, gm.',
+  line: 'Read again on 2 Oct. The mint page still says soon. The claim counts had not moved: 384 guaranteed, 1,054 first-come. The last titled HoodStreet Media room we can still open is Unvault alpha, ended 29 Sep.',
   spaceTitle: 'Unvault alpha',
   spaceWhen: '29 Sep 2026',
   spaceHref: 'https://x.com/i/spaces/1dxYlaOgyzYJX',

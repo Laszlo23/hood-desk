@@ -17,8 +17,8 @@ export const STORY: StoryChapter[] = [
   {
     id: 'wood',
     title: 'The wood',
-    line: 'The forest took from the rich so the pack could eat. This desk is that story, made into a coin.',
-    body: 'In the old wood, outlaws took from the rich so the many could eat. Hood Street keeps the myth. Hood Desk is where it becomes one coin, one pool, and a book anyone can read.',
+    line: 'The forest is the name. The app is one coin, one pool, and a ledger anyone can read.',
+    body: 'In the old wood, outlaws took from the rich so the many could eat. Hood Street keeps that myth as a name. The app is the coin, the pool, and a book anyone can read. Stay dark is a small game beside it, for fun.',
     image: '/lore/hood-forest.jpg',
     door: 'lore',
     doorLabel: 'The legend',
@@ -67,8 +67,8 @@ export const STORY: StoryChapter[] = [
   {
     id: 'street',
     title: 'The street',
-    line: 'Notes are what Hood Street said. Skills answer questions. They do not trade.',
-    body: 'Notes are Hood Street, written down on this desk. The skills are question lists. Following one changes what Ask can say. It does not move a token.',
+    line: 'Notes are what Hood Street said. The thank-you on that page is the lore.',
+    body: 'Notes are Hood Street, written down on this desk. The thank-you is the lore in one piece: a free app, a real pool, and a small game. The skills are question lists. Following one changes what Ask can say. It does not move a token.',
     door: 'blog',
     doorLabel: 'Notes',
   },

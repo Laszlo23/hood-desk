@@ -110,7 +110,7 @@ export function Chat({ onReady }: Props) {
           <div className="chat-empty-hood" aria-hidden>
             <HoodMark size={96} variant="photo" className="chat-empty-mascot" />
             <HoodSeal size={36} decorative className="chat-empty-seal" />
-            <p className="muted tiny">HOOD here — community desk standing by · Sherwood mist</p>
+            <p className="muted tiny">HOOD here. Ask a question. This does not place a trade.</p>
           </div>
         )}
         {messages.map((m) => (

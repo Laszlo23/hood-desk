@@ -12,7 +12,7 @@ export function CommunityTrade({ onNavigate }: Props) {
     <section className="page community-trade-page">
       <HoodAgentHero
         title="The pool"
-        eyebrow="One pool in the wood"
+        eyebrow="The useful part"
         lead="The desk keeps the market in view. A swap happens when your wallet signs it."
         voice="HOOD here. The pool is on-chain. The desk does not place the order."
       >

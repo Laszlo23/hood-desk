@@ -102,6 +102,47 @@ export function placeOnDesk(board: BoardRow[], address: string | null): { place:
   return { place: index + 1, of: board.length, total: board[index]?.total ?? 0 }
 }
 
+export function nightSharePost(input: {
+  phase: 'title' | 'play' | 'caught' | 'home'
+  score: number
+  streak: number
+  record: boolean
+  carried: number
+  pot: number | null
+  url: string
+}): string {
+  const potBit =
+    input.pot != null ? ` This week's pot is ${input.pot.toLocaleString('en-US')}.` : ' The wood is open.'
+  const link = `Come take a run: ${input.url}`
+  switch (input.phase) {
+    case 'home': {
+      if (input.score <= 0) return `The light found me. This run kept nothing.${potBit}\n\n${link}`
+      const streakBit = input.streak > 0 ? ` Streak ${input.streak}.` : ''
+      const bestBit = input.record ? ' New best.' : ''
+      const tomorrow = input.streak > 0 ? ' Tomorrow it pays more.' : ''
+      return `I stayed dark and came home with ${input.score.toLocaleString('en-US')}.${streakBit}${bestBit}${tomorrow}${potBit}\n\n${link}`
+    }
+    case 'caught':
+      return `The light found me. This run kept nothing.${potBit}\n\n${link}`
+    case 'title':
+    case 'play': {
+      if (input.carried > 0) {
+        const streakBit = input.streak > 0 ? ` Streak ${input.streak}.` : ''
+        return `The wood has ${input.carried.toLocaleString('en-US')} on my card.${streakBit}${potBit}\n\n${link}`
+      }
+      return `Stay dark. Take what the rich left in the light.${potBit}\n\n${link}`
+    }
+    default: {
+      const unseen: never = input.phase
+      return unseen
+    }
+  }
+}
+
+export function nightShareHref(text: string) {
+  return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`
+}
+
 export async function shareDeskLine(text: string): Promise<'shared' | 'copied' | 'closed'> {
   const url = `${window.location.origin}${window.location.pathname}#/dark`
   const full = `${text} ${url}`

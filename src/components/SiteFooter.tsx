@@ -21,7 +21,7 @@ export function SiteFooter({ onNavigate }: Props) {
         <HoodMark size={44} variant="logo" alt="Hood Desk" />
         <div>
           <strong>Hood Desk</strong>
-          <p>From the wood. One coin, one pool, and the notes.</p>
+          <p>A free app. The coin, the pool, and the ledger do the work. The story and the game are for fun.</p>
         </div>
       </div>
 

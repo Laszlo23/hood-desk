@@ -39,16 +39,16 @@ export function WoodWheel({ onNavigate }: Props) {
     <section className="card wood-wheel" aria-label="The wood">
       <div className="lore-legend-head row-between">
         <div>
-          <p className="eyebrow">The flywheel</p>
-          <h2 className="section-title">Gold comes home, then the wood asks again</h2>
+          <p className="eyebrow">A small game</p>
+          <h2 className="section-title">Stay dark, for fun</h2>
         </div>
         <button type="button" className="btn btn-primary btn-sm" onClick={() => onNavigate('dark')}>
           Stay dark
         </button>
       </div>
       <p className="muted">
-        A run fills the pack. The pack writes the profile card. The card takes a place on the board.
-        Tonight the doors move. Come back tomorrow and the streak pays more. Each homecoming adds to the week's pot. A Seeder pass or Inner Circle mark already lives on that same card.
+        Points stay on your desk card. They are not a payout, and they are not written into the coin.
+        Come back tomorrow if you want the streak. The pool is the useful part. A Seeder pass or Inner Circle mark is a real mint, separate from this score.
       </p>
       <ol className="wood-loop">
         {STEPS.map((step) => (

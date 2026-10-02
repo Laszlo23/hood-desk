@@ -27,7 +27,7 @@ import {
 import { playNightChime, unlockNightSound } from '../game/nightSound'
 import { awardXp, getGamification } from '../lib/gamification'
 import { bestOf, placeOnBoard, publishNightScore } from '../lib/nightBoard'
-import { fetchNightDesk, pushNightRun, shareDeskLine, type Jackpot } from '../lib/nightDesk'
+import { fetchNightDesk, nightShareHref, nightSharePost, pushNightRun, type Jackpot } from '../lib/nightDesk'
 import { loadHoodLedger, type HoodSwapRow } from '../lib/trade/poolCandles'
 import type { ViewId } from '../lib/nav'
 import { useAccount } from 'wagmi'
@@ -256,19 +256,17 @@ export function NightGame({ onNavigate }: Props) {
     }
   }, [])
 
-  const share = () => {
-    const potText = pot ? `This week's pot is ${pot.pot.toLocaleString('en-US')}.` : 'The wood is open.'
-    const banked = reward?.banked ?? hud.score
-    const streakBit = reward ? ` Streak ${reward.streakDays}.` : ''
-    const scoreText =
-      hud.phase === 'home'
-        ? `I came home with ${banked.toLocaleString('en-US')}.${streakBit}`
-        : 'Stay dark with Robin.'
-    void shareDeskLine(`${scoreText} ${potText}`).then((result) => {
-      if (result === 'copied') setShared('Copied')
-      if (result === 'shared') setShared('Shared')
-    })
-  }
+  const gameUrl = `${window.location.origin}${window.location.pathname}#/dark`
+  const shareText = nightSharePost({
+    phase: hud.phase,
+    score: reward?.banked ?? hud.score,
+    streak: reward?.streakDays ?? save.streak,
+    record: reward?.record ?? false,
+    carried: save.total,
+    pot: pot?.pot ?? null,
+    url: gameUrl,
+  })
+  const shareHref = nightShareHref(shareText)
 
   useEffect(() => {
     const kept = readNightSave()
@@ -327,6 +325,9 @@ export function NightGame({ onNavigate }: Props) {
                 <p>
                   The pack holds three. A cup or a gem takes two slots, so leave what does not fit. A faint gold dot is a coin in the dark. Step close and it shows its number.
                   {moon ? ' A moon gem is hidden in the dark for these two minutes. It takes two slots.' : ''}
+                </p>
+                <p className="night-owned">
+                  A small game, for fun. These points stay on the desk. The coin, the pool, and the ledger are the useful part.
                 </p>
                 <p className="night-owned">
                   {save.streak > 0
@@ -413,9 +414,15 @@ export function NightGame({ onNavigate }: Props) {
                   Your card
                 </button>
               )}
-              <button type="button" className="night-next" onClick={share}>
+              <a
+                className="night-next"
+                href={shareHref}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setShared('Opened')}
+              >
                 {shared || 'Share'}
-              </button>
+              </a>
             </div>
           </div>
         )}

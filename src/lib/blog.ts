@@ -31,6 +31,38 @@ function slugify(title: string): string {
 
 const SEED: BlogPost[] = [
   {
+    id: 'post_seed_thank_you',
+    slug: 'thank-you-this-is-the-lore',
+    title: 'Thank you. This is the lore.',
+    body: `Thank you to Hood Street.
+
+This desk is a small app, built for free and for fun. It is not a prize, and it is not something to boast about. The useful part is plain. [$HOOD](https://doghood.aibusiness.fun/#/hood) was minted once, one billion tokens, no tax, and it cannot be minted again. There is one pool. Your wallet signs the swap. The [ledger](https://doghood.aibusiness.fun/#/rewards) writes the row down so anyone can read it.
+
+The Robin Hood story is a name we borrowed, with thanks. In the old wood, people took from the rich so the pack could eat. Hood Street kept that myth and built a block on Robinhood Chain: the Squares, the free mints, and the media room that stays up. This desk is a table on that block. We did not invent the street. We kept a book for the coin that lives here.
+
+[Stay dark](https://doghood.aibusiness.fun/#/dark) is the game, and only the game. Come home with a pack if you want. The points stay on a card. They are not written into the coin, and they are not a mint. Tomorrow the streak pays a few more desk points. That is the fun. The pool is the work.
+
+Thank you to everyone who signed a swap, held a Square, sat in the [HoodStreet Media](https://x.com/HoodStreetMedia) room, and walked Robin home. The wood is still open. The ledger is still the book.`,
+    date: '2026-10-02T12:10:00.000Z',
+    updatedAt: '2026-10-02T12:10:00.000Z',
+  },
+  {
+    id: 'post_seed_media_oct2',
+    slug: 'hood-street-media-2-oct',
+    title: 'Hood Street on 2 Oct: the media room, the claim, the mint still soon',
+    body: `Read on 2 Oct 2026 from the public sites and the HoodStreet Media room. Nothing here is a transcript of a space we did not hear.
+
+**The room.** [HoodStreet Media](https://x.com/HoodStreetMedia) is the standing 24/7 space for Robinhood NFTs, news, and talk. The last one with a public title we can still open ended 29 Sep 2026: [Unvault alpha](https://x.com/i/spaces/1dxYlaOgyzYJX). The page lists Cashpig as host, and the room includes Hood Street Mini, RoaringPiggy, Aaron from X, Unvault, and a long roll of the block. The page said 8 listeners when it ended. The two before it were [VAMPS minted out](https://x.com/i/spaces/1yGBePymnYEKN) on 28 Sep and [VAMPS mint](https://x.com/i/spaces/1nJOLQOvXlOxR) on 27 Sep. No newer titled space was public when this note was written.
+
+**The account.** [@HoodStreetMini](https://x.com/HoodStreetMini) is still the whitelist dealer. The posts on the profile are the site coming back from a 404, GTD and FCFS drops going live, shipments that sell through, a surprise flash drop, an honorary Mini for Adam Weitsman, and Hood morning. Timing for the mint comes from that account only.
+
+**The site, read again today.** [hoodstreetmini.com](https://hoodstreetmini.com/) still says free mint, Robinhood Chain, soon. 4,269 Minis, 55 one-of-ones, 13 base models, 289 traits. The [claim page](https://hoodstreetmini.com/claim) still shows 384 guaranteed spots across 294 wallets, 1,054 first-come spots across 420 wallets, and 496 wallets on the list. Those counts had not moved since 1 Oct. A first guaranteed spot is 4,269 Hood Bucks with an original post that tags @HoodStreetMini and uses #hoodstreet. A first-come spot is 420. Hood Bucks are play money with no cash value. The site also has Hood Games (Blackjack, video poker, three card poker, street dice, lucky 7s, three cups) and 168 memes free to post.
+
+This desk does not sell Minis and does not run the space.`,
+    date: '2026-10-02T12:00:00.000Z',
+    updatedAt: '2026-10-02T12:00:00.000Z',
+  },
+  {
     id: 'post_seed_wl_live',
     slug: 'minis-whitelist-drop-is-live',
     title: 'Hood Street Minis: the whitelist drop is live again',

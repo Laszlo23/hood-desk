@@ -22,7 +22,10 @@ export function Landing({ onNavigate }: Props) {
             <p className="eyebrow">Robinhood Chain</p>
             <h1 className="hero-title">Hood Desk</h1>
             <p className="hero-tagline">
-              The home of $HOOD. Your wallet signs the swap. This desk writes it down.
+              The coin, the pool, and the ledger are the useful part. Your wallet signs the swap. This desk writes it down.
+            </p>
+            <p className="muted">
+              Just another app, built for free and for fun. The story is the name. Stay dark is a small game.
             </p>
             <HoodAgentBadge className="landing-hood-badge" />
           </div>
@@ -92,7 +95,7 @@ export function Landing({ onNavigate }: Props) {
           </button>
         </div>
         <p className="muted lore-legend-copy">
-          Eight steps. Each one opens the part of the desk it names.
+          The legend is the name of the app. Each step opens a real page: the coin, the pool, the ledger, the marks.
         </p>
         <StoryWalk onNavigate={onNavigate} />
       </section>

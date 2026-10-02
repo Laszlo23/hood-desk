@@ -20,9 +20,13 @@ export function Lore({ onNavigate }: Props) {
           <p className="eyebrow">The legend · Hood Street</p>
           <h1>From the wood to the desk</h1>
           <p className="muted lore-lede">
-            The forest took from the rich so the pack could eat. Hood Street kept the story. This
-            page is the whole of it, and each chapter opens the part of the desk it names.
+            This page is the story. The app is the coin, the pool, and the ledger. Stay dark is a
+            small game, for fun. The thank-you is the lore in one piece. Each chapter still opens
+            the page it names.
           </p>
+          <button type="button" className="btn btn-primary btn-sm mt" onClick={() => onNavigate('blog', 'thank-you-this-is-the-lore')}>
+            Read the thank you
+          </button>
         </div>
       </div>
 

@@ -10,7 +10,7 @@ import { VetPanel } from '../components/trade/VetPanel'
 import { collectTradeTokens, defaultTradeToken, stubTokenFromAddress } from '../lib/trade/demoTokens'
 import { HOOD_SWAP_SLIPPAGE_BPS, planHoodMarketSwap } from '../lib/trade/hoodSwap'
 import { listOrders, placeOnchainOrder } from '../lib/trade/orders'
-import { loadHoodPoolChart, type HoodPoolChart } from '../lib/trade/poolCandles'
+import { loadHoodLedger, loadHoodPoolChart, type HoodPoolChart, type HoodSwapRow } from '../lib/trade/poolCandles'
 import { hoodHasPool, okuSwapUrl, uniswapSwapUrl } from '../lib/trade/uniswap'
 import { erc20Abi } from '../lib/hoodToken'
 import type {
@@ -23,6 +23,7 @@ import { getActiveBot, recordSkillUsage } from '../lib/market/skillMarket'
 import { awardXp } from '../lib/gamification'
 import type { ViewId } from '../lib/nav'
 import { WeeklyBanner } from '../components/WeeklyBanner'
+import { DeskPulse } from '../components/DeskPulse'
 import { ConnectButton } from '../components/ConnectButton'
 import { TradeStatusBar } from '../components/status/TradeStatusBar'
 import { HOOD_TOKEN_ADDRESS } from '../lib/hoodToken'
@@ -46,7 +47,9 @@ export function Trade({ onNavigate }: Props) {
   const tokens = useMemo(() => collectTradeTokens(address), [address])
   const [token, setToken] = useState<TradeToken>(() => defaultTradeToken())
   const [timeframe, setTimeframe] = useState<Timeframe>('15m')
-  const [ordersTab, setOrdersTab] = useState<'orders' | 'trades'>('orders')
+  const [ordersTab, setOrdersTab] = useState<'orders' | 'trades'>('trades')
+  const [poolSwaps, setPoolSwaps] = useState<HoodSwapRow[]>([])
+  const [poolState, setPoolState] = useState<'loading' | 'ready' | 'miss'>('loading')
   const [orders, setOrders] = useState<SimulatedOrder[]>([])
   const [vetOpen, setVetOpen] = useState(false)
   const [vetGate, setVetGate] = useState(false)
@@ -64,6 +67,22 @@ export function Trade({ onNavigate }: Props) {
   useEffect(() => {
     refreshOrders()
   }, [refreshOrders])
+
+  useEffect(() => {
+    let cancelled = false
+    loadHoodLedger()
+      .then((swaps) => {
+        if (cancelled) return
+        setPoolSwaps(swaps)
+        setPoolState('ready')
+      })
+      .catch(() => {
+        if (!cancelled) setPoolState('miss')
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     if (!HOOD_TOKEN_ADDRESS) {
@@ -219,6 +238,7 @@ export function Trade({ onNavigate }: Props) {
 
       <div className="trade-center">
         <WeeklyBanner compact />
+        <DeskPulse />
         <TradeStatusBar
           mode={isHoodToken && poolExists ? 'uniswap' : 'no pool'}
           live={Boolean(isHoodToken && poolExists)}
@@ -319,7 +339,7 @@ export function Trade({ onNavigate }: Props) {
           poolCandles={isHoodToken && poolExists ? poolChart?.candles ?? null : undefined}
           poolSwapCount={poolChart?.swapCount}
         />
-        <OrdersPanel orders={orders} tab={ordersTab} onTab={setOrdersTab} />
+        <OrdersPanel orders={orders} poolSwaps={poolSwaps} poolState={poolState} tab={ordersTab} onTab={setOrdersTab} />
       </div>
 
       <TradePanel

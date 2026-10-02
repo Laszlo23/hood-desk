@@ -5,6 +5,7 @@ dist
 *.local
 node_modules/.tmp
 server/.env
+server/data/*.json
 *.pem
 
 # Foundry

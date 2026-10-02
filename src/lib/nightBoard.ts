@@ -1,3 +1,5 @@
+import { pushNightRun } from './nightDesk'
+
 const KEY = 'hood-desk:night-board:v1'
 
 export type BoardRow = {
@@ -65,6 +67,7 @@ export function publishNightScore(
   })
   const ranked = rows.sort((a, b) => b.total - a.total || b.best - a.best)
   write(ranked)
+  void pushNightRun({ address: wallet, total: night, best: run, score: 0 })
   return ranked
 }
 

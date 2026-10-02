@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 import { readNightSave } from '../game/nightMarks'
 import { bestOf, placeOnBoard, publishNightScore } from '../lib/nightBoard'
+import { fetchNightDesk, type Jackpot } from '../lib/nightDesk'
 import type { ViewId } from '../lib/nav'
 
 type Props = { onNavigate: (id: ViewId) => void }
@@ -17,6 +18,7 @@ export function WoodWheel({ onNavigate }: Props) {
   const { address } = useAccount()
   const [carried, setCarried] = useState(0)
   const [standing, setStanding] = useState<{ place: number; of: number } | null>(null)
+  const [pot, setPot] = useState<Jackpot | null>(null)
 
   useEffect(() => {
     const save = readNightSave()
@@ -24,6 +26,13 @@ export function WoodWheel({ onNavigate }: Props) {
     const place = placeOnBoard(address ?? null)
     setCarried(save.total)
     setStanding(place ? { place: place.place, of: place.of } : null)
+    let live = true
+    fetchNightDesk().then((desk) => {
+      if (live && desk) setPot(desk.jackpot)
+    })
+    return () => {
+      live = false
+    }
   }, [address])
 
   return (
@@ -39,8 +48,7 @@ export function WoodWheel({ onNavigate }: Props) {
       </div>
       <p className="muted">
         A run fills the pack. The pack writes the profile card. The card takes a place on the board.
-        Tonight the doors move, so the same skill is worth coming back for. A Seeder pass or Inner
-        Circle mark already lives on that same card.
+        Tonight the doors move, so the same skill is worth coming back for. Each homecoming adds to the week's pot. A Seeder pass or Inner Circle mark already lives on that same card.
       </p>
       <ol className="wood-loop">
         {STEPS.map((step) => (
@@ -52,6 +60,11 @@ export function WoodWheel({ onNavigate }: Props) {
           </li>
         ))}
       </ol>
+      {pot ? (
+        <p className="wood-standing">
+          {pot.label} pot {pot.pot.toLocaleString('en-US')}. {pot.runs} came home. The best run holds it.
+        </p>
+      ) : null}
       {carried > 0 && standing ? (
         <p className="wood-standing">
           You carry {carried.toLocaleString('en-US')}. The wood has you at {standing.place} of {standing.of}.

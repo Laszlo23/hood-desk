@@ -1,4 +1,4 @@
-/** Pixel night run. Take purses from the lit rooms and slip back to the wood. */
+/** Pixel night run. The pack holds three. Stand still in the wood to keep what you chose. */
 
 export const COLS = 24
 export const ROWS = 16
@@ -13,7 +13,15 @@ export type Phase = 'title' | 'play' | 'caught' | 'home'
 export type SkillName = 'quiet' | 'shadow' | 'lift'
 
 type Torch = { x: number; y: number }
-type Purse = { x: number; y: number; taken: boolean }
+type Purse = {
+  name: string
+  x: number
+  y: number
+  points: number
+  slots: number
+  hidden: boolean
+  taken: boolean
+}
 type Guard = {
   x: number
   y: number
@@ -76,6 +84,7 @@ export type Hud = {
   quiet: SkillHud
   shadow: SkillHud
   lift: SkillHud
+  kept: string
 }
 
 export type FrameInput = {
@@ -128,12 +137,15 @@ export type Game = {
   darkScore: number
   pop: string
   popT: number
+  homeHold: number
 }
 
 const QUIET_TIME = 4.2
 const QUIET_CD = 7
 const SHADOW_TIME = 3.2
 const SHADOW_CD = 8
+export const PACK = 3
+const HOME_HOLD = 1.15
 
 export function deskDate(): string {
   try {
@@ -160,12 +172,6 @@ const BASE_TORCHES = [
   { x: 4.5, y: 2.5 },
   { x: 18.5, y: 2.5 },
   { x: 18.5, y: 12.5 },
-]
-
-const BASE_PURSES = [
-  { x: 4.5, y: 3.5 },
-  { x: 18.5, y: 3.5 },
-  { x: 18.5, y: 11.5 },
 ]
 
 function hallGuard(speed: number, x = 6.5): GuardSeed {
@@ -206,10 +212,6 @@ export function moonWindowOpen(now = new Date()): boolean {
   } catch {
     return now.getMinutes() % 10 < 2
   }
-}
-
-function makeRelic(relic: Omit<Relic, 'x' | 'y' | 'taken' | 'missed' | 'warned'>): Relic {
-  return { ...relic, x: relic.x0, y: relic.y0, taken: false, missed: false, warned: false }
 }
 
 export const LEVELS: {
@@ -333,89 +335,12 @@ function blankGame(): Game {
     darkScore: 0,
     pop: '',
     popT: 0,
+    homeHold: 0,
   }
 }
 
 function withHome(seed: GuardSeed): Guard {
   return { ...seed, homeX: seed.x, homeY: seed.y, dir0: seed.dir }
-}
-
-function armRelics(game: Game) {
-  const salt = dateSalt(deskDate())
-  const dailyOpen = 9 + (salt % 8)
-  const byLevel: Record<LevelId, Omit<Relic, 'x' | 'y' | 'taken' | 'missed' | 'warned'>> = {
-    gate: {
-      name: 'Cup',
-      x0: 4.2,
-      y0: 7.5,
-      x1: 19.4,
-      y1: 7.5,
-      open: 11,
-      close: 14.2,
-      points: 420,
-      reach: 0.58,
-      line: 'The cup. The rich will look for it longer than the gold.',
-      warn: 'The cup is about to cross the hall. It will not wait.',
-    },
-    hall: {
-      name: 'Ring',
-      x0: 18.6,
-      y0: 7.5,
-      x1: 4.4,
-      y1: 7.5,
-      open: 15,
-      close: 17.6,
-      points: 480,
-      reach: 0.54,
-      line: 'A ring off a lit hand. Robin did not slow.',
-      warn: 'The ring is coming back through the light.',
-    },
-    inner: {
-      name: 'Brooch',
-      x0: 11.5,
-      y0: 2.2,
-      x1: 11.5,
-      y1: 12.4,
-      open: 13,
-      close: 15.6,
-      points: 520,
-      reach: 0.5,
-      line: 'The brooch left the flame. The flame never knew.',
-      warn: 'The brooch drops through the inner light. Be there.',
-    },
-    daily: {
-      name: 'Tonight',
-      x0: 5.2,
-      y0: 7.5,
-      x1: 18.6,
-      y1: 7.5,
-      open: dailyOpen,
-      close: dailyOpen + 2.6,
-      points: 560,
-      reach: 0.5,
-      line: 'Tonight’s rare. The house will not set it out again.',
-      warn: 'Tonight’s rare is moving. The window is thin.',
-    },
-  }
-  const relics = [makeRelic(byLevel[game.levelId])]
-  if (moonWindowOpen()) {
-    relics.push(
-      makeRelic({
-        name: 'Moon cup',
-        x0: 2.4,
-        y0: 2.4,
-        x1: 7.6,
-        y1: 2.4,
-        open: 6.5,
-        close: 8.7,
-        points: 700,
-        reach: 0.46,
-        line: 'The moon cup. It only crosses while the hour is thin.',
-        warn: 'The moon cup is in the house. Two breaths, then it is gone.',
-      }),
-    )
-  }
-  game.relics = relics
 }
 
 export function applyLevel(game: Game, id: LevelId) {
@@ -431,19 +356,14 @@ export function applyLevel(game: Game, id: LevelId) {
   if (id === 'gate') {
     game.tiles = buildTiles()
     game.torches = BASE_TORCHES.map((torch) => ({ ...torch }))
-    game.purses = BASE_PURSES.map((purse) => ({ ...purse, taken: false }))
     game.guards = [withHome(hallGuard(1.15, 8.5))]
-    game.need = 3
   } else if (id === 'hall') {
     game.tiles = buildTiles()
     game.torches = BASE_TORCHES.map((torch) => ({ ...torch }))
-    game.purses = BASE_PURSES.map((purse) => ({ ...purse, taken: false }))
     game.guards = [withHome(hallGuard(1.55)), withHome(spineGuard(1.5))]
-    game.need = 3
   } else {
     game.tiles = tilesInner()
     game.torches = [...BASE_TORCHES.map((torch) => ({ ...torch })), { x: 11.5, y: 2.5 }]
-    game.purses = [...BASE_PURSES.map((purse) => ({ ...purse, taken: false })), { x: 11.5, y: 3.5, taken: false }]
     game.riches = [...RICHES, { x: 11.5, y: 4.4 }]
     const guards = [hallGuard(1.65, 5.5), spineGuard(1.7), laneGuard(1.75)]
     if (id === 'daily') {
@@ -459,9 +379,8 @@ export function applyLevel(game: Game, id: LevelId) {
       })
     }
     game.guards = guards.map(withHome)
-    game.need = 4
   }
-  armRelics(game)
+  game.need = PACK
   game.line = meta.blurb
   game.lineT = 99
   resetRun(game)
@@ -496,50 +415,33 @@ function say(game: Game, line: string) {
   game.lineT = 6.4
 }
 
-const TALE: Record<LevelId, { open: string; take: string[]; home: string }> = {
+const TALE: Record<LevelId, { open: string; home: string }> = {
   gate: {
-    open: 'Robin steps from the wood. The rich are sleeping in their light.',
-    take: [
-      'The first gold. They left it where the torch could see.',
-      'A second purse. The hall hears nothing.',
-      'Three. The wood is the way home.',
-    ],
-    home: 'The wood takes the gold, and Robin with it.',
+    open: 'Robin steps from the wood. The pack holds three. The rest stays behind.',
+    home: 'The wood takes what he chose, and leaves the rest in the dark.',
   },
   hall: {
-    open: 'Two keep the hall. Robin keeps to the dark.',
-    take: [
-      'Gold, taken while the watch looks the other way.',
-      'Another purse. The stone does not tell.',
-      'The last of the hall. Home is still dark.',
-    ],
-    home: 'Robin is under the trees. The hall is poorer.',
+    open: 'Two keep the hall. The pack is small, so Robin chooses.',
+    home: 'Robin is under the trees. The hall keeps what he left.',
   },
   inner: {
-    open: 'The inner rooms hide nothing from the flame, and everything from the dark.',
-    take: [
-      'The first gold of the inner house.',
-      'Closer to the fire. The hand stays cold.',
-      'A third purse. The rich grow lighter.',
-      'Four. The deepest room is empty. Go.',
-    ],
-    home: 'Four purses. The inner house never learned the name.',
+    open: 'The inner rooms hide gold in the dark. The pack still holds three.',
+    home: 'The inner house never learned the name. The wood did.',
   },
   daily: {
-    open: 'Tonight the doors have moved. Robin trusts the wood.',
-    take: [
-      'Tonight’s first gold.',
-      'The house shifted. The purse did not.',
-      'A third, taken from a room that moved.',
-      'The night’s last purse. The wood is waiting.',
-    ],
-    home: 'Tonight is kept. The wood writes it down.',
+    open: 'Tonight the gold is scattered. The pack still holds three.',
+    home: 'Tonight is kept. The wood writes down what he carried.',
   },
 }
 
-function taleTake(game: Game, got: number) {
-  const lines = TALE[game.levelId].take
-  return lines[Math.min(got, lines.length) - 1] ?? lines[lines.length - 1]
+function prettyLoot(name: string) {
+  if (name === 'COIN') return 'a coin'
+  if (name === 'PURSE') return 'a purse'
+  if (name === 'RING') return 'a ring'
+  if (name === 'CUP') return 'a cup'
+  if (name === 'GEM') return 'a gem'
+  if (name === 'MOON') return 'the moon gem'
+  return 'something'
 }
 
 export function lightAt(game: Game, x: number, y: number, reduced: boolean) {
@@ -565,6 +467,93 @@ function clamp(n: number, a: number, b: number) {
   return Math.max(a, Math.min(b, n))
 }
 
+function packUsed(game: Game) {
+  let used = 0
+  for (const loot of game.purses) if (loot.taken) used += loot.slots
+  return used
+}
+
+function lootShown(game: Game, loot: Purse) {
+  if (loot.taken || !loot.hidden) return !loot.taken
+  const near = Math.hypot(game.player.x - loot.x, game.player.y - loot.y) <= 2.4
+  if (!near) return false
+  const light = lightAt(game, loot.x, loot.y, true)
+  return light < 0.35 || game.shadow.left > 0
+}
+
+function scatterLoot(game: Game) {
+  let seed = (Date.now() ^ dateSalt(deskDate()) ^ game.levelId.length * 997) >>> 0
+  const rand = () => {
+    seed = (Math.imul(1664525, seed) + 1013904223) >>> 0
+    return seed / 4294967296
+  }
+  const bag: { name: string; points: number; slots: number; hidden: boolean }[] = [
+    { name: 'COIN', points: 90, slots: 1, hidden: true },
+    { name: 'COIN', points: 110, slots: 1, hidden: true },
+    { name: 'PURSE', points: 170, slots: 1, hidden: false },
+    { name: 'PURSE', points: 190, slots: 1, hidden: true },
+    { name: 'RING', points: 280, slots: 1, hidden: true },
+    { name: 'CUP', points: 360, slots: 2, hidden: false },
+    { name: 'GEM', points: 480, slots: 2, hidden: true },
+  ]
+  for (let i = bag.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1))
+    const a = bag[i]
+    const b = bag[j]
+    if (a === undefined || b === undefined) continue
+    bag[i] = b
+    bag[j] = a
+  }
+  const count = game.levelId === 'inner' ? 7 : game.levelId === 'gate' ? 5 : 6
+  const picks = bag.slice(0, count)
+  if (moonWindowOpen()) picks.push({ name: 'MOON', points: 640, slots: 2, hidden: true })
+
+  const spots: { x: number; y: number; light: number }[] = []
+  for (let y = 1; y < ROWS - 1; y++) {
+    for (let x = 1; x < COLS - 1; x++) {
+      const tile = game.tiles[idx(x, y)]
+      if (tile === WALL || tile === WOOD) continue
+      const cx = x + 0.5
+      const cy = y + 0.5
+      if (Math.hypot(cx - game.spawn.x, cy - game.spawn.y) < 3) continue
+      spots.push({ x: cx, y: cy, light: lightAt(game, cx, cy, true) })
+    }
+  }
+  for (let i = spots.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1))
+    const a = spots[i]
+    const b = spots[j]
+    if (a === undefined || b === undefined) continue
+    spots[i] = b
+    spots[j] = a
+  }
+
+  const used = new Set<string>()
+  const takeSpot = (hidden: boolean) => {
+    const prefer = hidden ? spots.filter((spot) => spot.light < 0.22) : spots.filter((spot) => spot.light >= 0.22)
+    const pools = prefer.length > 0 ? [prefer, spots] : [spots]
+    for (const pool of pools) {
+      for (const spot of pool) {
+        const key = `${Math.floor(spot.x)},${Math.floor(spot.y)}`
+        if (used.has(key)) continue
+        used.add(key)
+        return spot
+      }
+    }
+    return null
+  }
+
+  const loot: Purse[] = []
+  for (const pick of picks) {
+    const spot = takeSpot(pick.hidden)
+    if (!spot) continue
+    loot.push({ ...pick, x: spot.x, y: spot.y, taken: false })
+  }
+  game.purses = loot
+  game.relics = []
+  game.homeHold = 0
+}
+
 function resetRun(game: Game) {
   game.player.x = game.spawn.x
   game.player.y = game.spawn.y
@@ -588,8 +577,8 @@ function resetRun(game: Game) {
   game.darkScore = 0
   game.pop = ''
   game.popT = 0
-  for (const purse of game.purses) purse.taken = false
-  armRelics(game)
+  game.homeHold = 0
+  scatterLoot(game)
   for (const guard of game.guards) {
     guard.x = guard.homeX
     guard.y = guard.homeY
@@ -609,51 +598,6 @@ function placeRelics(game: Game) {
     relic.x = relic.x0 + (relic.x1 - relic.x0) * u
     relic.y = relic.y0 + (relic.y1 - relic.y0) * u
   }
-}
-
-function nearestRelic(game: Game): Relic | null {
-  let nearest: Relic | null = null
-  let best = Infinity
-  for (const relic of game.relics) {
-    if (!relicLive(relic, game.elapsed)) continue
-    const d = Math.hypot(game.player.x - relic.x, game.player.y - relic.y)
-    if (d <= relic.reach && d < best) {
-      best = d
-      nearest = relic
-    }
-  }
-  return nearest
-}
-
-function takeRelic(game: Game, relic: Relic) {
-  const darkEnough = game.heat < 12 || game.shadow.left > 0
-  if (!darkEnough) {
-    relic.missed = true
-    game.heat = clamp(game.heat + 28, 0, 100)
-    game.flash = 0.4
-    say(game, `The light is on the ${relic.name.toLowerCase()}. It fled.`)
-    return
-  }
-  relic.taken = true
-  game.rareScore += relic.points
-  game.score += relic.points
-  game.pop = `+${relic.points}`
-  game.popT = 1.8
-  game.floaters.push({ x: relic.x, y: relic.y - 0.2, text: `+${relic.points}`, life: 2.4 })
-  game.chime = 'rare'
-  game.heat = clamp(game.heat - 6, 0, 100)
-  for (let i = 0; i < 10; i++) {
-    const a = (Math.PI * 2 * i) / 10
-    game.sparks.push({
-      x: relic.x,
-      y: relic.y,
-      vx: Math.cos(a) * 2.6,
-      vy: Math.sin(a) * 2.6,
-      life: 0.55,
-      color: i % 2 ? '#fff6c8' : '#f0c14a',
-    })
-  }
-  say(game, relic.line)
 }
 
 function watchRelics(game: Game) {
@@ -699,26 +643,59 @@ function rareHud(game: Game): { rareName: string; rareLeft: number; rareState: H
   return { rareName: '', rareLeft: 0, rareState: 'wait' }
 }
 
+function claimLoot(game: Game, loot: Purse) {
+  const pts = loot.points
+  const heavy = loot.slots >= 2 || loot.name === 'RING' || loot.name === 'GEM' || loot.name === 'MOON'
+  loot.taken = true
+  if (heavy) game.rareScore += pts
+  else game.purseScore += pts
+  game.score += pts
+  game.pop = `+${pts} ${loot.name}`
+  game.popT = 1.6
+  game.floaters.push({ x: loot.x, y: loot.y - 0.2, text: `+${pts}`, life: 2.4 })
+  game.chime = heavy ? 'rare' : 'gold'
+  game.heat = clamp(game.heat - 8, 0, 100)
+  const sparks = heavy ? 12 : 8
+  for (let i = 0; i < sparks; i++) {
+    const a = (Math.PI * 2 * i) / sparks
+    game.sparks.push({
+      x: loot.x,
+      y: loot.y,
+      vx: Math.cos(a) * (heavy ? 2.8 : 2.2),
+      vy: Math.sin(a) * (heavy ? 2.8 : 2.2),
+      life: 0.5,
+      color: i % 2 ? '#f0c14a' : '#fff1c2',
+    })
+  }
+  const left = PACK - packUsed(game)
+  const piece = prettyLoot(loot.name)
+  if (left <= 0) say(game, `${piece}, ${pts} points. The pack is full. Leave the rest.`)
+  else if (left === 1) say(game, `${piece}, ${pts} points. One slot left.`)
+  else say(game, `${piece}, ${pts} points. The pack can still take more.`)
+}
+
 function tryLift(game: Game) {
   if (game.liftCd > 0 || game.phase !== 'play') return
   game.liftCd = 0.45
-  const relic = nearestRelic(game)
-  if (relic) {
-    takeRelic(game, relic)
-    return
-  }
   let nearest: Purse | null = null
-  let best = 1.15
-  for (const purse of game.purses) {
-    if (purse.taken) continue
-    const d = Math.hypot(game.player.x - purse.x, game.player.y - purse.y)
+  let best = 1.05
+  for (const loot of game.purses) {
+    if (!lootShown(game, loot)) continue
+    const d = Math.hypot(game.player.x - loot.x, game.player.y - loot.y)
     if (d < best) {
       best = d
-      nearest = purse
+      nearest = loot
     }
   }
   if (!nearest) {
-    say(game, 'No purse in reach.')
+    say(game, 'Nothing in reach. Some gold only shows in the dark.')
+    return
+  }
+  const used = packUsed(game)
+  if (used + nearest.slots > PACK) {
+    const piece = prettyLoot(nearest.name)
+    if (used >= PACK) say(game, `The pack is full. Leave ${piece}.`)
+    else say(game, `Only one slot is open. Leave ${piece}.`)
     return
   }
   const darkEnough = game.heat < 40 || game.shadow.left > 0
@@ -735,30 +712,7 @@ function tryLift(game: Game) {
     }
     return
   }
-  nearest.taken = true
-  const clean = game.heat < 18 && game.shadow.left <= 0
-  const shaded = game.shadow.left > 0
-  const pts = clean ? 180 : shaded ? 150 : 120
-  game.purseScore += pts
-  game.score += pts
-  game.pop = `+${pts}`
-  game.popT = 1.4
-  game.floaters.push({ x: nearest.x, y: nearest.y - 0.15, text: `+${pts}`, life: 2.2 })
-  game.chime = 'gold'
-  game.heat = clamp(game.heat - 8, 0, 100)
-  for (let i = 0; i < 8; i++) {
-    const a = (Math.PI * 2 * i) / 8
-    game.sparks.push({
-      x: nearest.x,
-      y: nearest.y,
-      vx: Math.cos(a) * 2.2,
-      vy: Math.sin(a) * 2.2,
-      life: 0.45,
-      color: i % 2 ? '#f0c14a' : '#fff1c2',
-    })
-  }
-  const got = game.purses.filter((p) => p.taken).length
-  say(game, taleTake(game, got))
+  claimLoot(game, nearest)
 }
 
 export function stepGame(game: Game, input: FrameInput, dt: number) {
@@ -876,17 +830,34 @@ export function stepGame(game: Game, input: FrameInput, dt: number) {
     return
   }
 
-  const got = game.purses.filter((p) => p.taken).length
-  const home = Math.hypot(game.player.x - game.home.x, game.player.y - game.home.y) < 0.7
-  if (got >= game.need && home) {
-    game.timeScore = Math.max(0, Math.round((90 - game.elapsed) * 2))
-    game.darkScore = Math.round((100 - game.peak) * 2)
-    game.score += game.timeScore + game.darkScore
-    game.chime = 'home'
-    game.pop = `+${game.timeScore + game.darkScore}`
-    game.popT = 2
-    game.phase = 'home'
-    say(game, TALE[game.levelId].home)
+  const inWood = tileAt(game, game.player.x, game.player.y) === WOOD
+  const used = packUsed(game)
+  if (inWood && used > 0 && !game.moving) {
+    if (game.homeHold <= 0 && game.lineT <= 0) say(game, 'Stand. The wood is keeping the pack.')
+    game.homeHold += h
+    if (game.homeHold >= HOME_HOLD) {
+      game.timeScore = Math.max(0, Math.round((90 - game.elapsed) * 2))
+      game.darkScore = Math.round((100 - game.peak) * 2)
+      game.score += game.timeScore + game.darkScore
+      game.chime = 'home'
+      game.pop = `+${game.timeScore + game.darkScore}`
+      game.popT = 2
+      game.phase = 'home'
+      game.homeHold = 0
+      say(game, TALE[game.levelId].home)
+    }
+  } else {
+    game.homeHold = 0
+    if (
+      inWood &&
+      used === 0 &&
+      !game.moving &&
+      game.elapsed > 0.8 &&
+      game.lineT <= 0 &&
+      game.line !== 'Empty hands. Find something worth carrying.'
+    ) {
+      say(game, 'Empty hands. Find something worth carrying.')
+    }
   }
 }
 
@@ -895,7 +866,7 @@ export function readHud(game: Game): Hud {
   return {
     phase: game.phase,
     heat: game.heat,
-    purses: game.purses.filter((p) => p.taken).length,
+    purses: packUsed(game),
     need: game.need,
     line: game.lineT > 0 ? game.line : game.levelName,
     score: game.score,
@@ -912,6 +883,10 @@ export function readHud(game: Game): Hud {
     quiet: { active: game.quiet.left, wait: wait(game.quiet, QUIET_CD) },
     shadow: { active: game.shadow.left, wait: wait(game.shadow, SHADOW_CD) },
     lift: { active: 0, wait: game.liftCd > 0 ? 1 : 0 },
+    kept: game.purses
+      .filter((loot) => loot.taken)
+      .map((loot) => `${loot.name} ${loot.points}`)
+      .join(', '),
   }
 }
 
@@ -996,6 +971,7 @@ function drawHood(ctx: CanvasRenderingContext2D, px: number, py: number, bob: nu
     ctx.fillStyle = '#f0c14a'
     ctx.fillRect(x - 4, y + 7, 3, 3)
     if (carried > 1) ctx.fillRect(x - 3, y + 6, 1, 1)
+    if (carried > 2) ctx.fillRect(x - 2, y + 9, 1, 1)
   }
 }
 
@@ -1044,14 +1020,40 @@ function drawRelic(ctx: CanvasRenderingContext2D, relic: Relic, elapsed: number,
   drawText(ctx, String(left), px - 2, py - 12, '#fff6c8', 1)
 }
 
-function drawPurse(ctx: CanvasRenderingContext2D, x: number, y: number) {
-  const px = Math.round(x * TILE) - 4
-  const py = Math.round(y * TILE) - 5
-  ctx.fillStyle = '#f0c14a'
-  ctx.fillRect(px + 2, py, 4, 2)
-  ctx.fillRect(px, py + 2, 8, 6)
-  ctx.fillStyle = '#6a4a10'
-  ctx.fillRect(px + 3, py + 4, 2, 2)
+function drawLoot(ctx: CanvasRenderingContext2D, game: Game, loot: Purse, reduced: boolean) {
+  if (loot.taken) return
+  const px = Math.round(loot.x * TILE)
+  const py = Math.round(loot.y * TILE)
+  if (!lootShown(game, loot)) {
+    const light = lightAt(game, loot.x, loot.y, reduced)
+    if (light >= 0.35) return
+    const blink = reduced ? 0.4 : 0.22 + 0.18 * Math.sin(game.time * 3 + loot.x)
+    ctx.globalAlpha = blink
+    ctx.fillStyle = '#8a7040'
+    ctx.fillRect(px, py, 1, 1)
+    ctx.globalAlpha = 1
+    return
+  }
+  if (loot.slots >= 2) {
+    ctx.fillStyle = '#fff6c8'
+    ctx.fillRect(px - 1, py - 4, 2, 2)
+    ctx.fillStyle = '#f0c14a'
+    ctx.fillRect(px - 3, py - 2, 6, 2)
+    ctx.fillRect(px - 2, py, 4, 2)
+    ctx.fillRect(px - 1, py + 2, 2, 2)
+  } else if (loot.name === 'COIN') {
+    ctx.fillStyle = '#f0c14a'
+    ctx.fillRect(px - 2, py - 2, 4, 4)
+    ctx.fillStyle = '#fff1c2'
+    ctx.fillRect(px - 1, py - 1, 2, 2)
+  } else {
+    ctx.fillStyle = '#f0c14a'
+    ctx.fillRect(px - 2, py - 3, 4, 2)
+    ctx.fillRect(px - 4, py - 1, 8, 6)
+    ctx.fillStyle = '#6a4a10'
+    ctx.fillRect(px - 1, py + 1, 2, 2)
+  }
+  drawText(ctx, String(loot.points), px - 8, py - 14, loot.slots >= 2 ? '#fff6c8' : '#f0c14a', 1)
 }
 
 function drawTorch(ctx: CanvasRenderingContext2D, x: number, y: number, time: number, reduced: boolean) {
@@ -1125,16 +1127,14 @@ export function drawGame(ctx: CanvasRenderingContext2D, game: Game, reduced: boo
   ctx.fillRect(hx - 2, hy - 1, 4, 2)
 
   for (const torch of game.torches) drawTorch(ctx, torch.x, torch.y, game.time, reduced)
-  for (const purse of game.purses) {
-    if (!purse.taken) drawPurse(ctx, purse.x, purse.y)
-  }
+  for (const loot of game.purses) drawLoot(ctx, game, loot, reduced)
   for (const relic of game.relics) drawRelic(ctx, relic, game.elapsed, reduced)
   for (const rich of game.riches) drawRich(ctx, rich.x, rich.y)
 
   for (const guard of game.guards) drawGuard(ctx, guard)
 
   const bob = game.moving && !reduced ? (Math.floor(game.time * 8) % 2 === 0 ? 0 : 1) : 0
-  const carried = game.purses.filter((purse) => purse.taken).length + game.relics.filter((relic) => relic.taken).length
+  const carried = packUsed(game)
   drawHood(
     ctx,
     Math.round(game.player.x * TILE) - 8,
@@ -1153,12 +1153,26 @@ export function drawGame(ctx: CanvasRenderingContext2D, game: Game, reduced: boo
 
   for (const floater of game.floaters) {
     ctx.globalAlpha = Math.min(1, floater.life)
-    drawText(ctx, floater.text, Math.round(floater.x * TILE) - 10, Math.round(floater.y * TILE) - 12, '#c6f54a', 1)
+    drawText(ctx, floater.text, Math.round(floater.x * TILE) - 14, Math.round(floater.y * TILE) - 16, '#c6f54a', 2)
     ctx.globalAlpha = 1
   }
 
+  if (game.phase === 'play' && game.homeHold > 0) {
+    const bar = Math.round(22 * Math.min(1, game.homeHold / HOME_HOLD))
+    const bx = Math.round(game.player.x * TILE) - 11
+    const by = Math.round(game.player.y * TILE) - 18
+    ctx.fillStyle = '#1f4a30'
+    ctx.fillRect(bx, by, 22, 3)
+    ctx.fillStyle = '#c6f54a'
+    ctx.fillRect(bx, by, bar, 3)
+  }
+
+  if (game.phase === 'play' && game.popT > 0 && game.pop) {
+    drawCentered(ctx, game.pop, 6, '#fff6c8', 2)
+  }
+
   if (game.phase === 'play') {
-    drawText(ctx, String(Math.floor(game.tally)), 8, 4, '#c6f54a', 1)
+    drawText(ctx, String(Math.floor(game.tally)), 8, 22, '#c6f54a', 1)
   }
 
   if (game.flash > 0) {
@@ -1170,7 +1184,7 @@ export function drawGame(ctx: CanvasRenderingContext2D, game: Game, reduced: boo
     ctx.fillStyle = 'rgba(5, 6, 10, 0.62)'
     ctx.fillRect(0, 0, COLS * TILE, ROWS * TILE)
     drawCentered(ctx, 'STAY DARK', 78, '#c6f54a', 3)
-    drawCentered(ctx, 'THE RICH KEEP THE LIGHT', 112, '#d7e2c8', 1)
+    drawCentered(ctx, 'PACK HOLDS THREE', 112, '#d7e2c8', 1)
   } else if (game.phase === 'caught') {
     ctx.fillStyle = 'rgba(40, 10, 8, 0.45)'
     ctx.fillRect(0, 0, COLS * TILE, ROWS * TILE)

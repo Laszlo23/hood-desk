@@ -14,6 +14,7 @@ import {
   type NftProjectStory,
 } from '../lib/nfts/stories'
 import type { ViewId } from '../lib/nav'
+import { DeskPulse } from '../components/DeskPulse'
 
 type Props = { onNavigate: (id: ViewId, projectId?: string) => void }
 
@@ -132,6 +133,7 @@ export function Nfts({ onNavigate }: Props) {
           DogiHood and CCFF00 belong to Hood Street. Hood Seeder and Inner Circle belong to this
           desk. The desk wallet mints those two.
         </p>
+        <DeskPulse />
         <div className="demo-banner">
           <strong>Mint.</strong> Connect the desk wallet on this page to mint the next Seeder pass
           or the next Inner Circle badge. A pass can move. A badge stays in the wallet that

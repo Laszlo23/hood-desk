@@ -129,6 +129,15 @@
   color: #c6f54a;
 }
 
+.night-run-score.is-pop {
+  color: #fff6c8;
+}
+
+.night-run-score.is-pop small {
+  font-size: 16px;
+  color: #fff6c8;
+}
+
 .night-levels {
   display: flex;
   flex-wrap: wrap;
@@ -342,11 +351,16 @@
   background: #e25a2a;
 }
 
-.night-purses {
+.night-purses,
+.night-street {
   margin: 0;
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+.night-street {
+  color: #f0c14a;
 }
 
 .night-skills {

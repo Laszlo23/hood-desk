@@ -18,6 +18,8 @@ import { grantNightRun, markIdFor, nextLevelId, readNightSave, type NightMark, t
 import { playNightChime, unlockNightSound } from '../game/nightSound'
 import { awardXp, getGamification } from '../lib/gamification'
 import { bestOf, placeOnBoard, publishNightScore } from '../lib/nightBoard'
+import { fetchNightDesk, pushNightRun, shareDeskLine, type Jackpot } from '../lib/nightDesk'
+import { loadHoodLedger, type HoodSwapRow } from '../lib/trade/poolCandles'
 import type { ViewId } from '../lib/nav'
 import { useAccount } from 'wagmi'
 import './night-game.css'
@@ -51,6 +53,9 @@ export function NightGame({ onNavigate }: Props) {
   const [hud, setHud] = useState<Hud>(freshHud)
   const [level, setLevel] = useState<LevelId>('gate')
   const [save, setSave] = useState<NightSave>(() => readNightSave())
+  const [pot, setPot] = useState<Jackpot | null>(null)
+  const [shared, setShared] = useState('')
+  const [street, setStreet] = useState<HoodSwapRow | null>(null)
   const [reward, setReward] = useState<{
     mark: NightMark
     fresh: boolean
@@ -117,6 +122,15 @@ export function NightGame({ onNavigate }: Props) {
             const granted = grantNightRun(next.levelId, next.score)
             const xp = awardXp('night_clear')
             publishNightScore(addressRef.current ?? null, granted.save.total, bestOf(granted.save.best), true)
+            void pushNightRun({
+              address: addressRef.current ?? null,
+              total: granted.save.total,
+              best: bestOf(granted.save.best),
+              score: next.score,
+              runId: token.replace(/[^a-z0-9:_-]/gi, '').slice(0, 80),
+            }).then((desk) => {
+              if (desk) setPot(desk.jackpot)
+            })
             setSave(granted.save)
             setReward({
               mark: granted.mark,
@@ -197,6 +211,33 @@ export function NightGame({ onNavigate }: Props) {
   const ofTheWood = getGamification().badges.includes('of_the_wood')
 
   useEffect(() => {
+    let live = true
+    fetchNightDesk().then((desk) => {
+      if (live && desk) setPot(desk.jackpot)
+    })
+    loadHoodLedger()
+      .then((swaps) => {
+        if (live) setStreet(swaps[0] ?? null)
+      })
+      .catch(() => {
+        if (live) setStreet(null)
+      })
+    return () => {
+      live = false
+    }
+  }, [])
+
+  const share = () => {
+    const potText = pot ? `This week's pot is ${pot.pot.toLocaleString('en-US')}.` : 'The wood is open.'
+    const scoreText =
+      hud.phase === 'home' ? `I came home with ${hud.score.toLocaleString('en-US')}.` : 'Stay dark with Robin.'
+    void shareDeskLine(`${scoreText} ${potText}`).then((result) => {
+      if (result === 'copied') setShared('Copied')
+      if (result === 'shared') setShared('Shared')
+    })
+  }
+
+  useEffect(() => {
     const kept = readNightSave()
     if (kept.total > 0) {
       publishNightScore(address ?? null, kept.total, bestOf(kept.best), true)
@@ -239,20 +280,25 @@ export function NightGame({ onNavigate }: Props) {
                   ))}
                 </div>
                 <p>
-                  {picked.blurb} A clean lift in the dark is worth more. Once each run, a rare crosses the light and does not wait.
-                  {moon ? ' The moon cup is out for these two minutes.' : ''}
+                  {picked.blurb} The pack holds three. Some gold glints in the rooms. Some stays hidden until you are close, and the spot is dark. Stand still in the wood to keep what you chose.
+                  {moon ? ' A moon gem is hidden in the dark for these two minutes. It takes two slots.' : ''}
                 </p>
                 <ul>
                   <li>
                     <b>Quiet</b> passes a guard without a sound.
                   </li>
                   <li>
-                    <b>Shadow</b> crosses the torchlight.
+                    <b>Shadow</b> crosses the torchlight, and shows what the dark was hiding.
                   </li>
                   <li>
-                    <b>Lift</b> takes the purse while you are still dark.
+                    <b>Lift</b> claims what you can see. A full pack leaves the rest.
                   </li>
                 </ul>
+                {pot ? (
+                  <p className="night-owned">
+                    {pot.label} pot {pot.pot.toLocaleString('en-US')}. Best run {pot.best.toLocaleString('en-US')}. Desk points, kept on the server.
+                  </p>
+                ) : null}
                 <MarkShelf save={save} />
                 {ofTheWood && <p className="night-owned">Of the wood</p>}
                 {standing && (
@@ -265,8 +311,9 @@ export function NightGame({ onNavigate }: Props) {
               <>
                 <p className="night-score">{hud.score.toLocaleString('en-US')}</p>
                 <ul className="night-break">
-                  <li>Purses {hud.purseScore}</li>
-                  <li>Rares {hud.rareScore}</li>
+                  {hud.kept ? <li>Carried {hud.kept}</li> : null}
+                  <li>Gold {hud.purseScore}</li>
+                  <li>Heavy {hud.rareScore}</li>
                   <li>Still dark {hud.darkScore}</li>
                   <li>Time {hud.timeScore}</li>
                 </ul>
@@ -312,6 +359,9 @@ export function NightGame({ onNavigate }: Props) {
                   Your card
                 </button>
               )}
+              <button type="button" className="night-next" onClick={share}>
+                {shared || 'Share'}
+              </button>
             </div>
           </div>
         )}
@@ -326,8 +376,13 @@ export function NightGame({ onNavigate }: Props) {
             </i>
           </div>
           <p className="night-purses">
-            Purses {hud.purses}/{hud.need}
+            Pack {hud.purses}/{hud.need}
           </p>
+          {street ? (
+            <p className="night-street">
+              Street {street.side} {Math.round(street.hood).toLocaleString('en-US')} HOOD
+            </p>
+          ) : null}
           <p className={`night-run-score${hud.pop ? ' is-pop' : ''}`}>
             {hud.tally.toLocaleString('en-US')}
             {hud.pop ? <small>{hud.pop}</small> : null}

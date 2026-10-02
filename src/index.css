@@ -6894,6 +6894,26 @@ a.nft-gallery-tile:hover {
   margin: 0 0 8px;
 }
 
+.desk-pulse {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(204, 255, 0, 0.22);
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.desk-pulse p {
+  margin: 0;
+}
+
+.orders-tape-note {
+  margin: 0 0 8px;
+}
+
 .night-board-card {
   margin: 0 0 28px;
   max-width: 440px;

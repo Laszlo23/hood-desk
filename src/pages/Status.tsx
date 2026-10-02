@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FeaturedTxRow } from '../components/status/FeaturedTxRow'
 import { buildLocalActivityFeed } from '../lib/status/activity'
 import type { ViewId } from '../lib/nav'
@@ -14,6 +14,7 @@ import { DeskStory } from '../components/DeskStory'
 import { HoodSeal } from '../components/HoodSeal'
 import { HOOD_TOKEN_ADDRESS, HOOD_TOKEN_DEPLOYED } from '../lib/hoodToken'
 import { EXPLORER_TX } from '../lib/chain'
+import { loadHoodLedger, type HoodSwapRow } from '../lib/trade/poolCandles'
 
 type Props = { onNavigate: (id: ViewId, projectId?: string) => void }
 type RankTab = 'top' | 'trending' | 'tokens'
@@ -42,6 +43,21 @@ export function Status({ onNavigate }: Props) {
   const projects = useMemo(() => listProjects(), [])
   const packs = useMemo(() => listSkillPacks(), [])
   const [rankTab, setRankTab] = useState<RankTab>('top')
+  const [poolSwaps, setPoolSwaps] = useState<HoodSwapRow[]>([])
+
+  useEffect(() => {
+    let live = true
+    loadHoodLedger()
+      .then((swaps) => {
+        if (live) setPoolSwaps(swaps.slice(0, 8))
+      })
+      .catch(() => {
+        if (live) setPoolSwaps([])
+      })
+    return () => {
+      live = false
+    }
+  }, [])
 
   const featuredProjects = useMemo(() => {
     const withToken = projects.filter((p) => p.fairLaunch?.tokenAddress || p.ticker)
@@ -357,11 +373,46 @@ export function Status({ onNavigate }: Props) {
         )}
       </div>
 
+      {poolSwaps.length > 0 && (
+        <div className="status-rank card">
+          <div className="status-rank-head">
+            <p className="rail-label">Pool trades</p>
+            <span className="tiny muted">On the chain for everyone</span>
+          </div>
+          <div className="status-rank-table-wrap">
+            <table className="status-rank-table">
+              <thead>
+                <tr>
+                  <th>Side</th>
+                  <th>HOOD</th>
+                  <th>ETH</th>
+                  <th>When</th>
+                </tr>
+              </thead>
+              <tbody>
+                {poolSwaps.map((swap) => (
+                  <tr key={swap.txHash} onClick={() => onNavigate('trade')} className="status-rank-row">
+                    <td>
+                      <a href={EXPLORER_TX(swap.txHash)} target="_blank" rel="noreferrer" className={swap.side === 'buy' ? 'side-buy' : 'side-sell'}>
+                        {swap.side.toUpperCase()}
+                      </a>
+                    </td>
+                    <td className="mono">{Math.round(swap.hood).toLocaleString('en-US')}</td>
+                    <td className="mono">{swap.eth >= 1 ? swap.eth.toFixed(3) : swap.eth.toPrecision(3)}</td>
+                    <td className="tiny muted">{swap.time ? relTime(new Date(swap.time * 1000).toISOString()) : ''}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {rankedOrders.length === 0 && (
         <div className="card status-empty-orders empty-card">
           <HoodSeal size={48} decorative className="empty-seal" />
           <p className="rail-label">Wallet swaps</p>
-          <p className="muted">No signed swaps yet. Open Trade and confirm a buy or sell in your wallet.</p>
+          <p className="muted">The pool tape above is public. A wallet is only needed when you sign a swap of your own.</p>
           <div className="cta-row mt">
             <button type="button" className="btn btn-primary btn-sm" onClick={() => onNavigate('trade')}>
               Open Trade

@@ -51,14 +51,18 @@ export async function probeFeaturedTx(
       signal,
     })
     if (!res.ok) {
-      return { kind: 'error', message: `RPC HTTP ${res.status}` }
+      return FEATURED_RH_TX_SEED_NOT_FOUND
+        ? { kind: 'not_found' }
+        : { kind: 'error', message: `RPC HTTP ${res.status}` }
     }
     const json = (await res.json()) as {
       result?: { blockNumber?: string | null; hash?: string } | null
       error?: { message?: string }
     }
     if (json.error?.message) {
-      return { kind: 'error', message: json.error.message }
+      return FEATURED_RH_TX_SEED_NOT_FOUND
+        ? { kind: 'not_found' }
+        : { kind: 'error', message: json.error.message }
     }
     if (json.result && json.result.hash) {
       return {
@@ -69,10 +73,12 @@ export async function probeFeaturedTx(
     return { kind: 'not_found' }
   } catch (e) {
     if (signal?.aborted) return { kind: 'checking' }
-    return {
-      kind: 'error',
-      message: e instanceof Error ? e.message : 'RPC unreachable',
-    }
+    return FEATURED_RH_TX_SEED_NOT_FOUND
+      ? { kind: 'not_found' }
+      : {
+          kind: 'error',
+          message: e instanceof Error ? e.message : 'RPC unreachable',
+        }
   }
 }
 

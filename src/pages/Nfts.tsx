@@ -162,6 +162,63 @@ export function Nfts({ onNavigate }: Props) {
       </div>
 
       <div className="nfts-featured-list">
+        <p className="rail-label">Holder Airdrop · ERC-1155</p>
+        <article className="card nft-story-card">
+          <div className="nft-story-head">
+            <div className="nft-story-cover-wrap" aria-hidden>
+              <img 
+                className="nft-story-cover" 
+                src="https://ipfs.io/ipfs/bafybeifvjldimueb2renkfkhneqvmxmooalpg67o6d5tfebxffign6kfhu" 
+                alt="Holder Airdrop NFT" 
+                loading="lazy"
+                onError={(e) => {
+                  const img = e.target as HTMLImageElement
+                  img.src = '/nfts/hood-seeder/placeholder.svg'
+                }}
+              />
+            </div>
+            <div className="nft-story-titles">
+              <div className="nft-story-title-row">
+                <h2>Holder Airdrop</h2>
+              </div>
+              <p className="muted nft-story-tagline">Special NFT for holders</p>
+              <div className="dogihood-meta">
+                <span className="badge">RH 4663</span>
+                <span className="badge">ERC-1155</span>
+                <span className="badge badge-muted">Token ID #1</span>
+              </div>
+            </div>
+          </div>
+          <p className="nft-story-body">
+            Holder Airdrop NFT recognizes early supporters of the Hood ecosystem. This ERC-1155 token (ID #1) 
+            honors wallets that held through the journey. Collection name on explorer is still "Unnamed token" — 
+            shown here as Holder Airdrop for clarity.
+          </p>
+          <p className="tiny muted mono">
+            NFT {shortAddr('0x019695A94464E8C6252f03e58980DEa550c2A19A')} · token #1 (ERC-1155)
+          </p>
+          <div className="cta-row nft-story-links">
+            <a
+              className="btn btn-ghost btn-sm"
+              href="https://robinhoodchain.blockscout.com/token/0x019695A94464E8C6252f03e58980DEa550c2A19A/instance/1"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Blockscout ↗
+            </a>
+            <a
+              className="btn btn-ghost btn-sm"
+              href="https://ipfs.io/ipfs/bafkreicg4wued2uvjeazfaaqaml2wvjmfqwh7ofrn4i7ss2wel7qcjhjcq"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Metadata (IPFS) ↗
+            </a>
+          </div>
+        </article>
+      </div>
+
+      <div className="nfts-featured-list">
         <p className="rail-label">Inner Circle · soulbound membership</p>
         <InnerCircleCard variant="featured" showHolderToggle />
       </div>

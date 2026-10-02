@@ -139,12 +139,13 @@ export function NightGame({ onNavigate }: Props) {
             const granted = grantNightRun(next.levelId, banked)
             const xp = awardXp('night_clear')
             publishNightScore(addressRef.current ?? null, granted.save.total, bestOf(granted.save.best), true)
+            const uniqueRunId = `${next.levelId}:${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`.replace(/[^a-z0-9:_-]/gi, '').slice(0, 80)
             void pushNightRun({
               address: addressRef.current ?? null,
               total: granted.save.total,
               best: bestOf(granted.save.best),
               score: banked,
-              runId: `${next.levelId}:${banked}`.replace(/[^a-z0-9:_-]/gi, '').slice(0, 80),
+              runId: uniqueRunId,
             }).then((desk) => {
               if (desk) setPot(desk.jackpot)
             })

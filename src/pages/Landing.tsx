@@ -73,13 +73,23 @@ export function Landing({ onNavigate }: Props) {
           <button type="button" className="btn btn-quiet" onClick={() => onNavigate('rewards')}>
             The ledger
           </button>
-          <button type="button" className="btn btn-quiet" onClick={() => onNavigate('blog')}>
-            Notes
-          </button>
           <button type="button" className="btn btn-quiet" onClick={() => onNavigate('dark')}>
             Stay dark
           </button>
         </div>
+
+        <button
+          type="button"
+          className="notes-callout"
+          onClick={() => onNavigate('blog', 'thank-you-cashpig-and-roaringpiggy')}
+        >
+          <span className="eyebrow">The notes</span>
+          <strong>Thank you, Cashpig and RoaringPiggy</strong>
+          <p>
+            They keep the HoodStreet Media room up, day and night. Today’s Mini counts are in the
+            note. Read it.
+          </p>
+        </button>
 
         <StatusStrip onNavigate={onNavigate} />
         <FeaturedTxRow compact className="landing-featured-tx" />
@@ -175,7 +185,9 @@ export function Landing({ onNavigate }: Props) {
         </article>
         <article className="card mini-card">
           <h3>Notes</h3>
-          <p className="muted">What Hood Street said, written down on this desk.</p>
+          <p className="muted">
+            The latest from the street, and a thank-you to Cashpig and RoaringPiggy for the room they keep open.
+          </p>
           <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('blog')}>
             Read the notes
           </button>

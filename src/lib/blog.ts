@@ -31,6 +31,24 @@ function slugify(title: string): string {
 
 const SEED: BlogPost[] = [
   {
+    id: 'post_seed_pigs_oct3',
+    slug: 'thank-you-cashpig-and-roaringpiggy',
+    title: 'Thank you, Cashpig and RoaringPiggy',
+    body: `Thank you, Cashpig and RoaringPiggy.
+
+[@RealCashpig](https://x.com/RealCashpig) and [@RoaringPiggy](https://x.com/RoaringPiggy) keep the HoodStreet Media room open. Their own public lines say it: HOODSTREET MEDIA 24/7 Spaces. RoaringPiggy builds the street. The bio names a founder of [@hoodstreetmedia](https://x.com/HoodStreetMedia), [@hoodstreetcap](https://x.com/HoodStreetCap), and [@ccff00club](https://x.com/ccff00club). Cashpig hosts the room: Robinhood Chain, the pixels, the talk, and the hours.
+
+This desk did not build that room. They did. They show up, they bring people in, and they stay with the block when a mint is moving and when it is quiet. Respect for that work. A big thank you for the effort, the engagement, and the community they keep in the room.
+
+**What the Mini site said on 3 Oct 2026.** [hoodstreetmini.com](https://hoodstreetmini.com/) still says free mint, Robinhood Chain, soon. 1,939 collectors have claimed. 1,735 whitelist spots are taken: 479 guaranteed and 1,256 first-come, across 614 wallets. 5.93 million Hood Bucks are in play. Hood Games shows 83,000 hands and 611 players. 771 tribute holders are paid across 18 partner collections. 168 memes are free to post. Hood Bucks are play money with no cash value.
+
+The last titled public space this desk can still open ended 29 Sep 2026: [Unvault alpha](https://x.com/i/spaces/1dxYlaOgyzYJX). The standing room is the 24/7 HoodStreet Media space. This note is not a transcript of a space we did not hear.
+
+This desk does not sell Minis and does not run the space.`,
+    date: '2026-10-03T00:30:00.000Z',
+    updatedAt: '2026-10-03T00:30:00.000Z',
+  },
+  {
     id: 'post_seed_thank_you',
     slug: 'thank-you-this-is-the-lore',
     title: 'Thank you. This is the lore.',

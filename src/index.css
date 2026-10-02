@@ -6882,6 +6882,36 @@ a.nft-gallery-tile:hover {
   margin-top: 22px;
 }
 
+.notes-callout {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  margin-top: 18px;
+  padding: 16px 18px;
+  text-align: left;
+  border-radius: 16px;
+  border: 1px solid rgba(204, 255, 0, 0.42);
+  background: rgba(204, 255, 0, 0.07);
+  color: inherit;
+  cursor: pointer;
+}
+
+.notes-callout strong {
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.notes-callout p {
+  margin: 0;
+  color: var(--text-dim);
+}
+
+.notes-callout:hover,
+.notes-callout:focus-visible {
+  border-color: var(--accent);
+  background: rgba(204, 255, 0, 0.12);
+}
+
 .btn-quiet {
   background: transparent;
   border-color: transparent;

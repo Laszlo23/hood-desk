@@ -45,6 +45,7 @@ export const VIEWS: { id: ViewId; label: string; hash: string }[] = [
 /** Primary top-bar links — 4 core items so the navbar stays scannable. */
 export const PRIMARY_NAV: { id: ViewId; label: string; hash: string }[] = [
   { id: 'trade', label: 'Trade', hash: '#/trade' },
+  { id: 'blog', label: 'Notes', hash: '#/blog' },
   { id: 'community', label: 'Pool', hash: '#/community' },
   { id: 'dark', label: 'The dark', hash: '#/dark' },
   { id: 'status', label: 'Status', hash: '#/status' },

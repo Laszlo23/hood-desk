@@ -7,9 +7,9 @@
 export const GM_FARCASTER_APP = 'https://www.gmfarcaster.com/'
 
 export const STREET_DAY = {
-  readAt: '2026-10-02T12:00:00.000Z',
+  readAt: '2026-10-03T00:30:00.000Z',
   profile: 'https://x.com/HoodStreetMini',
-  line: 'Read again on 2 Oct. The mint page still says soon. The claim counts had not moved: 384 guaranteed, 1,054 first-come. The last titled HoodStreet Media room we can still open is Unvault alpha, ended 29 Sep.',
+  line: 'Read on 3 Oct from hoodstreetmini.com. 1,939 collectors have claimed. 1,735 whitelist spots are taken: 479 guaranteed, 1,256 first-come, across 614 wallets. 5.93 million Hood Bucks are in play. The mint page still says soon. Cashpig and RoaringPiggy keep the HoodStreet Media room up.',
   spaceTitle: 'Unvault alpha',
   spaceWhen: '29 Sep 2026',
   spaceHref: 'https://x.com/i/spaces/1dxYlaOgyzYJX',

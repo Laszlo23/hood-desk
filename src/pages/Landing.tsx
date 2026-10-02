@@ -14,9 +14,9 @@ export function Landing({ onNavigate }: Props) {
   return (
     <section className="page landing-page">
       <div className="hero card">
-        <div className="hero-top row-gap">
+        <div className="hero-top">
           <HoodMark size={112} variant="logo" className="hero-logo" alt="Hood Desk" />
-          <div>
+          <div className="hero-copy">
             <p className="eyebrow">From the wood · Hood Street</p>
             <h1 className="hero-title">Hood Desk</h1>
             <p className="hero-tagline">
@@ -49,17 +49,17 @@ export function Landing({ onNavigate }: Props) {
           means Sourcify matched the contract.
         </div>
 
-        <div className="cta-row landing-cta-primary">
+        <div className="hero-actions">
           <button type="button" className="btn btn-primary" onClick={() => onNavigate('trade')}>
             Trade
           </button>
-          <button type="button" className="btn btn-primary" onClick={() => onNavigate('hood')}>
+          <button type="button" className="btn btn-quiet" onClick={() => onNavigate('hood')}>
             $HOOD
           </button>
-          <button type="button" className="btn btn-primary" onClick={() => onNavigate('rewards')}>
+          <button type="button" className="btn btn-quiet" onClick={() => onNavigate('rewards')}>
             Ledger
           </button>
-          <button type="button" className="btn btn-ghost" onClick={() => onNavigate('blog')}>
+          <button type="button" className="btn btn-quiet" onClick={() => onNavigate('blog')}>
             Notes
           </button>
         </div>
@@ -144,7 +144,7 @@ export function Landing({ onNavigate }: Props) {
           <p className="muted">
             Every $HOOD swap, in order. The pool fee stays in the position.
           </p>
-          <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('rewards')}>
+          <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('rewards')}>
             Open the ledger
           </button>
         </article>
@@ -153,7 +153,7 @@ export function Landing({ onNavigate }: Props) {
           <p className="muted">
             Start a fair launch: a name, a ticker, and a supply that is minted once.
           </p>
-          <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('create')}>
+          <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('create')}>
             Create →
           </button>
         </article>
@@ -162,7 +162,7 @@ export function Landing({ onNavigate }: Props) {
           <p className="muted">
             Launches saved on this desk. Mint once, no team mint, no tax.
           </p>
-          <button type="button" className="btn btn-sm btn-ghost mt" onClick={() => onNavigate('projects')}>
+          <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('projects')}>
             Browse →
           </button>
         </article>
@@ -171,7 +171,7 @@ export function Landing({ onNavigate }: Props) {
           <p className="muted">
             The live $HOOD/WETH market. The desk does not place the order for you.
           </p>
-          <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('community')}>
+          <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('community')}>
             See the pool
           </button>
         </article>
@@ -180,7 +180,7 @@ export function Landing({ onNavigate }: Props) {
           <p className="muted">
             Questions the desk can answer. Following a pack copies its skill list. It does not trade.
           </p>
-          <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('skills')}>
+          <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('skills')}>
             Browse →
           </button>
         </article>
@@ -189,7 +189,7 @@ export function Landing({ onNavigate }: Props) {
           <p className="muted">
             What Hood Street said, written down here.
           </p>
-          <button type="button" className="btn btn-sm btn-ghost mt" onClick={() => onNavigate('blog')}>
+          <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('blog')}>
             Read →
           </button>
         </article>
@@ -198,7 +198,7 @@ export function Landing({ onNavigate }: Props) {
           <p className="muted">
             Starter $4.99, Desk $9.99, Desk+ $19.99. Paid plans on this desk.
           </p>
-          <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('subscribe')}>
+          <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('subscribe')}>
             Plans →
           </button>
         </article>
@@ -207,7 +207,7 @@ export function Landing({ onNavigate }: Props) {
           <p className="muted">
             DogiHood, Hood Seeder, and CCFF00. Each mark can hold a wallet.
           </p>
-          <button type="button" className="btn btn-sm btn-primary mt" onClick={() => onNavigate('nfts')}>
+          <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('nfts')}>
             Open marks
           </button>
         </article>
@@ -216,7 +216,7 @@ export function Landing({ onNavigate }: Props) {
           <p className="muted">
             Struck once. One pool. A cut of every seed for the cause.
           </p>
-          <button type="button" className="btn btn-sm btn-ghost mt" onClick={() => onNavigate('hood')}>
+          <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('hood')}>
             Token card →
           </button>
         </article>

@@ -6628,3 +6628,285 @@ a.nft-gallery-tile:hover {
   background: rgba(204, 255, 0, 0.08);
   font-size: 0.82rem;
 }
+
+/* Night wood: one lime action, quieter panels, type with room. */
+.app-shell {
+  background:
+    radial-gradient(ellipse 52% 28% at 50% -4%, rgba(204, 255, 0, 0.08), transparent 62%),
+    radial-gradient(ellipse 36% 28% at 100% 100%, rgba(36, 52, 8, 0.22), transparent 58%),
+    linear-gradient(180deg, #080a07 0%, #050605 42%, #040504 100%);
+}
+
+.grid-bg {
+  opacity: 0.22;
+}
+
+.glow-orb {
+  opacity: 0.16;
+  filter: blur(56px);
+}
+
+.desk-layout {
+  max-width: 1080px;
+  gap: 28px;
+}
+
+.page {
+  gap: 32px;
+}
+
+.page .card {
+  padding: 22px 22px 20px;
+  border-color: rgba(204, 255, 0, 0.12);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(8, 10, 6, 0.42) 30%, rgba(6, 7, 5, 0.7));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.card::before {
+  opacity: 0.28;
+}
+
+.card:hover,
+.mini-card:hover {
+  transform: none;
+  border-color: rgba(204, 255, 0, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 18px 40px rgba(0, 0, 0, 0.32);
+}
+
+.section-title,
+.mini-card h3 {
+  font-family: Palatino, 'Palatino Linotype', 'Iowan Old Style', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.mini-card h3 {
+  font-size: 1.45rem;
+  line-height: 1.1;
+  margin: 0 0 8px;
+}
+
+.mini-card p {
+  line-height: 1.5;
+}
+
+.eyebrow {
+  text-shadow: none;
+  letter-spacing: 0.18em;
+}
+
+.brand-hood {
+  text-shadow: none;
+}
+
+.landing-page .hero.card {
+  padding: 36px 32px 30px;
+  animation: hood-arrive 0.7s ease both;
+  background:
+    linear-gradient(165deg, rgba(204, 255, 0, 0.06), rgba(10, 12, 8, 0.15) 38%, rgba(5, 6, 4, 0.45)),
+    radial-gradient(ellipse 70% 80% at 0% 0%, rgba(204, 255, 0, 0.07), transparent 56%);
+}
+
+.landing-page .hero-top {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  gap: 8px 32px;
+  align-items: center;
+}
+
+.landing-page .hero-title {
+  font-size: clamp(3.4rem, 7.4vw, 5.4rem);
+  margin: 2px 0 12px;
+}
+
+.landing-page .hero-tagline {
+  font-size: 1.32rem;
+  line-height: 1.32;
+  max-width: 26ch;
+  color: var(--text);
+}
+
+.landing-page .hero-pitch {
+  margin-top: 26px;
+  max-width: 58ch;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 22px;
+  margin-top: 22px;
+}
+
+.btn-quiet {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-dim);
+  box-shadow: none;
+  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.08rem;
+  padding: 10px 0;
+}
+
+.btn-quiet:hover,
+.btn-quiet:focus-visible {
+  color: var(--accent);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  filter: none;
+  text-decoration: none;
+}
+
+.mini-card .btn-quiet {
+  margin-top: 14px;
+  padding: 2px 0 0;
+}
+
+.btn-primary {
+  border-radius: 999px;
+  padding: 12px 22px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 8px 18px rgba(0, 0, 0, 0.28);
+}
+
+.btn-primary:hover:not(:disabled) {
+  filter: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 10px 22px rgba(0, 0, 0, 0.34);
+}
+
+.badge {
+  background: transparent;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.landing-page .landing-honesty {
+  margin-top: 6px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 16px 0 0;
+  border-top: 1px solid rgba(204, 255, 0, 0.12);
+  color: var(--muted);
+}
+
+.lore-legend-thumbs {
+  gap: 14px;
+}
+
+.lore-thumb {
+  border-color: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+
+.lore-thumb img {
+  aspect-ratio: 4 / 3;
+}
+
+.lore-thumb:hover {
+  transform: translateY(-2px);
+  border-color: rgba(204, 255, 0, 0.28);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+}
+
+.nav-link.active {
+  color: var(--text);
+  background: transparent;
+  border-color: transparent;
+  text-shadow: none;
+  box-shadow: none;
+}
+
+.nav-link.active::after {
+  height: 1px;
+  background: var(--accent);
+  box-shadow: none;
+}
+
+.top-bar-hairline {
+  box-shadow: none;
+  opacity: 0.65;
+}
+
+.site-footer {
+  margin-top: 4px;
+  padding-top: 36px;
+  border-top-color: rgba(204, 255, 0, 0.12);
+}
+
+@keyframes hood-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 1079px) {
+  .top-bar .brand-name {
+    font-size: 1.05rem;
+  }
+
+  .top-bar .brand-sub {
+    white-space: nowrap;
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .landing-page .hero.card {
+    padding: 22px 18px 18px;
+  }
+
+  .landing-page .hero-top {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .landing-page .hero-logo {
+    width: 88px;
+    height: 88px;
+  }
+
+  .landing-page .hero-title {
+    font-size: clamp(2.7rem, 12vw, 3.5rem);
+  }
+
+  .lore-legend-thumbs {
+    grid-template-columns: 1fr;
+  }
+
+  .lore-thumb img {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (min-width: 980px) {
+  .landing-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-page .hero.card {
+    animation: none;
+  }
+}

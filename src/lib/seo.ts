@@ -61,7 +61,8 @@ const PAGES: Record<ViewId, PageMeta> = {
   },
   lore: {
     title: 'Legend · Hood Desk',
-    description: 'Sherwood to Hood Street. The HOOD fox, the mist, and the desk that keeps the books honest.',
+    description:
+      'From the wood to the desk: the coin, the bow, the pool, the seed, the book, the street, and the pack.',
   },
   account: {
     title: 'Account · Hood Desk',

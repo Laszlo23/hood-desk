@@ -6,6 +6,7 @@ import { CCFF00_STORY, CCFF00_OPENSEA, ccff00ItemUrl, shortAddr } from '../lib/n
 import { StatusStrip } from '../components/status/StatusStrip'
 import { FeaturedTxRow } from '../components/status/FeaturedTxRow'
 import { skillCount } from '../lib/agent/skills'
+import { StoryWalk } from '../components/StoryWalk'
 import type { ViewId } from '../lib/nav'
 
 type Props = { onNavigate: (id: ViewId, projectId?: string) => void }
@@ -72,36 +73,23 @@ export function Landing({ onNavigate }: Props) {
       </div>
 
 
-      <section className="lore-legend-strip card" aria-label="The Legend">
+      <section className="card story-card" aria-label="The story">
         <div className="lore-legend-head row-between">
           <div className="row-gap">
             <HoodSeal size={44} className="lore-legend-seal" />
             <div>
-              <p className="eyebrow">The Legend</p>
-              <h2 className="section-title">Sherwood → Hood Street</h2>
+              <p className="eyebrow">The story</p>
+              <h2 className="section-title">From the wood to the desk</h2>
             </div>
           </div>
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('lore')}>
-            Full legend →
+            Read it through →
           </button>
         </div>
         <p className="muted lore-legend-copy">
-          The story is the wood. The project is the coin, the pool, and the book above.
+          Eight steps. Each one opens the part of the desk it names.
         </p>
-        <div className="lore-legend-thumbs">
-          <button type="button" className="lore-thumb" onClick={() => onNavigate('lore')} aria-label="The wood took from the rich">
-            <img src="/lore/hood-forest.jpg" alt="" loading="lazy" />
-            <span className="lore-thumb-line">The wood took from the rich.</span>
-          </button>
-          <button type="button" className="lore-thumb" onClick={() => onNavigate('lore')} aria-label="The desk keeps the books">
-            <img src="/lore/hood-council.jpg" alt="" loading="lazy" />
-            <span className="lore-thumb-line">The desk keeps the books.</span>
-          </button>
-          <button type="button" className="lore-thumb" onClick={() => onNavigate('lore')} aria-label="The hood marks the pack">
-            <img src="/lore/hood-seal.jpg" alt="" loading="lazy" />
-            <span className="lore-thumb-line">The hood marks the pack.</span>
-          </button>
-        </div>
+        <StoryWalk onNavigate={onNavigate} />
       </section>
 
       <div className="featured-nft-strip" aria-label="Featured NFTs">

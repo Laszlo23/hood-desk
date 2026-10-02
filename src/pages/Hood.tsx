@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { HoodMark } from '../components/HoodMark'
+import { DeskStory } from '../components/DeskStory'
+import { storyChapter } from '../lib/story'
 import { SeedRailCard } from '../components/SeedRailCard'
 import { VerifiedBadge } from '../components/VerifiedBadge'
 import { HOOD_META, HOOD_TOKEN_ADDRESS, HOOD_TOKEN_DEPLOYED } from '../lib/hoodToken'
@@ -56,6 +58,7 @@ export function Hood({ onNavigate }: Props) {
 
   return (
     <section className="page hood-rite">
+      <DeskStory line={storyChapter('coin')?.line ?? ''} onLegend={() => onNavigate('lore')} />
       <p className="hood-rite-kicker">The green hood</p>
       <div className="hood-rite-title">
         <HoodMark size={72} variant="logo" alt="Hood Desk" />

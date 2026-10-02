@@ -50,6 +50,7 @@ export function parseIntent(text: string): Intent {
   if (/market\.follow|follow (a )?bot|unfollow|set primary bot/.test(t)) return 'market_follow'
   if (/market\.publish|publish bot|creator perk/.test(t)) return 'market_publish'
   if (/swap|trade|exchange|buy|sell/.test(t)) return 'swap'
+  if (/paper book|paper trad|agent record/.test(t)) return 'paper_book'
   if (/price|quote|worth|\$hood price|eth price/.test(t)) return 'price'
 
   if (/gas tip|\bgas\b|fund wallet/.test(t)) return 'gas_tip'
@@ -74,6 +75,7 @@ export function parseIntent(text: string): Intent {
     'fair_launch_status',
     'explain_fair_launch',
     'price',
+    'paper_book',
     'swap',
     'trade_vet',
     'trade_chart',

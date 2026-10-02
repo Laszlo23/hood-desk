@@ -185,7 +185,7 @@ export function Landing({ onNavigate }: Props) {
         </article>
         <article className="card mini-card">
           <h3>Create</h3>
-          <p className="muted">A fair launch saved in this browser: a name, a ticker, one mint.</p>
+          <p className="muted">Bring a thing you made. Say what it is, who it helps, and where it lives.</p>
           <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('create')}>
             Start one
           </button>

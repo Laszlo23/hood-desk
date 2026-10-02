@@ -73,6 +73,12 @@ export function streakPay(days: number, grew: boolean) {
   return Math.min(days, 7) * 40
 }
 
+/** Desk points the next new-day homecoming adds, on top of the run. Day 1 opens the streak and pays 0. */
+export function nextHomePay(streak: number): number {
+  if (streak < 1) return 0
+  return Math.min(streak + 1, 7) * 40
+}
+
 export function grantNightRun(levelId: LevelId, score: number): {
   save: NightSave
   mark: NightMark

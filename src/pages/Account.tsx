@@ -82,7 +82,10 @@ export function Account({ onNavigate }: Props) {
       <div className="account-grid">
         <article className="card account-xp-card">
           <h2 className="section-title">Progress</h2>
-          <p className="muted">Level and streak are a little desk fun. The pool log is the ledger.</p>
+          <p className="muted">
+            Level and streak are desk points for showing up. They are not a payout. The pool log is
+            the ledger.
+          </p>
           <div className="mt">
             <XpChip
               tick={xpTick}

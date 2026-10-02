@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
+import { fetchBuilds, type DeskBuild } from '../lib/builders'
 import { listProjects, socialChips, storageOwnerKey } from '../lib/projects'
 import { VerifiedBadge } from '../components/VerifiedBadge'
 import { HoodSeal } from '../components/HoodSeal'
@@ -12,26 +13,71 @@ type Props = {
 export function Projects({ onNavigate }: Props) {
   const { address } = useAccount()
   const [tick, setTick] = useState(0)
+  const [builds, setBuilds] = useState<DeskBuild[] | null>(null)
   const projects = useMemo(() => {
     void tick
     return listProjects(address)
   }, [address, tick])
 
+  useEffect(() => {
+    let live = true
+    fetchBuilds()
+      .then((rows) => {
+        if (live) setBuilds(rows)
+      })
+      .catch(() => {
+        if (live) setBuilds([])
+      })
+    return () => {
+      live = false
+    }
+  }, [])
+
   return (
     <section className="page projects-page">
       <div className="page-intro row-between">
         <div>
-          <p className="eyebrow">Your AI businesses</p>
+          <p className="eyebrow">Builders</p>
           <h1>Projects</h1>
           <p className="muted">
-            Keyed by <code className="inline-code">{storageOwnerKey(address)}</code> in localStorage.
-            Refresh-safe. Every token path is <strong>Fair launch</strong> only.
+            The public list is work other people put on the desk. Yours also stays in this browser
+            under <code className="inline-code">{storageOwnerKey(address)}</code>. A token, if there
+            is one, is one mint, no tax, and no second mint.
           </p>
         </div>
         <button type="button" className="btn btn-primary" onClick={() => onNavigate('create')}>
           + Create
         </button>
       </div>
+
+      <div className="build-board">
+        {builds === null ? <p className="muted">Reading the builder list…</p> : null}
+        {builds && builds.length === 0 ? (
+          <article className="card">
+            <p className="eyebrow">Open desk</p>
+            <h2 className="section-title">No public projects yet</h2>
+            <p className="muted">
+              The first listing needs a name, what you built, who it is for, and a link. The desk
+              does not list a promise of profit.
+            </p>
+          </article>
+        ) : null}
+        {builds && builds.length > 0
+          ? builds.map((build) => (
+              <article key={build.id} className="card build-card">
+                <p className="eyebrow">{new Date(build.at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                <h2 className="section-title">{build.name}</h2>
+                <p>{build.work}</p>
+                <p className="muted">For {build.forWhom}</p>
+                <a className="btn btn-quiet btn-sm" href={build.link} target="_blank" rel="noreferrer">
+                  Open the work
+                </a>
+              </article>
+            ))
+          : null}
+      </div>
+
+      <h2 className="section-title build-yours">In this browser</h2>
 
       {projects.length === 0 ? (
         <div className="card empty-card">

@@ -13,7 +13,7 @@ export function greetingMessage(): ChatMessage {
   return {
     id: 'greeting',
     role: 'agent',
-    text: `GM. **HOOD** here — community desk online. 🦊\n\nFlagship agent on Robinhood Chain **4663**. **${skillCount()} skills** ready.\n\n$HOOD market swaps on **#/trade** are wallet-signed Uniswap fills. I do not place orders and I do not run a paper book.`,
+    text: `GM. **HOOD** here — community desk online. 🦊\n\nFlagship agent on Robinhood Chain **4663**. **${skillCount()} skills** ready.\n\n$HOOD market swaps on **#/trade** are wallet-signed Uniswap fills. I do not place those orders. Ask **paper book** for the paper result on the public pool prints.`,
   }
 }
 

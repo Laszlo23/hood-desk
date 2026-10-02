@@ -15,6 +15,7 @@ export type SkillId =
   | 'fair_launch_status'
   | 'explain_fair_launch'
   | 'price'
+  | 'paper_book'
   | 'swap'
   | 'portfolio'
   | 'draft_tweet'
@@ -157,6 +158,14 @@ export const SKILLS: SkillDef[] = [
     description: 'Honest stub until RH DEX / oracle is known',
     examples: ['price', 'quote'],
     invoke: (ctx) => tools.getPrice(ctx),
+  },
+  {
+    id: 'paper_book',
+    name: 'Paper book',
+    category: 'market',
+    description: 'The agent paper book marked on real $HOOD/WETH pool prints',
+    examples: ['paper book', 'paper trade', 'agent record'],
+    invoke: () => tools.paperBookSkill(),
   },
   {
     id: 'swap',

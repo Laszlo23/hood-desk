@@ -166,6 +166,14 @@ export async function loadHoodLedger(): Promise<HoodSwapRow[]> {
   return swaps
 }
 
+/** Pool prints in time order, including the live price when it has moved. */
+export async function loadHoodPricePath(): Promise<{ time: number; price: number }[]> {
+  const { points } = await loadPoints()
+  return points
+    .filter((point) => point.price > 0 && point.time > 0)
+    .map((point) => ({ time: point.time, price: point.price }))
+}
+
 export function candlesFromPoints(points: Point[], timeframe: Timeframe): Candle[] {
   if (points.length === 0) return []
   const step = TF_SECONDS[timeframe]

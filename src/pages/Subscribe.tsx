@@ -129,6 +129,12 @@ export function Subscribe({ onNavigate }: Props) {
             Free covers the swap, the ledger, and a few question lists. Desk and Desk+ add more
             lists in this browser, drafts you post yourself, and six months of product updates.
           </p>
+          <p className="muted mt">
+            Ask answers questions and can draft a post. It does not place a swap, and it does not
+            book a trading profit. The desk&apos;s fee is the 1% that stays in the $HOOD pool
+            position. A plan does not pay that fee out. Showing up is rewarded in desk points, on
+            the card, for anyone.
+          </p>
           <p className="tiny muted mt">
             Current plan: <strong className="accent-text">{state.label}</strong>
             {state.activatedAt ? ` · since ${new Date(state.activatedAt).toLocaleDateString()}` : ''}

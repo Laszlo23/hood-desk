@@ -15,6 +15,8 @@ import {
 } from '../projects'
 import { generateDemoCandles } from '../trade/chartData'
 import { getTokenPrice } from '../trade/uniswap'
+import { markPaper, paperReply, runPaper } from '../paper/book'
+import { loadHoodPricePath } from '../trade/poolCandles'
 import { collectTradeTokens, findToken, formatPrice, HOOD_DEMO_ADDRESS } from '../trade/demoTokens'
 import { formatVetSummary, vetToken } from '../trade/vet'
 import {
@@ -258,11 +260,31 @@ export async function getPrice(_ctx: ToolContext): Promise<ToolResult> {
   }
 }
 
+export async function paperBookSkill(): Promise<ToolResult> {
+  try {
+    const path = await loadHoodPricePath()
+    if (path.length === 0) {
+      return {
+        ok: false,
+        text: '**Paper book**\n\nThe pool path is empty, so there is no fill to show. Open **#/community** once the pool answers.',
+      }
+    }
+    const book = runPaper(path)
+    const mark = markPaper(book, path[path.length - 1].price)
+    return { ok: true, text: paperReply(book, mark) }
+  } catch {
+    return {
+      ok: false,
+      text: '**Paper book**\n\nThe pool path did not load. The paper book stays closed. A wallet swap is still on **#/trade**.',
+    }
+  }
+}
+
 /** Honest TODO — user wallet would sign; agent never holds keys. */
 export async function swapStub(_ctx: ToolContext): Promise<ToolResult> {
   return {
     ok: false,
-    text: `**Swap**\n\n$HOOD market buy and sell on **#/trade** sign in your wallet through Uniswap V3 SwapRouter02. The desk does not hold your key.\n\nLimit, stop, TWAP, DCA, and auto-trade stay on this desk. The $HOOD/WETH pool is thin.`,
+    text: `**Swap**\n\n$HOOD market buy and sell on **#/trade** sign in your wallet through Uniswap V3 SwapRouter02. The desk does not hold your key.\n\nThe paper book on **#/community** marks a rule against pool prints. It does not send an order.`,
   }
 }
 
@@ -406,7 +428,7 @@ export function dailyBrief(ctx: ToolContext): ToolResult {
   const onRh = ctx.chainId === 4663 ? 'on RH 4663 ✓' : ctx.chainId ? `chain ${ctx.chainId}` : 'wallet disconnected'
   return {
     ok: true,
-    text: `**Daily brief** 🦊\n\n• Desk online · ${onRh}\n• Projects stored: **${projects.length}**\n• $HOOD: ${HOOD_TOKEN_DEPLOYED ? `\`${HOOD_TOKEN_ADDRESS}\`` : 'not deployed'}\n• Stripe Checkout is live on the desk\n• $HOOD/WETH market swaps sign on Uniswap. The agent does not place orders.\n• Ask **list skills** for the full catalog\n\nGM. What are we building?`,
+    text: `**Daily brief** 🦊\n\n• Desk online · ${onRh}\n• Projects stored: **${projects.length}**\n• $HOOD: ${HOOD_TOKEN_DEPLOYED ? `\`${HOOD_TOKEN_ADDRESS}\`` : 'not deployed'}\n• Stripe Checkout is live on the desk\n• $HOOD/WETH market swaps sign on Uniswap. The agent does not place orders.\n• Ask **paper book** for the agent's paper result on the public pool prints.\n• Ask **list skills** for the full catalog\n\nGM. What are we building?`,
   }
 }
 

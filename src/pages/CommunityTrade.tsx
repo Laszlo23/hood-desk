@@ -1,4 +1,5 @@
 import { HoodAgentHero } from '../components/HoodAgentHero'
+import { PaperBook } from '../components/PaperBook'
 import { HOOD_WETH_POOL, uniswapPoolUrl, uniswapSwapUrl } from '../lib/trade/uniswap'
 import { HOOD_TOKEN_ADDRESS } from '../lib/hoodToken'
 import type { ViewId } from '../lib/nav'
@@ -25,6 +26,7 @@ export function CommunityTrade({ onNavigate }: Props) {
           </a>
         </div>
       </HoodAgentHero>
+      <PaperBook />
       <article className="card">
         <p className="rail-label">What is live</p>
         <h2 className="section-title">$HOOD/WETH</h2>

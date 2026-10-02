@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { useAccount } from 'wagmi'
 import { createProject, suggestTickerFromName } from '../lib/projects'
+import { buildBar, publishBuild } from '../lib/builders'
+import { deskId } from '../lib/nightDesk'
 import { awardXp } from '../lib/gamification'
 import type { ViewId } from '../lib/nav'
 
@@ -21,12 +23,49 @@ export function CreateProject({ onNavigate }: Props) {
   const [logoUrl, setLogoUrl] = useState('')
   const [avatarEmoji, setAvatarEmoji] = useState('🦊')
   const [agentPersona, setAgentPersona] = useState('')
+  const [forWhom, setForWhom] = useState('')
+  const [listOnDesk, setListOnDesk] = useState(true)
+  const [pledge, setPledge] = useState(false)
+  const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
 
-  const submit = (e: FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault()
     if (!name.trim()) {
       setError('Project name is required.')
+      return
+    }
+    const link = website.trim() || twitter.trim() || farcaster.trim()
+    if (listOnDesk) {
+      const problem = buildBar({
+        name,
+        work: description,
+        forWhom,
+        link,
+        maker: address ?? deskId(),
+        pledge,
+      })
+      if (problem) {
+        setError(problem)
+        return
+      }
+    }
+    setBusy(true)
+    setError('')
+    try {
+      if (listOnDesk) {
+        await publishBuild({
+          name,
+          work: description,
+          forWhom,
+          link,
+          maker: address ?? deskId(),
+          pledge,
+        })
+      }
+    } catch (err) {
+      setBusy(false)
+      setError(err instanceof Error ? err.message : 'The desk did not list this project.')
       return
     }
     const project = createProject(
@@ -42,17 +81,19 @@ export function CreateProject({ onNavigate }: Props) {
       address,
     )
     awardXp('create_project')
+    setBusy(false)
     onNavigate('project', project.id)
   }
 
   return (
     <section className="page create-page">
       <div className="page-intro">
-        <p className="eyebrow">Launchpad</p>
+        <p className="eyebrow">Builders</p>
         <h1>Create project</h1>
         <p className="muted">
-          Name your AI business, attach socials, set the agent voice. Then fair-launch a token from
-          the project page. Stored in localStorage (wallet key or <code className="inline-code">anon</code>).
+          Bring something you made. Say what it is, who it helps, and where people can open it.
+          If there is a token, it is one mint, no tax, and no second mint. A promise of profit is
+          not a project, and it is not listed.
         </p>
         <p className="tiny muted">
           Create the card, deploy the token, paste the address, then trade. The swaps land on the{' '}
@@ -93,13 +134,23 @@ export function CreateProject({ onNavigate }: Props) {
         </div>
 
         <label className="field">
-          <span className="rail-label">One-liner / description</span>
+          <span className="rail-label">What you built</span>
           <textarea
             className="input textarea"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="AI-run trading desk on Robinhood Chain…"
-            rows={3}
+            placeholder="A tool, a game, a mint, or a contract. What it does, in plain words."
+            rows={4}
+          />
+        </label>
+
+        <label className="field">
+          <span className="rail-label">Who it is for</span>
+          <input
+            className="input"
+            value={forWhom}
+            onChange={(e) => setForWhom(e.target.value)}
+            placeholder="Artists on Robinhood Chain who need a gallery"
           />
         </label>
 
@@ -149,11 +200,22 @@ export function CreateProject({ onNavigate }: Props) {
           />
         </label>
 
+        <label className="field paper-check">
+          <input type="checkbox" checked={listOnDesk} onChange={(e) => setListOnDesk(e.target.checked)} />
+          <span>List this on the desk so other people can open it</span>
+        </label>
+        {listOnDesk ? (
+          <label className="field paper-check">
+            <input type="checkbox" checked={pledge} onChange={(e) => setPledge(e.target.checked)} />
+            <span>One mint if there is a token. No tax. No second mint. No promise that the price goes up.</span>
+          </label>
+        ) : null}
+
         {error && <p className="err-line form-err">{error}</p>}
 
         <div className="cta-row">
-          <button type="submit" className="btn btn-primary">
-            Create project
+          <button type="submit" className="btn btn-primary" disabled={busy}>
+            {busy ? 'Listing…' : 'Create project'}
           </button>
           <button type="button" className="btn btn-ghost" onClick={() => onNavigate('projects')}>
             View projects

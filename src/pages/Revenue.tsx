@@ -75,8 +75,9 @@ export function Revenue({ onNavigate }: Props) {
         <p className="eyebrow">Business dashboard</p>
         <h1>Revenue</h1>
         <p className="muted">
-          The desk earns when $HOOD trades. Each swap pays 1% into the desk&apos;s pool position.
-          Stripe is the other paid path.
+          Each wallet-signed $HOOD swap pays 1% into the desk&apos;s pool position. That fee sits
+          there until it is collected. Ask does not place those swaps and does not book a trading
+          profit. Stripe is the other paid path, and it pays for lists, drafts, and updates.
         </p>
       </div>
 

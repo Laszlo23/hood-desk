@@ -13,7 +13,7 @@ import { shortHash } from '../lib/status/featured'
 import { DeskStory } from '../components/DeskStory'
 import { HoodSeal } from '../components/HoodSeal'
 import { HOOD_TOKEN_ADDRESS, HOOD_TOKEN_DEPLOYED } from '../lib/hoodToken'
-import { EXPLORER_TOKEN } from '../lib/chain'
+import { EXPLORER_TOKEN, EXPLORER_TX } from '../lib/chain'
 import { loadHoodLedger, type HoodSwapRow } from '../lib/trade/poolCandles'
 
 type Props = { onNavigate: (id: ViewId, projectId?: string) => void }

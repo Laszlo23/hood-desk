@@ -63,7 +63,7 @@ export function Hood({ onNavigate }: Props) {
         {verify?.verified ? <VerifiedBadge address={hoodAddr} size="md" /> : null}
       </div>
       <p className="hood-rite-lede">
-        Struck once. Passed from hand to hand. One pool in the wood, and a cut of every seed for the cause.
+        Minted once. 1,000,000,000 $HOOD. One Uniswap pool, and 2% of each seed goes to the cause.
       </p>
 
       {HOOD_TOKEN_DEPLOYED && hoodAddr ? (

@@ -14,9 +14,9 @@ type PageMeta = {
 
 const PAGES: Record<ViewId, PageMeta> = {
   landing: {
-    title: 'Hood Desk · AI trading desk on Robinhood Chain',
+    title: 'Hood Desk · $HOOD on Robinhood Chain',
     description:
-      'Hood Desk on Robinhood Chain. Trade $HOOD, read the pool ledger, and follow Hood Street notes.',
+      'The home of $HOOD. One mint, one Uniswap pool, and a ledger of every wallet-signed swap.',
   },
   trade: {
     title: 'Trade · Hood Desk',

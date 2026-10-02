@@ -6724,10 +6724,63 @@ a.nft-gallery-tile:hover {
 }
 
 .landing-page .hero-tagline {
-  font-size: 1.32rem;
-  line-height: 1.32;
-  max-width: 26ch;
+  font-size: 1.28rem;
+  line-height: 1.35;
+  max-width: 34ch;
   color: var(--text);
+}
+
+.project-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.project-fact {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0;
+  padding: 16px 16px 18px;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 16px;
+  border: 1px solid rgba(204, 255, 0, 0.14);
+  background: rgba(0, 0, 0, 0.28);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.project-fact:hover {
+  border-color: rgba(204, 255, 0, 0.4);
+  background: rgba(204, 255, 0, 0.05);
+}
+
+.project-fact span {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.project-fact strong {
+  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.45rem;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.project-fact p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  line-height: 1.45;
 }
 
 .landing-page .hero-pitch {
@@ -6887,6 +6940,10 @@ a.nft-gallery-tile:hover {
 
   .landing-page .hero-title {
     font-size: clamp(2.7rem, 12vw, 3.5rem);
+  }
+
+  .project-facts {
+    grid-template-columns: 1fr;
   }
 
   .lore-legend-thumbs {

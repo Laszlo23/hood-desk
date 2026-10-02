@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { DeskShareCard } from '../components/DeskShareCard'
 import { cardFromHash, type DeskCardData, type DeskMark } from '../lib/deskCard'
+import { publishNightScore } from '../lib/nightBoard'
 import { fetchHoodSeederBalance } from '../lib/nfts/hoodseeder'
 import { fetchInnerCircleBalance } from '../lib/nfts/innerCircle'
 import type { ViewId } from '../lib/nav'
@@ -16,6 +17,11 @@ export function CardPage({ onNavigate }: Props) {
     window.addEventListener('hashchange', read)
     return () => window.removeEventListener('hashchange', read)
   }, [])
+
+  useEffect(() => {
+    if (!card || card.night <= 0) return
+    publishNightScore(card.address, card.night, card.best)
+  }, [card])
 
   useEffect(() => {
     if (!card?.address) return

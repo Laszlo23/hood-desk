@@ -64,6 +64,10 @@ const PAGES: Record<ViewId, PageMeta> = {
     description:
       'From the wood to the desk: the coin, the bow, the pool, the seed, the book, the street, and the pack.',
   },
+  dark: {
+    title: 'Stay dark · Hood Desk',
+    description: 'A pixel run. Take three purses from the lit rooms and slip back to the wood.',
+  },
   account: {
     title: 'Account · Hood Desk',
     description: 'Your Hood Desk wallet, subscription, and NFT-bound balances on Robinhood Chain.',

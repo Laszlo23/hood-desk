@@ -98,6 +98,14 @@ export function DeskShareCard({ card: given, shared = false }: Props) {
           <span className="rail-label">Swaps</span>
           <strong>{card.swaps}</strong>
         </div>
+        <div>
+          <span className="rail-label">Night</span>
+          <strong>{(card.night || 0).toLocaleString('en-US')}</strong>
+        </div>
+        <div>
+          <span className="rail-label">Best run</span>
+          <strong>{(card.best || 0).toLocaleString('en-US')}</strong>
+        </div>
       </div>
       <ul className="desk-share-marks">
         {card.marks.length === 0 ? (
@@ -108,8 +116,8 @@ export function DeskShareCard({ card: given, shared = false }: Props) {
       </ul>
       <p className="tiny muted">
         {shared
-          ? 'Level, mornings, and swaps came with the link. A Seeder pass or Inner Circle badge stays on the card when the chain still holds it.'
-          : 'This card lives on this browser. Share it and the marks travel with the link.'}
+          ? 'The night score came with the card. A Seeder pass or Inner Circle mark stays when the chain still holds it.'
+          : 'The night score lives on this card, beside the marks. Share it and the wood can learn the name. It is not written into a chain token.'}
       </p>
       {shared ? null : (
         <button type="button" className="btn btn-primary btn-sm" onClick={() => void share()}>

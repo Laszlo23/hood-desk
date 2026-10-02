@@ -7,6 +7,7 @@ type Props = { onNavigate: (id: ViewId) => void }
 const DOORS: { id: ViewId; label: string }[] = [
   { id: 'trade', label: 'Trade' },
   { id: 'community', label: 'Pool' },
+  { id: 'dark', label: 'The dark' },
   { id: 'rewards', label: 'Ledger' },
   { id: 'blog', label: 'Notes' },
   { id: 'lore', label: 'Legend' },

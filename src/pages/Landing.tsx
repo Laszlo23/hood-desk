@@ -7,6 +7,7 @@ import { StatusStrip } from '../components/status/StatusStrip'
 import { FeaturedTxRow } from '../components/status/FeaturedTxRow'
 import { skillCount } from '../lib/agent/skills'
 import { StoryWalk } from '../components/StoryWalk'
+import { WoodWheel } from '../components/WoodWheel'
 import type { ViewId } from '../lib/nav'
 
 type Props = { onNavigate: (id: ViewId, projectId?: string) => void }
@@ -61,6 +62,9 @@ export function Landing({ onNavigate }: Props) {
           <button type="button" className="btn btn-quiet" onClick={() => onNavigate('blog')}>
             Notes
           </button>
+          <button type="button" className="btn btn-quiet" onClick={() => onNavigate('dark')}>
+            Stay dark
+          </button>
         </div>
 
         <StatusStrip onNavigate={onNavigate} />
@@ -72,6 +76,7 @@ export function Landing({ onNavigate }: Props) {
         </p>
       </div>
 
+      <WoodWheel onNavigate={onNavigate} />
 
       <section className="card story-card" aria-label="The story">
         <div className="lore-legend-head row-between">

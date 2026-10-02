@@ -121,6 +121,11 @@ function NavIcon({ name }: { name: string }) {
         <path d="M12 8v8" />
       </>
     ),
+    dark: (
+      <>
+        <path d="M21 14.5A8.5 8.5 0 1 1 9.5 3 7 7 0 0 0 21 14.5z" />
+      </>
+    ),
     lore: (
       <>
         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />

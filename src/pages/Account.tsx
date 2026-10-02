@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { HoodMark } from '../components/HoodMark'
 import { DogiHoodCard } from '../components/DogiHoodCard'
 import { HoodSeederCard } from '../components/HoodSeederCard'
@@ -6,15 +6,27 @@ import { InnerCircleCard } from '../components/InnerCircleCard'
 import { WalletPanel } from '../components/WalletPanel'
 import { XpChip } from '../components/XpChip'
 import { DeskShareCard } from '../components/DeskShareCard'
+import { NightBoard } from '../components/NightBoard'
+import { readNightSave } from '../game/nightMarks'
+import { bestOf, publishNightScore } from '../lib/nightBoard'
 import { formatUpdatesUntil, getSubscription } from '../lib/subscription'
 import type { ViewId } from '../lib/nav'
+import { useAccount } from 'wagmi'
 
 type Props = { onNavigate: (id: ViewId, projectId?: string) => void }
 
 export function Account({ onNavigate }: Props) {
   const [xpTick, setXpTick] = useState(0)
+  const [boardTick, setBoardTick] = useState(0)
+  const { address } = useAccount()
   const sub = getSubscription()
   const updatesLabel = formatUpdatesUntil(sub.updatesUntil)
+
+  useEffect(() => {
+    const save = readNightSave()
+    if (save.total > 0) publishNightScore(address ?? null, save.total, bestOf(save.best), true)
+    setBoardTick((n) => n + 1)
+  }, [address])
 
   return (
     <section className="page account-page">
@@ -38,6 +50,22 @@ export function Account({ onNavigate }: Props) {
 
 
       <DeskShareCard />
+
+      <article className="card night-board-card">
+        <div className="row-between">
+          <div>
+            <p className="eyebrow">The wood</p>
+            <h2 className="section-title">Who came home</h2>
+          </div>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('dark')}>
+            Stay dark →
+          </button>
+        </div>
+        <p className="muted">
+          A clear run writes the total onto this profile card. Open someone else’s card and their gold joins the board.
+        </p>
+        <NightBoard key={boardTick} highlight={address ?? null} />
+      </article>
 
       <div className="featured-nft-strip account-nft-strip" aria-label="Featured NFT collections">
         <div className="row-gap" style={{ justifyContent: 'space-between', width: '100%' }}>

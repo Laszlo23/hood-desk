@@ -22,6 +22,7 @@ import { Terminal } from './pages/Terminal'
 import { Trade } from './pages/Trade'
 import { CommunityTrade } from './pages/CommunityTrade'
 import { Lore } from './pages/Lore'
+import { NightGame } from './pages/NightGame'
 import { LoreBackdrop } from './components/LoreBackdrop'
 import { SiteFooter } from './components/SiteFooter'
 
@@ -69,6 +70,10 @@ export default function App() {
           : tradeMode
             ? 'mist'
             : null
+
+  if (view === 'dark') {
+    return <NightGame onNavigate={navigate} />
+  }
 
   return (
     <div className={`app-shell${tradeMode ? ' trade-shell' : ''}${loreVariant ? ` lore-shell lore-shell-${loreVariant}` : ''}`}>

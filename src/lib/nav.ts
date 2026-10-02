@@ -18,6 +18,7 @@ export type ViewId =
   | 'status'
   | 'community'
   | 'lore'
+  | 'dark'
 
 export const VIEWS: { id: ViewId; label: string; hash: string }[] = [
   { id: 'landing', label: 'Desk', hash: '#/' },
@@ -38,12 +39,14 @@ export const VIEWS: { id: ViewId; label: string; hash: string }[] = [
   { id: 'status', label: 'Status', hash: '#/status' },
   { id: 'community', label: 'Pool', hash: '#/community' },
   { id: 'lore', label: 'Legend', hash: '#/lore' },
+  { id: 'dark', label: 'The dark', hash: '#/dark' },
 ]
 
 /** Primary top-bar links — 4 core items so the navbar stays scannable. */
 export const PRIMARY_NAV: { id: ViewId; label: string; hash: string }[] = [
   { id: 'trade', label: 'Trade', hash: '#/trade' },
   { id: 'community', label: 'Pool', hash: '#/community' },
+  { id: 'dark', label: 'The dark', hash: '#/dark' },
   { id: 'status', label: 'Status', hash: '#/status' },
   { id: 'skills', label: 'Skills', hash: '#/skills' },
 ]
@@ -75,6 +78,7 @@ export const STREET_GROUPS: StreetGroup[] = [
     items: [
       { id: 'nfts', label: 'Marks', hint: 'NFTs and the wallets inside them', hash: '#/nfts' },
       { id: 'lore', label: 'Legend', hint: 'From Sherwood to this desk', hash: '#/lore' },
+      { id: 'dark', label: 'The dark', hint: 'A pixel run on the rich', hash: '#/dark' },
     ],
   },
   {
@@ -134,6 +138,7 @@ export const DRAWER_SECTIONS: DrawerSection[] = [
       { id: 'blog', label: 'Notes', hash: '#/blog', icon: 'blog' },
       { id: 'nfts', label: 'Marks', hash: '#/nfts', icon: 'nfts' },
       { id: 'lore', label: 'Legend', hash: '#/lore', icon: 'lore' },
+      { id: 'dark', label: 'The dark', hash: '#/dark', icon: 'dark' },
       { id: 'account', label: 'Account', hash: '#/account', icon: 'account' },
     ],
   },
@@ -203,6 +208,9 @@ export function routeFromHash(hash: string): RouteState {
   }
   if (parts[0] === 'lore' || parts[0] === 'legend' || parts[0] === 'story') {
     return { view: 'lore' }
+  }
+  if (parts[0] === 'dark' || parts[0] === 'night' || parts[0] === 'game') {
+    return { view: 'dark' }
   }
   if (parts[0] === 'projects' || parts[0] === 'project') {
     if (origParts[1]) {

@@ -1,0 +1,500 @@
+.night-root {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  background: #05060a;
+  color: #d7e2c8;
+  font-family: ui-monospace, 'Courier New', monospace;
+}
+
+.night-top {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px 0;
+}
+
+.night-brand {
+  margin: 0;
+  color: #c6f54a;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.night-line {
+  margin: 0;
+  color: #c9d7bc;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  min-height: 1.2em;
+}
+
+.night-leave,
+.night-start,
+.night-skill,
+.night-key {
+  font: inherit;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #d7e2c8;
+  background: #10140f;
+  border: 2px solid #2a3324;
+  box-shadow: 3px 3px 0 #000;
+  cursor: pointer;
+}
+
+.night-leave {
+  padding: 6px 10px;
+  font-size: 11px;
+}
+
+.night-leave:hover,
+.night-start:hover,
+.night-skill:hover:not(:disabled),
+.night-key:hover {
+  border-color: #c6f54a;
+  color: #c6f54a;
+}
+
+.night-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 10px 12px;
+}
+
+.night-canvas {
+  width: min(960px, 100%, calc((100dvh - 230px) * 1.5));
+  height: auto;
+  aspect-ratio: 3 / 2;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background: #05060a;
+  box-shadow: 0 0 0 2px #1c2218;
+}
+
+.night-card {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  width: min(440px, calc(100% - 28px));
+  padding: 12px 14px;
+  background: #080a08;
+  border: 2px solid #2a3324;
+  box-shadow: 4px 4px 0 #000;
+}
+
+.night-card p,
+.night-card ul {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.night-card ul {
+  margin-top: 8px;
+  padding-left: 16px;
+}
+
+.night-card b {
+  color: #c6f54a;
+  font-weight: 700;
+}
+
+.night-total {
+  margin: 0;
+  color: #c6f54a;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+
+.night-run-score {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: #d7e2c8;
+}
+
+.night-run-score small {
+  margin-left: 8px;
+  color: #c6f54a;
+}
+
+.night-levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.night-levels button {
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9aa892;
+  background: transparent;
+  border: 2px solid #2a3324;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+
+.night-levels button.is-on {
+  color: #10140f;
+  background: #c6f54a;
+  border-color: #c6f54a;
+}
+
+.night-score {
+  margin: 0 0 6px;
+  color: #c6f54a;
+  font-size: 28px;
+  letter-spacing: 0.08em;
+}
+
+.night-break {
+  display: flex;
+  gap: 12px;
+  padding-left: 0;
+  list-style: none;
+}
+
+.night-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.night-next {
+  margin-top: 0;
+  padding: 8px 14px;
+  font: inherit;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #d7e2c8;
+  background: #10140f;
+  border: 2px solid #c6f54a;
+  box-shadow: 3px 3px 0 #000;
+  cursor: pointer;
+}
+
+.night-badge {
+  margin-top: 10px;
+  padding: 10px;
+  border: 2px solid #f0c14a;
+  background: #1a1408;
+  box-shadow: 4px 4px 0 #000;
+}
+
+.night-rare {
+  margin: 0;
+  color: #f0c14a;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.night-rare.is-open {
+  color: #fff6c8;
+}
+
+.night-owned {
+  margin: 8px 0 0;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #f0c14a;
+}
+
+.night-badge h2 {
+  margin: 2px 0 4px;
+  font-size: 16px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #f0c14a;
+}
+
+.night-mark {
+  margin-top: 10px;
+  padding: 10px;
+  border: 2px solid #c6f54a;
+  background: #10140f;
+  box-shadow: 4px 4px 0 #000;
+}
+
+.night-mark h2 {
+  margin: 2px 0 4px;
+  font-size: 16px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.night-mark-kicker,
+.night-mark-score,
+.night-mark-note {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.night-mark-kicker {
+  color: #c6f54a;
+}
+
+.night-mark-note {
+  margin-top: 6px;
+  color: #9aa892;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.night-shelf {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.night-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  border: 2px solid #2a3324;
+  background: #0b0d0b;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6d7868;
+}
+
+.night-chip.is-kept {
+  border-color: #c6f54a;
+  color: #d7e2c8;
+}
+
+.night-chip b {
+  font-weight: 700;
+}
+
+.night-start {
+  margin-top: 0;
+  padding: 8px 14px;
+  color: #10140f;
+  background: #c6f54a;
+  border-color: #c6f54a;
+  font-size: 12px;
+}
+
+.night-dock {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px 16px;
+  align-items: center;
+  padding: 0 16px 14px;
+}
+
+.night-meters {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.night-meter {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.night-meter i {
+  display: block;
+  width: 120px;
+  height: 10px;
+  background: #14120f;
+  border: 2px solid #3a342c;
+  box-sizing: border-box;
+}
+
+.night-meter b {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: #3f8f4a;
+}
+
+.night-meter i.is-hot b {
+  background: #e25a2a;
+}
+
+.night-purses {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.night-skills {
+  display: flex;
+  gap: 8px;
+}
+
+.night-skill {
+  position: relative;
+  min-width: 92px;
+  padding: 8px 10px 7px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+  overflow: hidden;
+}
+
+.night-skill small {
+  color: #c6f54a;
+}
+
+.night-skill.is-on {
+  background: #c6f54a;
+  color: #10140f;
+  border-color: #c6f54a;
+}
+
+.night-skill.is-on small {
+  color: #10140f;
+}
+
+.night-skill.is-cool {
+  color: #6d7868;
+}
+
+.night-skill i {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background: #c6f54a;
+  transform-origin: left center;
+}
+
+.night-skill:disabled {
+  cursor: default;
+}
+
+.night-pad {
+  display: none;
+  grid-template-columns: 44px 44px 44px;
+  grid-template-rows: 44px 44px;
+  gap: 4px;
+}
+
+.night-key {
+  box-shadow: 2px 2px 0 #000;
+  font-size: 16px;
+  touch-action: none;
+}
+
+.night-key-up {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.night-key-left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.night-key-down {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.night-key-right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.night-help {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #6d7868;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+@media (pointer: coarse) {
+  .night-pad {
+    display: grid;
+  }
+
+  .night-help {
+    display: none;
+  }
+
+  .night-dock {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .night-top {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'brand leave'
+      'line line'
+      'total total';
+  }
+
+  .night-brand {
+    grid-area: brand;
+  }
+
+  .night-leave {
+    grid-area: leave;
+  }
+
+  .night-line {
+    grid-area: line;
+  }
+
+  .night-total {
+    grid-area: total;
+  }
+
+  .night-dock {
+    grid-template-columns: 1fr;
+  }
+
+  .night-skills {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .night-skill {
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .night-canvas {
+    width: 100%;
+    max-height: none;
+  }
+}

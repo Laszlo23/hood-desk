@@ -14,8 +14,9 @@ export type XpAction =
   | 'publish_bot'
   | 'create_project'
   | 'write_blog'
+  | 'night_clear'
 
-export type BadgeId = 'first_trade' | 'creator' | 'follower' | 'streak_3'
+export type BadgeId = 'first_trade' | 'creator' | 'follower' | 'streak_3' | 'of_the_wood'
 
 export type GamificationState = {
   xp: number
@@ -34,6 +35,7 @@ const XP_REWARDS: Record<XpAction, number> = {
   publish_bot: 40,
   create_project: 30,
   write_blog: 35,
+  night_clear: 25,
 }
 
 const BADGE_META: Record<BadgeId, { label: string; emoji: string }> = {
@@ -41,6 +43,7 @@ const BADGE_META: Record<BadgeId, { label: string; emoji: string }> = {
   creator: { label: 'Creator', emoji: '🏗️' },
   follower: { label: 'Follower', emoji: '🤝' },
   streak_3: { label: 'Streak 3', emoji: '🔥' },
+  of_the_wood: { label: 'Of the wood', emoji: '🌲' },
 }
 
 function viennaDate(): string {
@@ -159,6 +162,9 @@ export function awardXp(
   }
   if (action === 'follow_bot' && !state.badges.includes('follower')) {
     state.badges.push('follower')
+  }
+  if (action === 'night_clear' && !state.badges.includes('of_the_wood')) {
+    state.badges.push('of_the_wood')
   }
   if (state.streak >= 3 && !state.badges.includes('streak_3')) {
     state.badges.push('streak_3')

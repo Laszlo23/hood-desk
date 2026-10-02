@@ -85,6 +85,8 @@ export type Hud = {
   shadow: SkillHud
   lift: SkillHud
   kept: string
+  liftReady: boolean
+  combo: number
 }
 
 export type FrameInput = {
@@ -120,7 +122,7 @@ export type Game = {
   lineT: number
   sparks: Spark[]
   floaters: Floater[]
-  chime: '' | 'gold' | 'rare' | 'home' | 'caught'
+  chime: '' | 'gold' | 'rare' | 'home' | 'caught' | 'chain' | 'best'
   moving: boolean
   time: number
   elapsed: number
@@ -138,6 +140,11 @@ export type Game = {
   pop: string
   popT: number
   homeHold: number
+  hint: string
+  liftReady: boolean
+  aim: { x: number; y: number } | null
+  combo: number
+  lastGrab: number
 }
 
 const QUIET_TIME = 4.2
@@ -146,6 +153,8 @@ const SHADOW_TIME = 3.2
 const SHADOW_CD = 8
 export const PACK = 3
 const HOME_HOLD = 1.15
+const LIFT_REACH = 1.45
+const COACH = 'Find a gold number. Walk up to it. Press Lift.'
 
 export function deskDate(): string {
   try {
@@ -336,6 +345,11 @@ function blankGame(): Game {
     pop: '',
     popT: 0,
     homeHold: 0,
+    hint: COACH,
+    liftReady: false,
+    aim: null,
+    combo: 0,
+    lastGrab: -99,
   }
 }
 
@@ -410,9 +424,9 @@ function blocked(game: Game, x: number, y: number) {
   )
 }
 
-function say(game: Game, line: string) {
+function say(game: Game, line: string, seconds = 6.4) {
   game.line = line
-  game.lineT = 6.4
+  game.lineT = seconds
 }
 
 const TALE: Record<LevelId, { open: string; home: string }> = {
@@ -471,6 +485,47 @@ function packUsed(game: Game) {
   let used = 0
   for (const loot of game.purses) if (loot.taken) used += loot.slots
   return used
+}
+
+function nearestShown(game: Game, reach: number) {
+  let nearest: Purse | null = null
+  let best = reach
+  for (const loot of game.purses) {
+    if (!lootShown(game, loot)) continue
+    const distance = Math.hypot(game.player.x - loot.x, game.player.y - loot.y)
+    if (distance < best) {
+      best = distance
+      nearest = loot
+    }
+  }
+  return nearest
+}
+
+function coach(game: Game) {
+  const aim = nearestShown(game, LIFT_REACH)
+  const closer = aim ?? nearestShown(game, 3.4)
+  const inWood = tileAt(game, game.player.x, game.player.y) === WOOD
+  const used = packUsed(game)
+  game.aim = aim ? { x: aim.x, y: aim.y } : null
+  game.liftReady = aim !== null
+  if (aim) {
+    const hot = game.heat >= 40 && game.shadow.left <= 0
+    game.hint = hot ? 'Too bright. Press Shadow, then Lift.' : `Press Lift to take ${aim.points}.`
+    return
+  }
+  if (closer) {
+    game.hint = 'Walk up to the gold number, then press Lift.'
+    return
+  }
+  if (inWood && used > 0) {
+    game.hint = 'Stand still in the green wood. It keeps the pack.'
+    return
+  }
+  if (used === 0) {
+    game.hint = COACH
+    return
+  }
+  game.hint = 'Find another gold number, or stand still in the green wood.'
 }
 
 function lootShown(game: Game, loot: Purse) {
@@ -578,6 +633,11 @@ function resetRun(game: Game) {
   game.pop = ''
   game.popT = 0
   game.homeHold = 0
+  game.hint = COACH
+  game.liftReady = false
+  game.aim = null
+  game.combo = 0
+  game.lastGrab = -99
   scatterLoot(game)
   for (const guard of game.guards) {
     guard.x = guard.homeX
@@ -644,18 +704,22 @@ function rareHud(game: Game): { rareName: string; rareLeft: number; rareState: H
 }
 
 function claimLoot(game: Game, loot: Purse) {
-  const pts = loot.points
+  const chained = game.elapsed - game.lastGrab < 8
+  game.combo = chained ? game.combo + 1 : 1
+  game.lastGrab = game.elapsed
+  const bonus = (game.combo - 1) * 20
+  const pts = loot.points + bonus
   const heavy = loot.slots >= 2 || loot.name === 'RING' || loot.name === 'GEM' || loot.name === 'MOON'
   loot.taken = true
   if (heavy) game.rareScore += pts
   else game.purseScore += pts
   game.score += pts
-  game.pop = `+${pts} ${loot.name}`
+  game.pop = game.combo > 1 ? `+${pts} CHAIN ${game.combo}` : `+${pts} ${loot.name}`
   game.popT = 1.6
   game.floaters.push({ x: loot.x, y: loot.y - 0.2, text: `+${pts}`, life: 2.4 })
-  game.chime = heavy ? 'rare' : 'gold'
+  game.chime = game.combo > 1 ? 'chain' : heavy ? 'rare' : 'gold'
   game.heat = clamp(game.heat - 8, 0, 100)
-  const sparks = heavy ? 12 : 8
+  const sparks = (heavy ? 12 : 8) + Math.min(game.combo, 4) * 3
   for (let i = 0; i < sparks; i++) {
     const a = (Math.PI * 2 * i) / sparks
     game.sparks.push({
@@ -677,18 +741,9 @@ function claimLoot(game: Game, loot: Purse) {
 function tryLift(game: Game) {
   if (game.liftCd > 0 || game.phase !== 'play') return
   game.liftCd = 0.45
-  let nearest: Purse | null = null
-  let best = 1.05
-  for (const loot of game.purses) {
-    if (!lootShown(game, loot)) continue
-    const d = Math.hypot(game.player.x - loot.x, game.player.y - loot.y)
-    if (d < best) {
-      best = d
-      nearest = loot
-    }
-  }
+  const nearest = nearestShown(game, LIFT_REACH)
   if (!nearest) {
-    say(game, 'Nothing in reach. Some gold only shows in the dark.')
+    say(game, 'Walk closer to a gold number, then press Lift.')
     return
   }
   const used = packUsed(game)
@@ -731,7 +786,7 @@ export function stepGame(game: Game, input: FrameInput, dt: number) {
     if (input.level !== game.levelId) applyLevel(game, input.level)
     resetRun(game)
     game.phase = 'play'
-    say(game, TALE[game.levelId].open)
+    say(game, TALE[game.levelId].open, 2.2)
     return
   }
 
@@ -830,6 +885,8 @@ export function stepGame(game: Game, input: FrameInput, dt: number) {
     return
   }
 
+  coach(game)
+
   const inWood = tileAt(game, game.player.x, game.player.y) === WOOD
   const used = packUsed(game)
   if (inWood && used > 0 && !game.moving) {
@@ -848,16 +905,6 @@ export function stepGame(game: Game, input: FrameInput, dt: number) {
     }
   } else {
     game.homeHold = 0
-    if (
-      inWood &&
-      used === 0 &&
-      !game.moving &&
-      game.elapsed > 0.8 &&
-      game.lineT <= 0 &&
-      game.line !== 'Empty hands. Find something worth carrying.'
-    ) {
-      say(game, 'Empty hands. Find something worth carrying.')
-    }
   }
 }
 
@@ -868,7 +915,7 @@ export function readHud(game: Game): Hud {
     heat: game.heat,
     purses: packUsed(game),
     need: game.need,
-    line: game.lineT > 0 ? game.line : game.levelName,
+    line: game.phase === 'play' && (game.liftReady || game.lineT <= 0) ? game.hint : game.lineT > 0 ? game.line : game.levelName,
     score: game.score,
     tally: Math.floor(game.tally),
     purseScore: game.purseScore,
@@ -883,6 +930,8 @@ export function readHud(game: Game): Hud {
     quiet: { active: game.quiet.left, wait: wait(game.quiet, QUIET_CD) },
     shadow: { active: game.shadow.left, wait: wait(game.shadow, SHADOW_CD) },
     lift: { active: 0, wait: game.liftCd > 0 ? 1 : 0 },
+    liftReady: game.liftReady,
+    combo: game.combo,
     kept: game.purses
       .filter((loot) => loot.taken)
       .map((loot) => `${loot.name} ${loot.points}`)
@@ -1027,10 +1076,10 @@ function drawLoot(ctx: CanvasRenderingContext2D, game: Game, loot: Purse, reduce
   if (!lootShown(game, loot)) {
     const light = lightAt(game, loot.x, loot.y, reduced)
     if (light >= 0.35) return
-    const blink = reduced ? 0.4 : 0.22 + 0.18 * Math.sin(game.time * 3 + loot.x)
+    const blink = reduced ? 0.7 : 0.45 + 0.35 * Math.sin(game.time * 3 + loot.x)
     ctx.globalAlpha = blink
-    ctx.fillStyle = '#8a7040'
-    ctx.fillRect(px, py, 1, 1)
+    ctx.fillStyle = '#f0c14a'
+    ctx.fillRect(px - 1, py - 1, 3, 3)
     ctx.globalAlpha = 1
     return
   }
@@ -1155,6 +1204,21 @@ export function drawGame(ctx: CanvasRenderingContext2D, game: Game, reduced: boo
     ctx.globalAlpha = Math.min(1, floater.life)
     drawText(ctx, floater.text, Math.round(floater.x * TILE) - 14, Math.round(floater.y * TILE) - 16, '#c6f54a', 2)
     ctx.globalAlpha = 1
+  }
+
+  if (game.phase === 'play' && game.aim) {
+    const px = Math.round(game.aim.x * TILE)
+    const py = Math.round(game.aim.y * TILE)
+    ctx.fillStyle = '#c6f54a'
+    ctx.fillRect(px - 8, py - 8, 5, 1)
+    ctx.fillRect(px - 8, py - 8, 1, 5)
+    ctx.fillRect(px + 3, py - 8, 5, 1)
+    ctx.fillRect(px + 7, py - 8, 1, 5)
+    ctx.fillRect(px - 8, py + 7, 5, 1)
+    ctx.fillRect(px - 8, py + 3, 1, 5)
+    ctx.fillRect(px + 3, py + 7, 5, 1)
+    ctx.fillRect(px + 7, py + 3, 1, 5)
+    drawText(ctx, 'LIFT', px - 8, py - 20, '#c6f54a', 1)
   }
 
   if (game.phase === 'play' && game.homeHold > 0) {

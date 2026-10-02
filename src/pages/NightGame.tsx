@@ -14,7 +14,16 @@ import {
   type LevelId,
   type SkillName,
 } from '../game/stayDark'
-import { grantNightRun, markIdFor, nextLevelId, readNightSave, type NightMark, type NightSave } from '../game/nightMarks'
+import {
+  grantNightRun,
+  markIdFor,
+  nextLevelId,
+  noteNightHome,
+  readNightSave,
+  streakPay,
+  type NightMark,
+  type NightSave,
+} from '../game/nightMarks'
 import { playNightChime, unlockNightSound } from '../game/nightSound'
 import { awardXp, getGamification } from '../lib/gamification'
 import { bestOf, placeOnBoard, publishNightScore } from '../lib/nightBoard'
@@ -62,6 +71,11 @@ export function NightGame({ onNavigate }: Props) {
     best: number
     badge: boolean
     deskXp: number
+    banked: number
+    streakDays: number
+    streakGrew: boolean
+    streakBonus: number
+    record: boolean
   } | null>(null)
   const hudKey = useRef('')
 
@@ -111,7 +125,7 @@ export function NightGame({ onNavigate }: Props) {
       drawGame(ctx, game, reduced)
 
       const next = readHud(game)
-      const key = `${next.phase}|${next.levelId}|${Math.round(next.heat)}|${next.purses}|${next.tally}|${next.pop}|${next.rareState}|${next.rareLeft}|${Math.ceil(next.quiet.active)}|${Math.ceil(next.quiet.wait * 8)}|${Math.ceil(next.shadow.active)}|${Math.ceil(next.shadow.wait * 8)}|${next.lift.wait}|${next.line}`
+      const key = `${next.phase}|${next.levelId}|${Math.round(next.heat)}|${next.purses}|${next.tally}|${next.pop}|${next.combo}|${next.rareState}|${next.rareLeft}|${Math.ceil(next.quiet.active)}|${Math.ceil(next.quiet.wait * 8)}|${Math.ceil(next.shadow.active)}|${Math.ceil(next.shadow.wait * 8)}|${next.lift.wait}|${next.liftReady}|${next.line}`
       if (key !== hudKey.current) {
         hudKey.current = key
         setHud(next)
@@ -119,18 +133,28 @@ export function NightGame({ onNavigate }: Props) {
           const token = `${next.levelId}:${next.score}`
           if (grantToken.current !== token) {
             grantToken.current = token
-            const granted = grantNightRun(next.levelId, next.score)
+            const home = noteNightHome()
+            const bonus = streakPay(home.days, home.grew)
+            const banked = next.score + bonus
+            const granted = grantNightRun(next.levelId, banked)
             const xp = awardXp('night_clear')
             publishNightScore(addressRef.current ?? null, granted.save.total, bestOf(granted.save.best), true)
             void pushNightRun({
               address: addressRef.current ?? null,
               total: granted.save.total,
               best: bestOf(granted.save.best),
-              score: next.score,
-              runId: token.replace(/[^a-z0-9:_-]/gi, '').slice(0, 80),
+              score: banked,
+              runId: `${next.levelId}:${banked}`.replace(/[^a-z0-9:_-]/gi, '').slice(0, 80),
             }).then((desk) => {
               if (desk) setPot(desk.jackpot)
             })
+            if (granted.record) {
+              try {
+                playNightChime('best')
+              } catch {
+                // The home chime already landed. A missing best sting is fine.
+              }
+            }
             setSave(granted.save)
             setReward({
               mark: granted.mark,
@@ -138,6 +162,11 @@ export function NightGame({ onNavigate }: Props) {
               best: granted.best,
               badge: xp.newBadges.includes('of_the_wood'),
               deskXp: xp.awarded,
+              banked,
+              streakDays: home.days,
+              streakGrew: home.grew,
+              streakBonus: bonus,
+              record: granted.record,
             })
           }
         } else if (grantToken.current) {
@@ -229,8 +258,12 @@ export function NightGame({ onNavigate }: Props) {
 
   const share = () => {
     const potText = pot ? `This week's pot is ${pot.pot.toLocaleString('en-US')}.` : 'The wood is open.'
+    const banked = reward?.banked ?? hud.score
+    const streakBit = reward ? ` Streak ${reward.streakDays}.` : ''
     const scoreText =
-      hud.phase === 'home' ? `I came home with ${hud.score.toLocaleString('en-US')}.` : 'Stay dark with Robin.'
+      hud.phase === 'home'
+        ? `I came home with ${banked.toLocaleString('en-US')}.${streakBit}`
+        : 'Stay dark with Robin.'
     void shareDeskLine(`${scoreText} ${potText}`).then((result) => {
       if (result === 'copied') setShared('Copied')
       if (result === 'shared') setShared('Shared')
@@ -279,21 +312,29 @@ export function NightGame({ onNavigate }: Props) {
                     </button>
                   ))}
                 </div>
+                <p>{picked.blurb}</p>
+                <ol className="night-how">
+                  <li>
+                    <b>1</b> Walk to a gold number.
+                  </li>
+                  <li>
+                    <b>2</b> Press Lift. The coin leaves the map and the points count.
+                  </li>
+                  <li>
+                    <b>3</b> Stand still in the green wood. That finishes the level.
+                  </li>
+                </ol>
                 <p>
-                  {picked.blurb} The pack holds three. Some gold glints in the rooms. Some stays hidden until you are close, and the spot is dark. Stand still in the wood to keep what you chose.
+                  The pack holds three. A cup or a gem takes two slots, so leave what does not fit. A faint gold dot is a coin in the dark. Step close and it shows its number.
                   {moon ? ' A moon gem is hidden in the dark for these two minutes. It takes two slots.' : ''}
                 </p>
-                <ul>
-                  <li>
-                    <b>Quiet</b> passes a guard without a sound.
-                  </li>
-                  <li>
-                    <b>Shadow</b> crosses the torchlight, and shows what the dark was hiding.
-                  </li>
-                  <li>
-                    <b>Lift</b> claims what you can see. A full pack leaves the rest.
-                  </li>
-                </ul>
+                <p className="night-owned">
+                  {save.streak > 0
+                    ? `Streak ${save.streak}. Come back tomorrow and it pays more.`
+                    : save.total > 0
+                      ? 'The next home opens the streak. Tomorrow it pays more.'
+                      : 'Come home once. Tomorrow the streak starts paying.'}
+                </p>
                 {pot ? (
                   <p className="night-owned">
                     {pot.label} pot {pot.pot.toLocaleString('en-US')}. Best run {pot.best.toLocaleString('en-US')}. Desk points, kept on the server.
@@ -309,13 +350,26 @@ export function NightGame({ onNavigate }: Props) {
               </>
             ) : hud.phase === 'home' ? (
               <>
-                <p className="night-score">{hud.score.toLocaleString('en-US')}</p>
+                <p className="night-score">{(reward?.banked ?? hud.score).toLocaleString('en-US')}</p>
+                {reward && (
+                  <article className="night-hit">
+                    <p className="night-mark-kicker">{reward.record ? 'New best' : 'Home'}</p>
+                    <h2>Streak {reward.streakDays}</h2>
+                    <p>{streakLine(reward.streakDays, reward.streakGrew, reward.streakBonus)}</p>
+                    {pot ? (
+                      <p>
+                        This week’s pot is {pot.pot.toLocaleString('en-US')}. Your run is in it.
+                      </p>
+                    ) : null}
+                  </article>
+                )}
                 <ul className="night-break">
                   {hud.kept ? <li>Carried {hud.kept}</li> : null}
                   <li>Gold {hud.purseScore}</li>
                   <li>Heavy {hud.rareScore}</li>
                   <li>Still dark {hud.darkScore}</li>
                   <li>Time {hud.timeScore}</li>
+                  {reward && reward.streakBonus > 0 ? <li>Streak +{reward.streakBonus}</li> : null}
                 </ul>
                 {reward?.badge && (
                   <article className="night-badge">
@@ -377,6 +431,7 @@ export function NightGame({ onNavigate }: Props) {
           </div>
           <p className="night-purses">
             Pack {hud.purses}/{hud.need}
+            {playing && hud.combo > 1 ? ` · Chain x${hud.combo}` : ''}
           </p>
           {street ? (
             <p className="night-street">
@@ -398,7 +453,14 @@ export function NightGame({ onNavigate }: Props) {
         <div className="night-skills">
           <SkillButton name="Quiet" hint="1" skill={hud.quiet} disabled={!playing} onTap={() => tap('quiet')} />
           <SkillButton name="Shadow" hint="2" skill={hud.shadow} disabled={!playing} onTap={() => tap('shadow')} />
-          <SkillButton name="Lift" hint="3" skill={hud.lift} disabled={!playing} onTap={() => tap('lift')} />
+          <SkillButton
+            name="Lift"
+            hint="3"
+            skill={hud.lift}
+            disabled={!playing}
+            ready={playing && hud.liftReady}
+            onTap={() => tap('lift')}
+          />
         </div>
 
         <div className="night-pad" aria-hidden={!playing}>
@@ -415,10 +477,17 @@ export function NightGame({ onNavigate }: Props) {
             ↓
           </button>
         </div>
-        <p className="night-help">Arrows move · 1 quiet · 2 shadow · 3 lift</p>
+        <p className="night-help">Walk to the gold number. Press Lift. Stand in the green wood.</p>
       </footer>
     </div>
   )
+}
+
+function streakLine(days: number, grew: boolean, bonus: number) {
+  const tomorrow = Math.min(days + 1, 7) * 40
+  if (!grew) return `It holds. Come back tomorrow and it pays ${tomorrow}.`
+  if (bonus > 0) return `+${bonus} for coming back. Tomorrow pays ${tomorrow}.`
+  return `Come back tomorrow and it pays ${tomorrow}.`
 }
 
 function MarkShelf({ save }: { save: NightSave }) {
@@ -457,12 +526,14 @@ function SkillButton({
   hint,
   skill,
   disabled,
+  ready = false,
   onTap,
 }: {
   name: string
   hint: string
   skill: { active: number; wait: number }
   disabled: boolean
+  ready?: boolean
   onTap: () => void
 }) {
   const on = skill.active > 0
@@ -470,7 +541,7 @@ function SkillButton({
   return (
     <button
       type="button"
-      className={`night-skill${on ? ' is-on' : ''}${cooling ? ' is-cool' : ''}`}
+      className={`night-skill${on ? ' is-on' : ''}${cooling ? ' is-cool' : ''}${ready ? ' is-ready' : ''}`}
       disabled={disabled || cooling}
       onClick={onTap}
     >

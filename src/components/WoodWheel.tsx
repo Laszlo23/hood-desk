@@ -11,7 +11,7 @@ const STEPS = [
   { k: '1', title: 'Stay dark', line: 'Take what the rich left in the light.' },
   { k: '2', title: 'The pack', line: 'The gold counts onto your profile card.' },
   { k: '3', title: 'The board', line: 'The wood ranks who came home.' },
-  { k: '4', title: 'Tonight', line: 'The house moves. The desk is still here.' },
+  { k: '4', title: 'Tomorrow', line: 'Come back. The streak pays more, and the week pot is still open.' },
 ]
 
 export function WoodWheel({ onNavigate }: Props) {
@@ -48,7 +48,7 @@ export function WoodWheel({ onNavigate }: Props) {
       </div>
       <p className="muted">
         A run fills the pack. The pack writes the profile card. The card takes a place on the board.
-        Tonight the doors move, so the same skill is worth coming back for. Each homecoming adds to the week's pot. A Seeder pass or Inner Circle mark already lives on that same card.
+        Tonight the doors move. Come back tomorrow and the streak pays more. Each homecoming adds to the week's pot. A Seeder pass or Inner Circle mark already lives on that same card.
       </p>
       <ol className="wood-loop">
         {STEPS.map((step) => (

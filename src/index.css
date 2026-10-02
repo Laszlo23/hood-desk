@@ -3443,6 +3443,7 @@ a:hover {
     overflow-x: hidden;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
     z-index: 1101;
     background: #070807;
     animation: slideDown 0.25s ease;
@@ -3450,13 +3451,20 @@ a:hover {
 
   @keyframes slideDown {
     from {
-      transform: translateY(-10px);
       opacity: 0;
     }
     to {
-      transform: translateY(0);
       opacity: 1;
     }
+  }
+
+  .top-nav-mobile {
+    flex: none;
+    min-height: min-content;
+  }
+
+  .nav-drawer-section {
+    flex-shrink: 0;
   }
 }
 
@@ -3479,13 +3487,6 @@ a:hover {
   margin-top: 0;
 }
 
-/* Mobile: Ensure drawer content fills available height */
-@media (max-width: 1079px) {
-  .top-nav-mobile {
-    min-height: 100%;
-    flex: 1;
-  }
-}
 
 .top-nav-drawer-label {
   margin: 0 0 6px;

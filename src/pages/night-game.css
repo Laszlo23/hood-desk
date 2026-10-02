@@ -163,11 +163,50 @@
   border-color: #c6f54a;
 }
 
+.night-hit {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border: 1px solid #f0c14a;
+  background: #1a1408;
+  text-align: center;
+  animation: night-rise 0.55s ease-out;
+}
+
+.night-hit h2 {
+  margin: 0;
+  color: #f0c14a;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+}
+
+.night-hit p {
+  margin: 4px 0 0;
+}
+
 .night-score {
   margin: 0 0 6px;
   color: #c6f54a;
   font-size: 28px;
   letter-spacing: 0.08em;
+  animation: night-pop 0.45s ease-out;
+}
+
+@keyframes night-pop {
+  0% { transform: scale(0.72); }
+  70% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+@keyframes night-rise {
+  0% { transform: translateY(8px); opacity: 0; }
+  100% { transform: none; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .night-score,
+  .night-hit {
+    animation: none;
+  }
 }
 
 .night-break {
@@ -383,6 +422,27 @@
   color: #c6f54a;
 }
 
+.night-how {
+  margin: 8px 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.night-how li {
+  margin: 4px 0;
+}
+
+.night-how b {
+  color: #c6f54a;
+  margin-right: 6px;
+}
+
+.night-skill.is-ready {
+  border-color: #c6f54a;
+  color: #fff6c8;
+  box-shadow: 0 0 0 1px #c6f54a;
+}
+
 .night-skill.is-on {
   background: #c6f54a;
   color: #10140f;
@@ -510,5 +570,13 @@
   .night-canvas {
     width: 100%;
     max-height: none;
+  }
+
+  .night-card {
+    top: 8px;
+    bottom: 8px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
 }

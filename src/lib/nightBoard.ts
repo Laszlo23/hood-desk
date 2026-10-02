@@ -35,7 +35,11 @@ export function readBoard(): BoardRow[] {
 }
 
 export function bestOf(best: Partial<Record<string, number>>): number {
-  return Object.values(best).reduce((max, score) => Math.max(max, Number(score) || 0), 0)
+  let max = 0
+  for (const score of Object.values(best)) {
+    if (typeof score === 'number' && score > max) max = score
+  }
+  return max
 }
 
 /** Remember a profile's night score. A connected wallet claims the local row. */

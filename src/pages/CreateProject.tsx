@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useAccount } from 'wagmi'
+import { DropStudio } from '../components/DropStudio'
 import { createProject, suggestTickerFromName } from '../lib/projects'
 import { buildBar, publishBuild } from '../lib/builders'
 import { deskId } from '../lib/nightDesk'
@@ -88,12 +89,12 @@ export function CreateProject({ onNavigate }: Props) {
   return (
     <section className="page create-page">
       <div className="page-intro">
-        <p className="eyebrow">Builders</p>
-        <h1>Create project</h1>
+        <p className="eyebrow">People’s launchpad</p>
+        <h1>Press something of your own</h1>
         <p className="muted">
-          Bring something you made. Say what it is, who it helps, and where people can open it.
-          If there is a token, it is one mint, no tax, and no second mint. A promise of profit is
-          not a project, and it is not listed.
+          This desk is for people who make things. A collection pressed here stays on this page.
+          OpenSea does not host it. A build you list still needs a real link, a person it helps,
+          and one mint if there is a token. A promise of profit is not listed.
         </p>
         <p className="tiny muted">
           Create the card, deploy the token, paste the address, then trade. The swaps land on the{' '}
@@ -101,6 +102,9 @@ export function CreateProject({ onNavigate }: Props) {
         </p>
       </div>
 
+      <DropStudio onNavigate={onNavigate} />
+
+      <h2 className="section-title build-yours">Or list a build</h2>
       <form className="card form-card" onSubmit={submit}>
         <label className="field">
           <span className="rail-label">Project name *</span>

@@ -1,25 +1,19 @@
 /**
- * Featured RH hash watch — public hex only (never a private key / signer).
- * Easy to swap when a real RH tx lands.
- *
- * Known state (2026-09-30): Blockscout RH returns "Transaction not found"
- * and eth_getTransactionByHash is null. Do NOT label as proof / success.
+ * The featured hash is the $HOOD deploy. The receipt exists on Robinhood Chain.
+ * A missing receipt must not grow a Blockscout link.
  */
 
+import { useEffect, useState } from 'react'
 import { EXPLORER_TX, RH_RPC } from '../chain'
+import { HOOD_DEPLOY_TX } from '../hoodToken'
 
-/** Watched hex — not confirmed as an RH 4663 transaction. */
-export const FEATURED_RH_TX =
-  '0xe77d0c38e959dafdc3474f0c6fe74b6d92674fd3c4539440ce9572fc13c02afc' as const
+export const FEATURED_RH_TX = HOOD_DEPLOY_TX
 
-export const FEATURED_RH_TX_LABEL = 'Desk status · watched hash'
+export const FEATURED_RH_TX_LABEL = '$HOOD deploy'
 export const FEATURED_RH_TX_EXPLORER = EXPLORER_TX(FEATURED_RH_TX)
 
-/**
- * Seed truth when explorer already reported miss — UI starts honest,
- * then live probe can upgrade only if RPC/explorer actually finds it.
- */
-export const FEATURED_RH_TX_SEED_NOT_FOUND = true
+/** Start by asking the chain. Do not seed a miss for a hash that has a receipt. */
+export const FEATURED_RH_TX_SEED_NOT_FOUND = false
 
 export function shortHash(hash: string, lead = 6, trail = 4): string {
   const h = hash.startsWith('0x') ? hash : `0x${hash}`
@@ -82,6 +76,23 @@ export async function probeFeaturedTx(
   }
 }
 
+export function useFeaturedTxStatus(): FeaturedTxRpcStatus {
+  const [status, setStatus] = useState<FeaturedTxRpcStatus>(() =>
+    FEATURED_RH_TX_SEED_NOT_FOUND ? { kind: 'not_found' } : { kind: 'checking' },
+  )
+
+  useEffect(() => {
+    const ac = new AbortController()
+    void (async () => {
+      const next = await probeFeaturedTx(FEATURED_RH_TX, ac.signal)
+      if (!ac.signal.aborted) setStatus(next)
+    })()
+    return () => ac.abort()
+  }, [])
+
+  return status
+}
+
 export function featuredStatusLabel(status: FeaturedTxRpcStatus): string {
   switch (status.kind) {
     case 'checking':
@@ -94,5 +105,9 @@ export function featuredStatusLabel(status: FeaturedTxRpcStatus): string {
       return 'hash not found on RH'
     case 'error':
       return `RPC: ${status.message}`
+    default: {
+      const _exhaustive: never = status
+      return _exhaustive
+    }
   }
 }

@@ -15,6 +15,10 @@ const raw = clean(import.meta.env.VITE_HOOD_TOKEN)
 export const HOOD_TOKEN_CONFIRMED =
   '0xC7749BCFDC8d06FC246be556f4EAD75Ac7E1320c' as Address
 
+/** Receipt status 0x1, block 76657830. This transaction created HOOD_TOKEN_CONFIRMED. */
+export const HOOD_DEPLOY_TX =
+  '0xe148725110ccf28f6411c90aac0de7b6cbe1708dc2c1e4d8dc9f8b305c97f26b' as const
+
 /** $HOOD address. Invalid env override → unset. Empty env → confirmed contract. */
 export const HOOD_TOKEN_ADDRESS: Address | null =
   raw && isAddress(raw) ? (raw as Address) : raw ? null : HOOD_TOKEN_CONFIRMED

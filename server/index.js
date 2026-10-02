@@ -33,6 +33,7 @@ import express from 'express'
 import Stripe from 'stripe'
 import { createNightDesk } from './nightDesk.js'
 import { createBuilders } from './builders.js'
+import { createDrops } from './drops.js'
 
 const PORT = Number(process.env.PORT || 8787)
 const HOST = process.env.HOST || '0.0.0.0'
@@ -273,6 +274,7 @@ app.use(express.json({ limit: '32kb' }))
 
 const nightDesk = createNightDesk(path.join(__dirname, 'data', 'night-desk.json'))
 const builders = createBuilders(path.join(__dirname, 'data', 'builders.json'))
+const drops = createDrops(path.join(__dirname, 'data', 'drops.json'))
 
 app.get('/api/builders', (_req, res) => {
   res.json({ ok: true, ...builders.snapshot() })
@@ -283,6 +285,19 @@ app.post('/api/builders', (req, res) => {
     return publicError(req, res, 429, 'Too many listings. Wait a moment.')
   }
   const saved = builders.submit(req.body || {})
+  if (saved.error) return publicError(req, res, 400, saved.error)
+  res.json({ ok: true, ...saved })
+})
+
+app.get('/api/drops', (_req, res) => {
+  res.json({ ok: true, ...drops.snapshot() })
+})
+
+app.post('/api/drops', (req, res) => {
+  if (tooFast(`drop:${clientIp(req)}`, 4, 10 * 60 * 1000)) {
+    return publicError(req, res, 429, 'Too many collections. Wait a moment.')
+  }
+  const saved = drops.submit(req.body || {})
   if (saved.error) return publicError(req, res, 400, saved.error)
   res.json({ ok: true, ...saved })
 })

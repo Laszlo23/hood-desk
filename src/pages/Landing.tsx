@@ -22,10 +22,10 @@ export function Landing({ onNavigate }: Props) {
             <p className="eyebrow">Robinhood Chain</p>
             <h1 className="hero-title">Hood Desk</h1>
             <p className="hero-tagline">
-              The coin, the pool, and the ledger are the useful part. Your wallet signs the swap. This desk writes it down.
+              A launchpad for people who make things. The coin, the pool, and the ledger stay public. A collection you press lives on this desk.
             </p>
             <p className="muted">
-              Just another app, built for free and for fun. The story is the name. Stay dark is a small game.
+              Your wallet signs a swap. This desk writes it down. OpenSea does not host the collections pressed here.
             </p>
             <HoodAgentBadge className="landing-hood-badge" />
           </div>
@@ -50,10 +50,21 @@ export function Landing({ onNavigate }: Props) {
               questions. They do not trade.
             </p>
           </button>
+          <button type="button" className="project-fact" onClick={() => onNavigate('create')}>
+            <span>The press</span>
+            <strong>Your collection</strong>
+            <p>
+              Draw a mark, pick an edition, and put it on the public board. The first press from this
+              browser adds 120 XP. That is not a mint.
+            </p>
+          </button>
         </section>
 
         <div className="hero-actions">
-          <button type="button" className="btn btn-primary" onClick={() => onNavigate('trade')}>
+          <button type="button" className="btn btn-primary" onClick={() => onNavigate('create')}>
+            Press a collection
+          </button>
+          <button type="button" className="btn btn-quiet" onClick={() => onNavigate('trade')}>
             Trade $HOOD
           </button>
           <button type="button" className="btn btn-quiet" onClick={() => onNavigate('hood')}>
@@ -185,9 +196,11 @@ export function Landing({ onNavigate }: Props) {
         </article>
         <article className="card mini-card">
           <h3>Create</h3>
-          <p className="muted">Bring a thing you made. Say what it is, who it helps, and where it lives.</p>
+          <p className="muted">
+            Press a collection on this page. The pictures stay here. OpenSea does not set the edition.
+          </p>
           <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('create')}>
-            Start one
+            Open the press
           </button>
         </article>
         <article className="card mini-card">

@@ -1,13 +1,10 @@
-import { useEffect, useState } from 'react'
 import {
   FEATURED_RH_TX,
   FEATURED_RH_TX_EXPLORER,
   FEATURED_RH_TX_LABEL,
-  FEATURED_RH_TX_SEED_NOT_FOUND,
   featuredStatusLabel,
-  probeFeaturedTx,
   shortHash,
-  type FeaturedTxRpcStatus,
+  useFeaturedTxStatus,
 } from '../../lib/status/featured'
 
 type Props = {
@@ -16,18 +13,7 @@ type Props = {
 }
 
 export function FeaturedTxRow({ compact = false, className = '' }: Props) {
-  const [status, setStatus] = useState<FeaturedTxRpcStatus>(() =>
-    FEATURED_RH_TX_SEED_NOT_FOUND ? { kind: 'not_found' } : { kind: 'checking' },
-  )
-
-  useEffect(() => {
-    const ac = new AbortController()
-    void (async () => {
-      const next = await probeFeaturedTx(FEATURED_RH_TX, ac.signal)
-      if (!ac.signal.aborted) setStatus(next)
-    })()
-    return () => ac.abort()
-  }, [])
+  const status = useFeaturedTxStatus()
 
   const label = featuredStatusLabel(status)
   const tone =
@@ -39,7 +25,7 @@ export function FeaturedTxRow({ compact = false, className = '' }: Props) {
         <span className="featured-tx-pip" aria-hidden />
         <div className="featured-tx-titles">
           <p className="featured-tx-label">{FEATURED_RH_TX_LABEL}</p>
-          <p className="featured-tx-sub">Not a private key · RH 4663 watch only</p>
+          <p className="featured-tx-sub">Robinhood Chain · the transaction that created $HOOD</p>
         </div>
         <span className={`featured-tx-status featured-tx-status-${tone}`}>{label}</span>
       </div>
@@ -47,19 +33,24 @@ export function FeaturedTxRow({ compact = false, className = '' }: Props) {
         <code className="featured-tx-hash mono" title={FEATURED_RH_TX}>
           {compact ? shortHash(FEATURED_RH_TX, 8, 6) : shortHash(FEATURED_RH_TX, 10, 8)}
         </code>
-        <a
-          className="featured-tx-link"
-          href={FEATURED_RH_TX_EXPLORER}
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          Check Blockscout ↗
-        </a>
+        {status.kind === 'not_found' ? (
+          <span className="featured-tx-link muted">No chain record to open</span>
+        ) : (
+          <a
+            className="featured-tx-link"
+            href={FEATURED_RH_TX_EXPLORER}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            Blockscout ↗
+          </a>
+        )}
       </div>
       {!compact && (
         <p className="featured-tx-note muted tiny">
-          Explorer reports this hash is not a Robinhood Chain transaction. Shown for desk status
-          only — never treated as a signed success or a key.
+          {status.kind === 'not_found'
+            ? 'The link stays closed until the chain returns a receipt for this hash.'
+            : 'Blockscout opens this receipt. It created the $HOOD contract.'}
         </p>
       )}
     </article>

@@ -86,7 +86,7 @@ export const STREET_GROUPS: StreetGroup[] = [
     items: [
       { id: 'terminal', label: 'Ask', hint: 'Talk to the desk', hash: '#/terminal' },
       { id: 'projects', label: 'Projects', hint: 'Launches on the street', hash: '#/projects' },
-      { id: 'create', label: 'Create', hint: 'Start a fair launch', hash: '#/create' },
+      { id: 'create', label: 'Create', hint: 'Press a collection on this desk', hash: '#/create' },
       { id: 'ops', label: 'Ops', hint: 'How the desk stays up', hash: '#/ops' },
       { id: 'revenue', label: 'Revenue', hint: 'Plans, and what is actually paid', hash: '#/revenue' },
       { id: 'account', label: 'Account', hint: 'This wallet', hash: '#/account' },

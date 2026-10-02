@@ -6,6 +6,7 @@ import {
   FEATURED_RH_TX,
   FEATURED_RH_TX_EXPLORER,
   shortHash,
+  useFeaturedTxStatus,
 } from '../../lib/status/featured'
 import { lastLocalActivitySummary } from '../../lib/status/activity'
 import { getGamification } from '../../lib/gamification'
@@ -23,6 +24,8 @@ export function StatusStrip({ onNavigate }: Props) {
   const nftShort = DOGIHOOD_NFT_ADDRESS
     ? shortHash(DOGIHOOD_NFT_ADDRESS, 4, 4)
     : '—'
+  const featured = useFeaturedTxStatus()
+  const featuredMissing = featured.kind === 'not_found'
 
   return (
     <div className="status-strip" aria-label="Desk status">
@@ -64,15 +67,21 @@ export function StatusStrip({ onNavigate }: Props) {
         </div>
       </div>
       <div className="status-strip-rail">
-        <a
-          className="status-pill status-pill-link status-pill-warn"
-          href={FEATURED_RH_TX_EXPLORER}
-          target="_blank"
-          rel="noreferrer noopener"
-          title={`${FEATURED_RH_TX} — not found on RH`}
-        >
-          <em>Hash</em> {shortHash(FEATURED_RH_TX, 4, 4)} · not on RH
-        </a>
+        {featuredMissing ? (
+          <span className="status-pill status-pill-warn" title={FEATURED_RH_TX}>
+            <em>Hash</em> {shortHash(FEATURED_RH_TX, 4, 4)} · no receipt
+          </span>
+        ) : (
+          <a
+            className="status-pill status-pill-link"
+            href={FEATURED_RH_TX_EXPLORER}
+            target="_blank"
+            rel="noreferrer noopener"
+            title={`${FEATURED_RH_TX} — $HOOD deploy`}
+          >
+            <em>$HOOD</em> {shortHash(FEATURED_RH_TX, 4, 4)} · deploy
+          </a>
+        )}
         <span className={`status-pill${last ? '' : ' muted-pill'}`}>
           <em>Last</em> {last ?? 'no local activity yet'}
         </span>

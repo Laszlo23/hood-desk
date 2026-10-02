@@ -13,6 +13,7 @@ export type XpAction =
   | 'simulate_trade'
   | 'publish_bot'
   | 'create_project'
+  | 'publish_drop'
   | 'write_blog'
   | 'night_clear'
 
@@ -34,6 +35,7 @@ const XP_REWARDS: Record<XpAction, number> = {
   simulate_trade: 20,
   publish_bot: 40,
   create_project: 30,
+  publish_drop: 120,
   write_blog: 35,
   night_clear: 25,
 }
@@ -155,7 +157,7 @@ export function awardXp(
     state.badges.push('first_trade')
   }
   if (
-    (action === 'create_project' || action === 'publish_bot') &&
+    (action === 'create_project' || action === 'publish_bot' || action === 'publish_drop') &&
     !state.badges.includes('creator')
   ) {
     state.badges.push('creator')

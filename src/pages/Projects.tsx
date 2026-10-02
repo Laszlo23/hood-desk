@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
+import { DropBoard } from '../components/DropBoard'
 import { fetchBuilds, type DeskBuild } from '../lib/builders'
 import { listProjects, socialChips, storageOwnerKey } from '../lib/projects'
 import { VerifiedBadge } from '../components/VerifiedBadge'
@@ -37,18 +38,21 @@ export function Projects({ onNavigate }: Props) {
     <section className="page projects-page">
       <div className="page-intro row-between">
         <div>
-          <p className="eyebrow">Builders</p>
+          <p className="eyebrow">People’s launchpad</p>
           <h1>Projects</h1>
           <p className="muted">
-            The public list is work other people put on the desk. Yours also stays in this browser
-            under <code className="inline-code">{storageOwnerKey(address)}</code>. A token, if there
-            is one, is one mint, no tax, and no second mint.
+            Collections pressed on this desk come first. Builds other people listed come after.
+            Yours also stays in this browser under{' '}
+            <code className="inline-code">{storageOwnerKey(address)}</code>. A token, if there is
+            one, is one mint, no tax, and no second mint.
           </p>
         </div>
         <button type="button" className="btn btn-primary" onClick={() => onNavigate('create')}>
           + Create
         </button>
       </div>
+
+      <DropBoard />
 
       <div className="build-board">
         {builds === null ? <p className="muted">Reading the builder list…</p> : null}

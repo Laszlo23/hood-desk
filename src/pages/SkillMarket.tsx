@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, type FormEvent } from 'react'
 import { useAccount } from 'wagmi'
-import { SKILLS, type SkillId } from '../lib/agent/skills'
+import { SKILLS, skillCount, type SkillId } from '../lib/agent/skills'
 import {
   followBot,
   getActiveBotId,
@@ -139,11 +139,10 @@ export function SkillMarket({ onNavigate }: Props) {
         <DeskStory line="The bow draws when the wallet signs." onLegend={() => onNavigate('lore')} />
         <p className="eyebrow">The desk</p>
         <h1>
-          Skills <DogiHoodHolderBadge className="skills-holder-inline" />
+          Skill Market <DogiHoodHolderBadge className="skills-holder-inline" />
         </h1>
         <p className="muted">
-          The desk earns when a wallet swaps $HOOD. The 1% pool fee stays in the position. A list
-          you publish here only changes what Ask can answer.
+          Publish and follow skill packs (question lists that bundle skills). {skillCount()} individual skills are always available in Terminal and Ask. A pack you follow here changes what Ask can answer.
         </p>
         {flash && <div className="trade-flash mt">{flash}</div>}
         {activeBot && (
@@ -202,7 +201,20 @@ export function SkillMarket({ onNavigate }: Props) {
           </div>
         </div>
         {packs.length === 0 ? (
-          <p className="muted mt">No lists published from this browser yet.</p>
+          <div className="card mt demo-banner">
+            <p className="eyebrow">No packs yet</p>
+            <p>
+              No skill packs published from this browser. The {skillCount()} individual skills (balance, trade vet, draft tweet, etc.) are always available in <strong>Terminal</strong> and <strong>Ask</strong>.
+            </p>
+            <div className="cta-row mt">
+              <button type="button" className="btn btn-primary btn-sm" onClick={() => setTab('publish')}>
+                Publish a pack
+              </button>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('terminal')}>
+                Open Terminal
+              </button>
+            </div>
+          </div>
         ) : null}
         <div className="market-grid">
           {packs.map((bot) => {

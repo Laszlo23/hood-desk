@@ -290,6 +290,12 @@ export const HOOD_SEEDER_STORY: NftProjectStory = {
  */
 export const NFT_PROJECT_STORIES: NftProjectStory[] = [DOGIHOOD_STORY, HOOD_SEEDER_STORY, CCFF00_STORY]
 
+/** Holder Airdrop NFT (ERC-1155 token id 1) — featured on NFT page */
+export const HOLDER_AIRDROP_NFT_ADDRESS = '0x019695A94464E8C6252f03e58980DEa550c2A19A' as Address
+export const HOLDER_AIRDROP_TOKEN_ID = 1
+export const HOLDER_AIRDROP_BLOCKSCOUT = `https://robinhoodchain.blockscout.com/token/${HOLDER_AIRDROP_NFT_ADDRESS}/instance/${HOLDER_AIRDROP_TOKEN_ID}`
+export const HOLDER_AIRDROP_IMAGE_IPFS = 'ipfs://bafybeifvjldimueb2renkfkhneqvmxmooalpg67o6d5tfebxffign6kfhu'
+
 export const ALL_GALLERY_ITEMS: NftGalleryItem[] = NFT_PROJECT_STORIES.flatMap((s) => s.gallery)
 
 export { shortAddr }

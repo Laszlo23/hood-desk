@@ -194,6 +194,15 @@ export function TradePanel({
         </div>
       )}
 
+      {!hasNoPool && liveQuote && liveQuote.volumeEth < 0.05 && Math.abs(liveQuote.changePct) > 500 && (
+        <div className="trade-pool-warning">
+          <strong>⚠️ Thin liquidity</strong>
+          <p className="tiny muted">
+            Extreme {liveQuote.changePct >= 0 ? 'gain' : 'loss'} ({liveQuote.changePct >= 0 ? '+' : ''}{liveQuote.changePct.toFixed(0)}%) on tiny volume ({liveQuote.volumeEth.toFixed(4)} ETH). Price may be volatile or misleading.
+          </p>
+        </div>
+      )}
+
       {!hasNoPool && (
         <button type="button" className="btn btn-ghost vet-btn" onClick={onOpenVet}>
           🔍 Is this real? · Vet

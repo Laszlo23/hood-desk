@@ -57,6 +57,51 @@
   gap: 32px;
 }
 
+.street-intro {
+  padding: 24px;
+  background: #0b0d0b;
+  border: 2px solid #ccff00;
+  box-shadow: 4px 4px 0 #000;
+}
+
+.street-intro h2 {
+  margin: 0 0 16px;
+  color: #ccff00;
+  font-size: 16px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.street-steps {
+  margin: 0 0 16px;
+  padding: 0 0 0 20px;
+  list-style: decimal;
+  color: #d7e2c8;
+}
+
+.street-steps li {
+  margin-bottom: 12px;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+
+.street-steps strong {
+  color: #ccff00;
+  font-weight: 700;
+}
+
+.street-fine-print {
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid #2a3324;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #9aa892;
+  line-height: 1.4;
+}
+
 .street-block {
   padding: 24px;
   background: #0b0d0b;
@@ -392,6 +437,22 @@
   .street-main {
     padding: 24px 16px;
     gap: 24px;
+  }
+
+  .street-intro {
+    padding: 16px;
+  }
+
+  .street-intro h2 {
+    font-size: 14px;
+  }
+
+  .street-steps li {
+    font-size: 13px;
+  }
+
+  .street-fine-print {
+    font-size: 10px;
   }
 
   .street-block {

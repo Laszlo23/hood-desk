@@ -137,13 +137,31 @@ export function Street({ onNavigate }: Props) {
     <div className="street-root">
       <header className="street-header">
         <h1>Hood Street</h1>
-        <p className="street-tagline">One block. One neighborhood. People on the block.</p>
+        <p className="street-tagline">Show up. Tip your neighbors. Build your streak.</p>
         <button type="button" className="street-back" onClick={() => onNavigate('landing')}>
           ← Desk
         </button>
       </header>
 
       <main className="street-main">
+        <section className="street-intro">
+          <h2>How it works</h2>
+          <ol className="street-steps">
+            <li>
+              <strong>Check in</strong> once a day. You get 100 points.
+            </li>
+            <li>
+              <strong>Tip neighbors</strong> to send them 50 points.
+            </li>
+            <li>
+              <strong>Come back tomorrow.</strong> Your streak grows. The pot grows.
+            </li>
+          </ol>
+          <p className="street-fine-print">
+            Points live on this desk, not the blockchain. Tips send desk points to another wallet, not tokens.
+          </p>
+        </section>
+
         <section className="street-block">
           <div className="street-block-visual">
             <div className="street-corner street-corner-nw" />
@@ -179,7 +197,7 @@ export function Street({ onNavigate }: Props) {
                           onClick={() => handleTip(neighbor.address)}
                           disabled={tipState === 'tipping'}
                         >
-                          {tippingNeighborId === neighbor.address && tipState === 'tipping' ? '...' : 'Tip'}
+                          {tippingNeighborId === neighbor.address && tipState === 'tipping' ? '...' : 'Tip 50'}
                         </button>
                       )}
                     </div>
@@ -193,7 +211,7 @@ export function Street({ onNavigate }: Props) {
             {!isConnected ? (
               <div className="street-state">
                 <p className="street-warning">
-                  Connect your wallet to check in and tip neighbors. Reown may not have allowlisted this domain yet — if Connect fails, that's why.
+                  Connect your wallet to check in. The Connect button may fail if Reown has not allowlisted this domain.
                 </p>
               </div>
             ) : (
@@ -209,19 +227,19 @@ export function Street({ onNavigate }: Props) {
                       ? 'Checking in...'
                       : checkInState === 'done'
                         ? '✓ Checked in'
-                        : "I'm on the block"}
+                        : 'Check in'}
                   </button>
                 </div>
                 {checkInState === 'error' && (
                   <p className="street-error">Check-in failed. Try again.</p>
                 )}
                 {checkInState === 'done' && lastCheckIn && (
-                  <p className="street-success">Checked in at {lastCheckIn}</p>
+                  <p className="street-success">Checked in at {lastCheckIn}. You got 100 points.</p>
                 )}
                 {tipState === 'error' && <p className="street-error">Tip failed. Try again.</p>}
-                {tipState === 'done' && lastTip && <p className="street-success">Tipped at {lastTip} (+50 pts to neighbor)</p>}
+                {tipState === 'done' && lastTip && <p className="street-success">Sent 50 points at {lastTip}.</p>}
                 <p className="street-note">
-                  Check-in: wallet-signed homecoming (+100 pts). Tip: sends 50 points to a neighbor (database transfer, not yet on-chain).
+                  Click a neighbor's "Tip 50" button to send them points. Your check-in is saved with your wallet.
                 </p>
               </>
             )}

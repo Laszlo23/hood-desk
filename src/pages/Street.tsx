@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useAccount } from 'wagmi'
 import { fetchNightDesk, pushNightRun, type Jackpot } from '../lib/nightDesk'
 import { readNightSave, type NightSave } from '../game/nightMarks'
@@ -15,6 +15,22 @@ type Props = {
 type CheckInState = 'idle' | 'checking' | 'done' | 'error'
 type TipState = 'idle' | 'tipping' | 'done' | 'error'
 
+type FloatingScore = {
+  id: string
+  amount: number
+  x: number
+  y: number
+}
+
+type Activity = {
+  id: string
+  type: 'checkin' | 'tip'
+  address: string
+  target?: string
+  amount: number
+  time: string
+}
+
 export function Street({ onNavigate }: Props) {
   const { address, isConnected } = useAccount()
   const [pot, setPot] = useState<Jackpot | null>(null)
@@ -25,6 +41,10 @@ export function Street({ onNavigate }: Props) {
   const [lastCheckIn, setLastCheckIn] = useState<string | null>(null)
   const [lastTip, setLastTip] = useState<string | null>(null)
   const [tippingNeighborId, setTippingNeighborId] = useState<string | null>(null)
+  const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([])
+  const [blockPulse, setBlockPulse] = useState(false)
+  const [recentActivity, setRecentActivity] = useState<Activity[]>([])
+  const blockRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     let live = true
@@ -45,6 +65,56 @@ export function Street({ onNavigate }: Props) {
       live = false
     }
   }, [])
+
+  const addFloatingScore = (amount: number, fromNeighborIndex?: number) => {
+    const blockEl = blockRef.current
+    if (!blockEl) return
+
+    const rect = blockEl.getBoundingClientRect()
+    let x = rect.width / 2
+    let y = rect.height / 2
+
+    if (fromNeighborIndex !== undefined) {
+      const positions = [
+        { x: 0.12, y: 0.15 },
+        { x: 0.85, y: 0.18 },
+        { x: 0.08, y: 0.38 },
+        { x: 0.9, y: 0.42 },
+        { x: 0.15, y: 0.65 },
+        { x: 0.88, y: 0.62 },
+        { x: 0.18, y: 0.85 },
+        { x: 0.8, y: 0.88 },
+      ]
+      const pos = positions[fromNeighborIndex]
+      if (pos) {
+        x = rect.width * pos.x
+        y = rect.height * pos.y
+      }
+    }
+
+    const id = `${Date.now()}-${Math.random()}`
+    setFloatingScores((prev) => [...prev, { id, amount, x, y }])
+    setTimeout(() => {
+      setFloatingScores((prev) => prev.filter((s) => s.id !== id))
+    }, 2000)
+  }
+
+  const triggerBlockPulse = () => {
+    setBlockPulse(true)
+    setTimeout(() => setBlockPulse(false), 600)
+  }
+
+  const addActivity = (type: 'checkin' | 'tip', addr: string, target?: string, amount: number = 100) => {
+    const activity: Activity = {
+      id: `${Date.now()}-${Math.random()}`,
+      type,
+      address: addr,
+      target,
+      amount,
+      time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+    }
+    setRecentActivity((prev) => [activity, ...prev.slice(0, 4)])
+  }
 
   const handleCheckIn = async () => {
     if (!isConnected || checkInState === 'checking') return
@@ -74,6 +144,11 @@ export function Street({ onNavigate }: Props) {
         setSave({ ...updated, total: newTotal })
         setLastCheckIn(new Date().toLocaleString('en-US', { timeStyle: 'short' }))
         setCheckInState('done')
+        addFloatingScore(homecomingScore)
+        triggerBlockPulse()
+        if (address) {
+          addActivity('checkin', address, undefined, homecomingScore)
+        }
         setTimeout(() => setCheckInState('idle'), 3000)
       } else {
         setCheckInState('error')
@@ -85,7 +160,7 @@ export function Street({ onNavigate }: Props) {
     }
   }
 
-  const handleTip = async (recipientAddress: string | null) => {
+  const handleTip = async (recipientAddress: string | null, neighborIndex: number) => {
     if (!isConnected || tipState === 'tipping' || !recipientAddress) return
 
     setTipState('tipping')
@@ -113,6 +188,11 @@ export function Street({ onNavigate }: Props) {
         setNeighbors(result.board.slice(0, 8))
         setLastTip(new Date().toLocaleString('en-US', { timeStyle: 'short' }))
         setTipState('done')
+        addFloatingScore(tipAmount, neighborIndex)
+        triggerBlockPulse()
+        if (address) {
+          addActivity('tip', address, recipientAddress, tipAmount)
+        }
         setTimeout(() => {
           setTipState('idle')
           setTippingNeighborId(null)
@@ -163,7 +243,7 @@ export function Street({ onNavigate }: Props) {
         </section>
 
         <section className="street-block">
-          <div className="street-block-visual">
+          <div className={`street-block-visual ${blockPulse ? 'street-block-pulse' : ''}`} ref={blockRef}>
             <div className="street-corner street-corner-nw" />
             <div className="street-corner street-corner-ne" />
             <div className="street-corner street-corner-sw" />
@@ -176,7 +256,7 @@ export function Street({ onNavigate }: Props) {
                 <span className="street-empty">Not connected</span>
               )}
             </div>
-            {neighbors.length > 0 && (
+            {neighbors.length > 0 ? (
               <div className="street-neighbors">
                 {neighbors.map((neighbor, index) => {
                   const isYou =
@@ -194,7 +274,7 @@ export function Street({ onNavigate }: Props) {
                         <button
                           type="button"
                           className="street-neighbor-tip"
-                          onClick={() => handleTip(neighbor.address)}
+                          onClick={() => handleTip(neighbor.address, index)}
                           disabled={tipState === 'tipping'}
                         >
                           {tippingNeighborId === neighbor.address && tipState === 'tipping' ? '...' : 'Tip 50'}
@@ -204,7 +284,20 @@ export function Street({ onNavigate }: Props) {
                   )
                 })}
               </div>
+            ) : (
+              <div className="street-empty-state">
+                <span className="street-waiting">Waiting for neighbors...</span>
+              </div>
             )}
+            {floatingScores.map((score) => (
+              <div
+                key={score.id}
+                className="street-floating-score"
+                style={{ left: `${score.x}px`, top: `${score.y}px` }}
+              >
+                +{score.amount}
+              </div>
+            ))}
           </div>
 
           <div className="street-actions">
@@ -230,9 +323,7 @@ export function Street({ onNavigate }: Props) {
                         : 'Check in'}
                   </button>
                 </div>
-                {checkInState === 'error' && (
-                  <p className="street-error">Check-in failed. Try again.</p>
-                )}
+                {checkInState === 'error' && <p className="street-error">Check-in failed. Try again.</p>}
                 {checkInState === 'done' && lastCheckIn && (
                   <p className="street-success">Checked in at {lastCheckIn}. You got 100 points.</p>
                 )}
@@ -244,31 +335,78 @@ export function Street({ onNavigate }: Props) {
               </>
             )}
           </div>
+
+          {recentActivity.length > 0 && (
+            <div className="street-activity">
+              <h3>Your moves</h3>
+              <div className="street-activity-list">
+                {recentActivity.map((act) => (
+                  <div key={act.id} className="street-activity-item">
+                    <span className="street-activity-time">{act.time}</span>
+                    {act.type === 'checkin' ? (
+                      <span className="street-activity-text">
+                        {shortDeskAddress(act.address)} checked in (+{act.amount})
+                      </span>
+                    ) : (
+                      <span className="street-activity-text">
+                        {shortDeskAddress(act.address)} tipped {act.target ? shortDeskAddress(act.target) : 'someone'}{' '}
+                        {act.amount} pts
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
 
         <section className="street-status">
-          <div className="street-card">
+          <div className="street-card street-card-streak">
             <h2>Your streak</h2>
             {save.streak > 0 ? (
-              <p className="street-streak-count">{save.streak} days</p>
+              <>
+                <p className="street-streak-count">
+                  <span className="street-streak-number">{save.streak}</span> days
+                </p>
+                <div className="street-streak-progress">
+                  <div
+                    className="street-streak-bar"
+                    style={{ width: `${((save.streak % 7 || 7) / 7) * 100}%` }}
+                  />
+                </div>
+                <p className="street-streak-label">
+                  {save.streak % 7 === 0
+                    ? `${save.streak} day streak!`
+                    : `${7 - (save.streak % 7)} more for a week`}
+                </p>
+              </>
             ) : (
-              <p className="street-muted">No streak yet. Come back tomorrow.</p>
+              <p className="street-muted">No streak yet. Check in today.</p>
             )}
             {save.total > 0 && (
               <p className="street-total">{save.total.toLocaleString('en-US')} total points</p>
             )}
           </div>
 
-          <div className="street-card">
+          <div className="street-card street-card-pot">
             <h2>Night pot</h2>
             {pot ? (
               <>
                 <p className="street-pot-amount">{pot.pot.toLocaleString('en-US')} points</p>
                 <p className="street-pot-label">{pot.label}</p>
-                <p className="street-pot-runs">{pot.runs} runs this week</p>
-                {pot.best > 0 && (
-                  <p className="street-pot-best">Best run: {pot.best.toLocaleString('en-US')}</p>
-                )}
+                <div className="street-pot-stats">
+                  <span className="street-pot-stat">
+                    <span className="street-pot-stat-label">Runs</span>
+                    <span className="street-pot-stat-value">{pot.runs}</span>
+                  </span>
+                  {pot.best > 0 && (
+                    <span className="street-pot-stat">
+                      <span className="street-pot-stat-label">Best</span>
+                      <span className="street-pot-stat-value">{pot.best.toLocaleString('en-US')}</span>
+                    </span>
+                  )}
+                </div>
+                <p className="street-pot-cta">Come back tomorrow to grow the pot</p>
               </>
             ) : (
               <p className="street-muted">Loading pot...</p>

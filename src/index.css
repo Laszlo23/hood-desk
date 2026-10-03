@@ -6411,76 +6411,60 @@ a.nft-gallery-tile:hover {
 }
 
 .site-footer {
-  margin-top: 12px;
-  padding: 28px 4px 8px;
-  border-top: 1px solid rgba(204, 255, 0, 0.2);
+  margin-top: 64px;
+  padding: 52px 12px 28px;
+  border-top: 1px solid rgba(204, 255, 0, 0.12);
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
   gap: 18px;
 }
 
-.site-footer-brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.site-footer-brand .hood-mark {
-  border-radius: 12px;
-}
-
-.site-footer-brand strong {
-  display: block;
+.site-footer-name {
+  margin: 0;
   font-family: Palatino, 'Palatino Linotype', 'Iowan Old Style', Georgia, serif;
   font-weight: 500;
-  font-size: 1.35rem;
+  font-size: 1.7rem;
   letter-spacing: -0.03em;
 }
 
-.site-footer-brand p {
-  margin: 4px 0 0;
-  max-width: 36ch;
-  font-family: Palatino, 'Palatino Linotype', Georgia, serif;
-  font-size: 1rem;
-  line-height: 1.35;
-  color: var(--text-dim);
-}
-
-.site-footer-social,
 .site-footer-doors,
+.site-footer-social,
 .site-footer-legal {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 18px;
+  justify-content: center;
+  gap: 6px 20px;
+  max-width: 40rem;
 }
 
-.site-footer-social a,
 .site-footer-doors a,
+.site-footer-social a,
 .site-footer-legal a {
-  color: var(--text);
+  color: var(--text-dim);
   text-decoration: none;
   font-size: 0.92rem;
+  line-height: 1.4;
 }
 
-.site-footer-social a span {
-  display: block;
-  margin-bottom: 2px;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent);
+.site-footer-social {
+  gap: 6px 16px;
 }
 
-.site-footer-social a:hover,
+.site-footer-social a {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
 .site-footer-doors a:hover,
+.site-footer-social a:hover,
 .site-footer-legal a:hover {
   color: var(--accent);
 }
 
 .site-footer-legal a {
-  color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.75rem;
 }
 
 .legal-page {
@@ -6520,10 +6504,19 @@ a.nft-gallery-tile:hover {
   gap: 8px 16px;
 }
 
+.site-footer-base {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px 18px;
+  margin-top: 10px;
+}
+
 .site-footer-meta {
   margin: 0;
   font-size: 0.75rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   color: var(--muted);
 }
 
@@ -6536,7 +6529,9 @@ a.nft-gallery-tile:hover {
 
 @media (max-width: 1079px) {
   .site-footer {
-    padding: 28px 18px 36px;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-bottom: 36px;
   }
 }
 
@@ -7059,6 +7054,113 @@ a.nft-gallery-tile:hover {
   margin: 0 0 8px;
 }
 
+.book-sign {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(204, 255, 0, 0.16);
+}
+
+.book-sign-copy h3 {
+  margin: 0 0 6px;
+  font-family: Palatino, 'Palatino Linotype', 'Iowan Old Style', Georgia, serif;
+  font-weight: 500;
+  font-size: 1.55rem;
+  letter-spacing: -0.03em;
+}
+
+.book-sign-copy p,
+.book-count,
+.book-note {
+  margin: 0;
+  color: var(--muted);
+}
+
+.book-count {
+  margin-top: 12px;
+}
+
+.book-roll {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.book-roll li {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(204, 255, 0, 0.22);
+}
+
+.book-roll strong {
+  color: var(--text);
+  font-weight: 650;
+}
+
+.book-roll span {
+  color: var(--accent);
+  font-size: 0.82rem;
+}
+
+.book-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px 12px;
+  align-items: end;
+  margin-top: 14px;
+}
+
+.book-form .field span {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.book-channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-self: end;
+  padding-bottom: 2px;
+}
+
+.book-channel {
+  border: 1px solid rgba(204, 255, 0, 0.22);
+  background: transparent;
+  color: var(--text);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.book-channel.is-on {
+  background: rgba(204, 255, 0, 0.16);
+  border-color: rgba(204, 255, 0, 0.7);
+  color: var(--accent);
+}
+
+.book-form .btn {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.book-note {
+  margin-top: 10px;
+}
+
+@media (max-width: 720px) {
+  .book-form {
+    grid-template-columns: 1fr;
+  }
+}
+
 .desk-pulse {
   display: flex;
   flex-wrap: wrap;
@@ -7156,9 +7258,7 @@ a.nft-gallery-tile:hover {
 }
 
 .site-footer {
-  margin-top: 4px;
-  padding-top: 36px;
-  border-top-color: rgba(204, 255, 0, 0.12);
+  border-top-color: rgba(204, 255, 0, 0.1);
 }
 
 @keyframes hood-arrive {

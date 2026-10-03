@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { SignTheBook } from './SignTheBook'
 import { useAccount } from 'wagmi'
 import { nextHomePay, readNightSave } from '../game/nightMarks'
 import { bestOf, placeOnBoard, publishNightScore } from '../lib/nightBoard'
@@ -109,6 +110,7 @@ export function WoodWheel({ onNavigate }: Props) {
           What a plan pays for
         </button>
       </div>
+      <SignTheBook />
     </section>
   )
 }

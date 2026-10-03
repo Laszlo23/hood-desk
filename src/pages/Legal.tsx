@@ -108,7 +108,7 @@ function Privacy() {
       <p>Clearing site data in the browser removes those records from this device. It does not erase a transaction you already signed on chain.</p>
       <h2>What the desk stores</h2>
       <p>
-        A homecoming in Stay dark can be posted to the public board with the desk id and, if you connect, the wallet address you choose to send. A builder listing or a pressed collection is stored so other people can read it. The server also keeps a short rate-limit record of the IP that posted, so one address cannot flood the board.
+        A homecoming in Stay dark can be posted to the public board with the desk id and, if you connect, the wallet address you choose to send. A builder listing or a pressed collection is stored so other people can read it. Writing your name in the book stores the name on the page and the way back (an X name, a Farcaster name, or an email) with the desk, so a later note can find you. An email is not shown on the page. The server also keeps a short rate-limit record of the IP that posted, so one address cannot flood the board.
       </p>
       <h2>Wallet and chain</h2>
       <p>

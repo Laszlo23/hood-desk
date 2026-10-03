@@ -31,6 +31,24 @@ function slugify(title: string): string {
 
 const SEED: BlogPost[] = [
   {
+    id: 'post_seed_ship_oct3',
+    slug: 'street-hood-shipment-3-oct',
+    title: 'The jumbotron: a Street Hood shipment just landed',
+    body: `Read on the morning of 3 Oct 2026 from the live board on [hoodstreetmini.com](https://hoodstreetmini.com/). The page now calls the collection Street Hood Minis. The account on that page is [@StreetHoodMini](https://x.com/StreetHoodMini).
+
+**What is hitting.** The bar across the top is the loud part. It says a whitelist shipment landed, with **94 guaranteed spots left out of 118** and **97 first-come spots left out of 130**. A guaranteed spot on that shipment is 4,269 Hood Bucks with an X post. A first-come spot is 420 Hood Bucks. Guaranteed also needs an approved follow. First-come runs until the 130 are gone. Those leftovers were on the board at the moment this note was written. They move while the shipment is open.
+
+**The board under it, same moment.** 2,038 collectors have claimed. 1,826 whitelist spots are taken: 516 guaranteed and 1,310 first-come, across 648 wallets. 7.16 million Hood Bucks are in play. Hood Games shows 85.1K hands and 625 players. 775 tribute holders are paid across 18 partner collections. 186 memes are free to post. The mint page still says soon. Hood Bucks are play money with no cash value.
+
+The biggest crew on that same page is the Gorilla, 1,114 of the 4,269. That is the size of the model, not a price.
+
+**The room.** The standing HoodStreet Media space is still the 24/7 room Cashpig and RoaringPiggy keep open. The newest titled space this desk can point at from a public write-up is Unvault’s own, dated 2 Oct 2026: [UnVault Beta: Who Made The Cut?](https://www.twitterspacegpt.com/ja/articles/unvault-beta-wallet-gated-selection-1Vjm0j). That write-up lists Roaring Piggy from Hood Street Media in the room. Unvault’s own posts on 1 Oct said about 60% of the beta spots were chosen, 40% were still open, and the first wave is about 100 testers. This note is not a transcript of a space we did not hear.
+
+The thank-you to [Cashpig and RoaringPiggy](https://doghood.aibusiness.fun/#/blog/thank-you-cashpig-and-roaringpiggy) still stands. This desk does not sell Minis and does not run the space.`,
+    date: '2026-10-03T03:20:00.000Z',
+    updatedAt: '2026-10-03T03:20:00.000Z',
+  },
+  {
     id: 'post_seed_pigs_oct3',
     slug: 'thank-you-cashpig-and-roaringpiggy',
     title: 'Thank you, Cashpig and RoaringPiggy',

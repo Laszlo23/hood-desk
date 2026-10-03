@@ -16,13 +16,13 @@ export function StreetToday() {
       <p className="muted tiny">
         Read from the public{' '}
         <a href={STREET_DAY.profile} target="_blank" rel="noreferrer">
-          @HoodStreetMini
+          @StreetHoodMini
         </a>{' '}
-        profile. The last titled space ended {STREET_DAY.spaceWhen}:{' '}
+        profile. The last HoodStreet Media space this desk can still open ended {STREET_DAY.spaceWhen}:{' '}
         <a href={STREET_DAY.spaceHref} target="_blank" rel="noreferrer">
           {STREET_DAY.spaceTitle}
         </a>
-        .
+        . A later public write-up, 2 Oct, is Unvault’s own beta space.
       </p>
       <div className="cta-row">
         <a className="btn btn-primary btn-sm" href={GM_FARCASTER_APP} target="_blank" rel="noreferrer">

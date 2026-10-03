@@ -1,6 +1,6 @@
 /** Public accounts the desk already names. Each URL was checked before it was listed. */
 export const DESK_SOCIALS = [
-  { id: 'x', label: 'X', name: '@HoodStreetMini', href: 'https://x.com/HoodStreetMini' },
+  { id: 'x', label: 'X', name: '@StreetHoodMini', href: 'https://x.com/StreetHoodMini' },
   { id: 'farcaster', label: 'Farcaster', name: '@0xleonardo', href: 'https://farcaster.xyz/0xleonardo' },
   { id: 'discord', label: 'Discord', name: 'HoodStreet', href: 'https://discord.gg/hoodstreet' },
   { id: 'gm', label: 'GM', name: 'the show', href: 'https://www.gmfarcaster.com/' },

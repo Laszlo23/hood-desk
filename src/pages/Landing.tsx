@@ -81,13 +81,13 @@ export function Landing({ onNavigate }: Props) {
         <button
           type="button"
           className="notes-callout"
-          onClick={() => onNavigate('blog', 'thank-you-cashpig-and-roaringpiggy')}
+          onClick={() => onNavigate('blog', 'street-hood-shipment-3-oct')}
         >
           <span className="eyebrow">The notes</span>
-          <strong>Thank you, Cashpig and RoaringPiggy</strong>
+          <strong>A Street Hood shipment just landed</strong>
           <p>
-            They keep the HoodStreet Media room up, day and night. Today’s Mini counts are in the
-            note. Read it.
+            The board says 94 guaranteed and 97 first-come spots are still open. The mint page still
+            says soon. Read the note.
           </p>
         </button>
 
@@ -186,7 +186,7 @@ export function Landing({ onNavigate }: Props) {
         <article className="card mini-card">
           <h3>Notes</h3>
           <p className="muted">
-            The latest from the street, and a thank-you to Cashpig and RoaringPiggy for the room they keep open.
+            The shipment on the Street Hood board, and the thank-you to Cashpig and RoaringPiggy.
           </p>
           <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('blog')}>
             Read the notes

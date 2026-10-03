@@ -7,9 +7,9 @@
 export const GM_FARCASTER_APP = 'https://www.gmfarcaster.com/'
 
 export const STREET_DAY = {
-  readAt: '2026-10-03T00:30:00.000Z',
-  profile: 'https://x.com/HoodStreetMini',
-  line: 'Read on 3 Oct from hoodstreetmini.com. 1,939 collectors have claimed. 1,735 whitelist spots are taken: 479 guaranteed, 1,256 first-come, across 614 wallets. 5.93 million Hood Bucks are in play. The mint page still says soon. Cashpig and RoaringPiggy keep the HoodStreet Media room up.',
+  readAt: '2026-10-03T03:20:00.000Z',
+  profile: 'https://x.com/StreetHoodMini',
+  line: 'Read on the morning of 3 Oct from the Street Hood board. A whitelist shipment is open: 94 guaranteed left of 118, 97 first-come left of 130. The board showed 2,038 collectors and 7.16 million Hood Bucks. The mint page still says soon.',
   spaceTitle: 'Unvault alpha',
   spaceWhen: '29 Sep 2026',
   spaceHref: 'https://x.com/i/spaces/1dxYlaOgyzYJX',

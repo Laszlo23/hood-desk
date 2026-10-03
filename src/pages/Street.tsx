@@ -129,7 +129,12 @@ export function Street({ onNavigate }: Props) {
         setPot(result.jackpot)
         setNeighbors(result.board.slice(0, 8))
         setPersonal(result.personal ?? null)
-        setSave({ ...updated, total: newTotal })
+        
+        const myNewTotal = result.board.find((row) => 
+          row.address?.toLowerCase() === address?.toLowerCase()
+        )?.total ?? updated.total
+        setSave({ ...updated, total: myNewTotal })
+        
         setLastCheckIn(new Date().toLocaleString('en-US', { timeStyle: 'short' }))
         setCheckInState('done')
         
@@ -428,13 +433,28 @@ export function Street({ onNavigate }: Props) {
                     hour: 'numeric', 
                     minute: '2-digit' 
                   })
-                  const isPersonal = address && (
-                    move.from === address || 
-                    move.to === address || 
-                    move.starter === address || 
-                    move.neighbor === address
+                  const normalizedAddress = address?.toLowerCase()
+                  const isPersonal = normalizedAddress && (
+                    move.from?.toLowerCase() === normalizedAddress || 
+                    move.to?.toLowerCase() === normalizedAddress || 
+                    move.starter?.toLowerCase() === normalizedAddress || 
+                    move.neighbor?.toLowerCase() === normalizedAddress
                   )
-                  if (move.type === 'tip') {
+                  
+                  if (move.type === 'checkin') {
+                    return (
+                      <div 
+                        key={`${move.at}-${index}`} 
+                        className={`street-ledger-item ${isPersonal ? 'street-ledger-item-you' : ''}`}
+                      >
+                        <span className="street-ledger-time">{time}</span>
+                        <span className="street-ledger-text">
+                          {shortDeskAddress(move.from!)} checked in (+{move.amount})
+                          {isPersonal && <span className="street-ledger-you-badge">you</span>}
+                        </span>
+                      </div>
+                    )
+                  } else if (move.type === 'tip') {
                     return (
                       <div 
                         key={`${move.at}-${index}`} 

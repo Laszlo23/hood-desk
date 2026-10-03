@@ -77,9 +77,10 @@ function ranked(rows) {
 }
 
 function publicWeek(data, key) {
-  const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, tips: [], digs: [] }
+  const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, tips: [], digs: [], checkins: [] }
   const tips = week.tips || []
   const digs = week.digs || []
+  const checkins = week.checkins || []
   
   const recentMoves = []
   
@@ -100,6 +101,15 @@ function publicWeek(data, key) {
       neighbor: dig.neighbor,
       amount: dig.amount,
       at: dig.at,
+    })
+  })
+  
+  checkins.slice(-20).forEach((checkin) => {
+    recentMoves.push({
+      type: 'checkin',
+      from: checkin.from,
+      amount: checkin.amount,
+      at: checkin.at,
     })
   })
   
@@ -181,7 +191,7 @@ export function createNightDesk(file) {
     data.rows = ranked([...data.rows.filter((row) => row.id !== id), next])
 
     const key = weekKey()
-    const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, seen: [], tips: [], digs: [], lastCheckInDay: null }
+    const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, seen: [], tips: [], digs: [], checkins: [], lastCheckInDay: null }
     const runId = cleanRun(body?.runId)
     const recipient = cleanAddress(body?.recipient)
     const neighbor = cleanAddress(body?.neighbor)
@@ -191,22 +201,26 @@ export function createNightDesk(file) {
     if (runId && !week.seen.includes(runId)) {
       week.seen = [...week.seen, runId].slice(-400)
       
-      if (recipient && runId.startsWith('tip:') && score > 0) {
-        const recipientRow = data.rows.find((row) => row.address === recipient)
-        if (recipientRow) {
-          recipientRow.total = Math.max(0, (recipientRow.total || 0) + score)
-          recipientRow.at = new Date().toISOString()
-          data.rows = ranked(data.rows)
-          
-          week.tips = week.tips || []
-          week.tips.push({
-            from: address,
-            to: recipient,
-            amount: score,
-            runId,
-            at: new Date().toISOString(),
-          })
-          week.tips = week.tips.slice(-200)
+      if (runId.startsWith('tip:') && score > 0) {
+        if (recipient) {
+          const recipientRow = data.rows.find((row) => row.address === recipient)
+          if (recipientRow) {
+            recipientRow.total = Math.max(0, (recipientRow.total || 0) + score)
+            recipientRow.at = new Date().toISOString()
+            data.rows = ranked(data.rows)
+            
+            week.tips = week.tips || []
+            week.tips.push({
+              from: address,
+              to: recipient,
+              amount: score,
+              runId,
+              at: new Date().toISOString(),
+            })
+            week.tips = week.tips.slice(-200)
+          }
+        } else {
+          week.pot += score
         }
       }
       
@@ -257,15 +271,28 @@ export function createNightDesk(file) {
       
       if (score > 0 && runId.startsWith('homecoming:')) {
         const today = viennaDate()
+        let checkinAmount = score
         
-        if (week.lastCheckInDay !== today) {
+        if (week.lastCheckInDay !== today && week.pot >= 20) {
           earlyBirdBonus = 20
+          week.pot -= earlyBirdBonus
           next.total += earlyBirdBonus
+          checkinAmount += earlyBirdBonus
           week.lastCheckInDay = today
         }
         
         week.pot += score
         week.runs += 1
+        
+        week.checkins = week.checkins || []
+        week.checkins.push({
+          from: address,
+          amount: checkinAmount,
+          runId,
+          at: new Date().toISOString(),
+        })
+        week.checkins = week.checkins.slice(-200)
+        
         if (score >= week.best) {
           week.best = score
           week.holder = address

@@ -5,9 +5,10 @@ This document explains how doghood.aibusiness.fun was transformed into a Farcast
 ## What was changed
 
 ### 1. Added Farcaster SDK
-- **Package**: `@farcaster/frame-sdk` (v0.1.0)
-- **Init**: `src/lib/farcaster.ts` - wrapper that initializes SDK and calls `ready()`
+- **Package**: `@farcaster/miniapp-sdk` (v0.3.0)
+- **Init**: `src/lib/farcaster.ts` - wrapper that initializes SDK and calls `ready()` only when in mini app
 - **Integration**: `src/main.tsx` - initializes SDK on mount
+- **Detection**: Uses `await sdk.isInMiniApp()` to properly detect Farcaster context (not Promise checks)
 
 ### 2. Updated Farcaster manifest
 File: `public/.well-known/farcaster.json`
@@ -163,14 +164,17 @@ Try to embed the site in an iframe:
 
 ### Farcaster SDK wrapper
 `src/lib/farcaster.ts` provides:
-- `initFarcasterSDK()` - Call once on mount
-- `isFarcasterContext()` - Returns true when in Farcaster
+- `initFarcasterSDK()` - Call once on mount, only calls `ready()` when in mini app
+- `isFarcasterContext()` - Async function that returns true when in Farcaster (uses `await sdk.isInMiniApp()`)
 - `sdk` - Direct access to SDK instance
+
+**Important**: `sdk.isInMiniApp()` is the correct detection method. Do NOT use `sdk.context !== null` (context is a Promise, never null).
 
 ### Routing logic
 `src/App.tsx`:
-- Checks `isFarcasterContext()` on mount
+- Calls `isFarcasterContext()` (async) on mount
 - If true AND route is `landing`, redirect to `street`
+- Normal browser visits stay on landing page
 - Regular navigation works normally
 
 ### Street component
@@ -178,7 +182,7 @@ Try to embed the site in an iframe:
 - Shows check-in button (always)
 - Shows share button (only after check-in, only in Farcaster)
 - Displays real server errors (not generic messages)
-- Uses `sdk.actions.openUrl()` to compose casts
+- Uses `sdk.actions.composeCast()` to create casts with the mini app
 
 ### Server gate
 `server/nightDesk.js` line 318:
@@ -195,6 +199,10 @@ This error now reaches the UI and is shown to the user.
 ### SDK not initializing
 **Symptom**: Splash screen doesn't dismiss
 **Fix**: Check that `initFarcasterSDK()` is called in `main.tsx` `useEffect`
+
+### Wrong route on normal browser
+**Symptom**: Browser visits go to `/#/street` instead of landing
+**Fix**: This was a bug in the original implementation. The fixed version uses `await sdk.isInMiniApp()` which returns false in browsers.
 
 ### Headers still blocking
 **Symptom**: "Refused to frame" error in console

@@ -19,6 +19,7 @@ export type ViewId =
   | 'community'
   | 'lore'
   | 'dark'
+  | 'street'
   | 'terms'
   | 'privacy'
   | 'disclaimer'
@@ -43,6 +44,7 @@ export const VIEWS: { id: ViewId; label: string; hash: string }[] = [
   { id: 'community', label: 'Pool', hash: '#/community' },
   { id: 'lore', label: 'Legend', hash: '#/lore' },
   { id: 'dark', label: 'The dark', hash: '#/dark' },
+  { id: 'street', label: 'Hood Street', hash: '#/street' },
   { id: 'terms', label: 'Terms', hash: '#/terms' },
   { id: 'privacy', label: 'Privacy', hash: '#/privacy' },
   { id: 'disclaimer', label: 'Disclaimer', hash: '#/disclaimer' },
@@ -54,6 +56,7 @@ export const PRIMARY_NAV: { id: ViewId; label: string; hash: string }[] = [
   { id: 'blog', label: 'Notes', hash: '#/blog' },
   { id: 'community', label: 'Pool', hash: '#/community' },
   { id: 'dark', label: 'The dark', hash: '#/dark' },
+  { id: 'street', label: 'Hood Street', hash: '#/street' },
   { id: 'status', label: 'Status', hash: '#/status' },
   { id: 'skills', label: 'Skills', hash: '#/skills' },
 ]
@@ -218,6 +221,9 @@ export function routeFromHash(hash: string): RouteState {
   }
   if (parts[0] === 'dark' || parts[0] === 'night' || parts[0] === 'game') {
     return { view: 'dark' }
+  }
+  if (parts[0] === 'street' || parts[0] === 'block' || parts[0] === 'hood-street') {
+    return { view: 'street' }
   }
   if (parts[0] === 'terms' || parts[0] === 'tos') return { view: 'terms' }
   if (parts[0] === 'privacy') return { view: 'privacy' }

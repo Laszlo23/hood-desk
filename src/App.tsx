@@ -3,6 +3,7 @@ import { TopNav } from './components/TopNav'
 import { WeeklyBanner } from './components/WeeklyBanner'
 import { hashForView, routeFromHash, type ViewId } from './lib/nav'
 import { usePageSeo } from './lib/seo'
+import { isFarcasterContext } from './lib/farcaster'
 import { Account } from './pages/Account'
 import { CardPage } from './pages/Card'
 import { Blog } from './pages/Blog'
@@ -29,8 +30,12 @@ import { LoreBackdrop } from './components/LoreBackdrop'
 import { SiteFooter } from './components/SiteFooter'
 
 export default function App() {
+  const inFarcaster = isFarcasterContext()
   const initial = typeof window !== 'undefined' ? routeFromHash(window.location.hash) : { view: 'landing' as ViewId }
-  const [view, setView] = useState<ViewId>(initial.view)
+  
+  const initialView = inFarcaster && initial.view === 'landing' ? 'street' : initial.view
+  
+  const [view, setView] = useState<ViewId>(initialView)
   const [projectId, setProjectId] = useState<string | undefined>(initial.projectId)
   const [blogSlug, setBlogSlug] = useState<string | undefined>(initial.blogSlug)
 
@@ -44,6 +49,13 @@ export default function App() {
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
+  
+  useEffect(() => {
+    if (inFarcaster && view === 'landing') {
+      setView('street')
+      window.location.hash = '#/street'
+    }
+  }, [inFarcaster, view])
 
   const navigate = useCallback((id: ViewId, idOrProject?: string) => {
     const next = hashForView(id, idOrProject)

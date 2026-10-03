@@ -4,6 +4,7 @@ import { fetchNightDesk, pushNightRun, type Jackpot, type PersonalStats } from '
 import { readNightSave, type NightSave } from '../game/nightMarks'
 import { NightBoard } from '../components/NightBoard'
 import { shortDeskAddress } from '../lib/deskCard'
+import { isFarcasterContext, sdk } from '../lib/farcaster'
 import type { BoardRow } from '../lib/nightBoard'
 import type { ViewId } from '../lib/nav'
 import './street.css'
@@ -25,11 +26,13 @@ type FloatingScore = {
 
 export function Street({ onNavigate }: Props) {
   const { address, isConnected } = useAccount()
+  const inFarcaster = isFarcasterContext()
   const [pot, setPot] = useState<Jackpot | null>(null)
   const [neighbors, setNeighbors] = useState<BoardRow[]>([])
   const [personal, setPersonal] = useState<PersonalStats | null>(null)
   const [save, setSave] = useState<NightSave>(() => readNightSave())
   const [checkInState, setCheckInState] = useState<CheckInState>('idle')
+  const [checkInError, setCheckInError] = useState<string | null>(null)
   const [tipState, setTipState] = useState<TipState>('idle')
   const [digState, setDigState] = useState<DigState>('idle')
   const [lastCheckIn, setLastCheckIn] = useState<string | null>(null)
@@ -103,10 +106,41 @@ export function Street({ onNavigate }: Props) {
     setTimeout(() => setBlockPulse(false), 600)
   }
 
+  const handleShare = async () => {
+    if (!inFarcaster) return
+
+    const streak = save.streak > 0 ? save.streak : 0
+    const total = personal?.total ?? save.total
+    const place = personal?.place
+    
+    let message = `Just checked in on Hood Street! 🏘️\n\n`
+    
+    if (streak > 0) {
+      message += `${streak} day streak 🔥\n`
+    }
+    
+    if (total > 0) {
+      message += `${total.toLocaleString('en-US')} desk points`
+      if (place && place <= 10) {
+        message += ` (rank #${place})`
+      }
+      message += '\n'
+    }
+    
+    message += `\nCheck in once a day, build your streak 📍`
+
+    try {
+      await sdk.actions.openUrl('https://warpcast.com/~/compose?text=' + encodeURIComponent(message) + '&embeds[]=https://doghood.aibusiness.fun')
+    } catch (err) {
+      console.error('Share failed:', err)
+    }
+  }
+
   const handleCheckIn = async () => {
     if (!isConnected || checkInState === 'checking') return
 
     setCheckInState('checking')
+    setCheckInError(null)
     try {
       const homecomingScore = 100
       const uniqueRunId = `homecoming:${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
@@ -150,11 +184,20 @@ export function Street({ onNavigate }: Props) {
         setTimeout(() => setCheckInState('idle'), 3000)
       } else {
         setCheckInState('error')
-        setTimeout(() => setCheckInState('idle'), 3000)
+        setCheckInError('Check-in failed. Try again.')
+        setTimeout(() => {
+          setCheckInState('idle')
+          setCheckInError(null)
+        }, 3000)
       }
-    } catch {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Check-in failed. Try again.'
       setCheckInState('error')
-      setTimeout(() => setCheckInState('idle'), 3000)
+      setCheckInError(message)
+      setTimeout(() => {
+        setCheckInState('idle')
+        setCheckInError(null)
+      }, 3000)
     }
   }
 
@@ -398,8 +441,17 @@ export function Street({ onNavigate }: Props) {
                         ? '✓ Checked in'
                         : 'Check in'}
                   </button>
+                  {inFarcaster && checkInState === 'done' && (
+                    <button
+                      type="button"
+                      className="street-share"
+                      onClick={handleShare}
+                    >
+                      Share
+                    </button>
+                  )}
                 </div>
-                {checkInState === 'error' && <p className="street-error">Check-in failed. Try again.</p>}
+                {checkInError && <p className="street-error">{checkInError}</p>}
                 {checkInState === 'done' && lastCheckIn && (
                   <p className="street-success">
                     {earlyBird 

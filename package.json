@@ -11,6 +11,7 @@
     "server:install": "npm --prefix server install"
   },
   "dependencies": {
+    "@farcaster/frame-sdk": "^0.1.0",
     "@stripe/stripe-js": "^5.10.0",
     "@tanstack/react-query": "^5.104.0",
     "lightweight-charts": "^4.2.3",

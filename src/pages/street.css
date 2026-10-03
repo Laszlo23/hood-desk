@@ -481,6 +481,27 @@
   cursor: not-allowed;
 }
 
+.street-share {
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #d7e2c8;
+  background: #10140f;
+  border: 2px solid #ccff00;
+  padding: 12px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 #000;
+  font-weight: 700;
+  min-width: 180px;
+}
+
+.street-share:hover {
+  background: #14180f;
+  border-color: #d7ff1a;
+  color: #ccff00;
+}
+
 .street-state,
 .street-warning,
 .street-note,
@@ -1041,6 +1062,11 @@
   }
 
   .street-checkin {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .street-share {
     width: 100%;
     min-width: 0;
   }

@@ -68,6 +68,12 @@ const PAGES: Record<ViewId, PageMeta> = {
     title: 'Stay dark · Night Ledger',
     description: 'A small game on Night Ledger, for fun. Points stay on the card. The coin and the pool are the useful part.',
   },
+  street: {
+    title: 'Hood Street · Night Ledger',
+    description:
+      'One block, one neighborhood. Check in, see your streak, watch the night pot grow. The first playable loop of Hood Street.',
+    image: STREET_IMAGE,
+  },
   account: {
     title: 'Account · Night Ledger',
     description: 'Your Night Ledger wallet, subscription, and NFT-bound balances on Robinhood Chain.',

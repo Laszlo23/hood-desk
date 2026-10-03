@@ -45,11 +45,12 @@ export function Street({ onNavigate }: Props) {
 
       const updated = readNightSave()
       const newTotal = updated.total + homecomingScore
+      const currentBest = updated.best?.gate ?? 0
 
       const result = await pushNightRun({
         address: address ?? null,
         total: newTotal,
-        best: updated.best.gate,
+        best: currentBest,
         score: homecomingScore,
         runId: uniqueRunId,
       })

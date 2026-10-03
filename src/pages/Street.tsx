@@ -338,7 +338,7 @@ export function Street({ onNavigate }: Props) {
 
           {recentActivity.length > 0 && (
             <div className="street-activity">
-              <h3>Live on the block</h3>
+              <h3>Your moves</h3>
               <div className="street-activity-list">
                 {recentActivity.map((act) => (
                   <div key={act.id} className="street-activity-item">
@@ -369,12 +369,15 @@ export function Street({ onNavigate }: Props) {
                   <span className="street-streak-number">{save.streak}</span> days
                 </p>
                 <div className="street-streak-progress">
-                  <div className="street-streak-bar" style={{ width: `${Math.min((save.streak % 7) / 7, 1) * 100}%` }} />
+                  <div
+                    className="street-streak-bar"
+                    style={{ width: `${((save.streak % 7 || 7) / 7) * 100}%` }}
+                  />
                 </div>
                 <p className="street-streak-label">
-                  {save.streak < 7
-                    ? `${7 - (save.streak % 7)} more for a week`
-                    : `${save.streak} day streak!`}
+                  {save.streak % 7 === 0
+                    ? `${save.streak} day streak!`
+                    : `${7 - (save.streak % 7)} more for a week`}
                 </p>
               </>
             ) : (

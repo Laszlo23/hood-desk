@@ -492,6 +492,17 @@ export function Street({ onNavigate }: Props) {
             <div className="street-card street-card-personal">
               <h2>Your record</h2>
               <div className="street-personal-stats">
+                {personal.place !== null && (
+                  <div className="street-personal-stat street-personal-stat-place">
+                    <span className="street-personal-label">Place on block</span>
+                    <span className="street-personal-value street-personal-place">
+                      {personal.place === 1 ? '🥇 1st' : 
+                       personal.place === 2 ? '🥈 2nd' : 
+                       personal.place === 3 ? '🥉 3rd' : 
+                       `${personal.place}th`}
+                    </span>
+                  </div>
+                )}
                 <div className="street-personal-stat">
                   <span className="street-personal-label">Total points</span>
                   <span className="street-personal-value">{personal.total.toLocaleString('en-US')}</span>
@@ -513,6 +524,17 @@ export function Street({ onNavigate }: Props) {
                   <span className="street-personal-value">{personal.digs}</span>
                 </div>
               </div>
+              {personal.rival && (
+                <div className="street-rival">
+                  <span className="street-rival-icon">⚔️</span>
+                  <span className="street-rival-text">
+                    Rivalry with {shortDeskAddress(personal.rival.address)} — {personal.rival.interactions} moves
+                  </span>
+                </div>
+              )}
+              {personal.place === null && personal.total === 0 && (
+                <p className="street-not-on-board">Not on the board yet. Check in to get started.</p>
+              )}
             </div>
           )}
 
@@ -523,6 +545,16 @@ export function Street({ onNavigate }: Props) {
                 <p className="street-streak-count">
                   <span className="street-streak-number">{save.streak}</span> days
                 </p>
+                {(save.streak === 7 || save.streak === 14 || save.streak === 21) && (
+                  <div className="street-week-goal">
+                    <span className="street-week-goal-icon">🎯</span>
+                    <span className="street-week-goal-text">
+                      {save.streak === 7 ? 'One week complete!' : 
+                       save.streak === 14 ? 'Two weeks complete!' : 
+                       'Three weeks complete!'}
+                    </span>
+                  </div>
+                )}
                 <div className="street-streak-progress">
                   <div
                     className="street-streak-bar"

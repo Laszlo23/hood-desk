@@ -639,6 +639,93 @@
   text-shadow: 0 0 10px rgba(204, 255, 0, 0.3);
 }
 
+.street-personal-stat-place {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #1a1408 0%, #14120f 100%);
+  border: 2px solid #f0c14a;
+}
+
+.street-personal-place {
+  font-size: 24px;
+  color: #f0c14a;
+  text-shadow: 0 0 12px rgba(240, 193, 74, 0.4);
+}
+
+.street-rival {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 12px;
+  background: linear-gradient(135deg, #1a0808 0%, #140f0f 100%);
+  border: 2px solid #e25a2a;
+  box-shadow: 0 0 10px rgba(226, 90, 42, 0.2);
+}
+
+.street-rival-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.street-rival-text {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: #d7e2c8;
+}
+
+.street-not-on-board {
+  margin: 16px 0 0;
+  padding: 12px;
+  background: #10140f;
+  border: 1px solid #2a3324;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #9aa892;
+  text-align: center;
+}
+
+.street-week-goal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 12px 0;
+  padding: 12px;
+  background: linear-gradient(135deg, #0f1a08 0%, #14120f 100%);
+  border: 2px solid #3f8f4a;
+  box-shadow: 0 0 12px rgba(63, 143, 74, 0.3);
+  animation: weekGoalPulse 2s ease-in-out infinite;
+}
+
+@keyframes weekGoalPulse {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(63, 143, 74, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(63, 143, 74, 0.6);
+  }
+}
+
+.street-week-goal-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.street-week-goal-text {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #3f8f4a;
+  text-transform: uppercase;
+}
+
+.street-total {
+  margin: 4px 0;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #9aa892;
+}
+
 .street-activity-list {
   display: flex;
   flex-direction: column;

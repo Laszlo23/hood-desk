@@ -140,9 +140,43 @@ function personalStats(data, address) {
   const total = row?.total ?? 0
   const best = row?.best ?? 0
   
+  const board = ranked(data.rows)
+  const rank = board.findIndex((r) => r.address === address)
+  const place = rank >= 0 ? rank + 1 : null
+  
   const tipsGiven = tips.filter((t) => t.from === address).length
   const tipsReceived = tips.filter((t) => t.to === address).length
   const digsCount = digs.filter((d) => d.starter === address || d.neighbor === address).length
+  
+  const interactions = new Map()
+  
+  tips.forEach((tip) => {
+    if (tip.from === address && tip.to) {
+      interactions.set(tip.to, (interactions.get(tip.to) || 0) + 1)
+    }
+    if (tip.to === address && tip.from) {
+      interactions.set(tip.from, (interactions.get(tip.from) || 0) + 1)
+    }
+  })
+  
+  digs.forEach((dig) => {
+    if (dig.starter === address && dig.neighbor) {
+      interactions.set(dig.neighbor, (interactions.get(dig.neighbor) || 0) + 1)
+    }
+    if (dig.neighbor === address && dig.starter) {
+      interactions.set(dig.starter, (interactions.get(dig.starter) || 0) + 1)
+    }
+  })
+  
+  let topRival = null
+  let topCount = 0
+  
+  interactions.forEach((count, addr) => {
+    if (count > topCount && count >= 2) {
+      topRival = addr
+      topCount = count
+    }
+  })
   
   return {
     address,
@@ -151,6 +185,8 @@ function personalStats(data, address) {
     tipsGiven,
     tipsReceived,
     digs: digsCount,
+    place,
+    rival: topRival ? { address: topRival, interactions: topCount } : null,
   }
 }
 

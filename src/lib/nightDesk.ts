@@ -29,6 +29,11 @@ export type PersonalStats = {
   tipsGiven: number
   tipsReceived: number
   digs: number
+  place: number | null
+  rival: {
+    address: string
+    interactions: number
+  } | null
 }
 
 export type NightDesk = {

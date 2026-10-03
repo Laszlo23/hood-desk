@@ -74,7 +74,7 @@ function ranked(rows) {
 }
 
 function publicWeek(data, key) {
-  const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, tips: [] }
+  const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, tips: [], digs: [] }
   return {
     week: key,
     pot: week.pot || 0,
@@ -82,6 +82,7 @@ function publicWeek(data, key) {
     holder: week.holder || null,
     runs: week.runs || 0,
     tips: week.tips?.length || 0,
+    digs: week.digs?.length || 0,
     label: key.replace('-W', ' · week '),
   }
 }
@@ -119,14 +120,15 @@ export function createNightDesk(file) {
     data.rows = ranked([...data.rows.filter((row) => row.id !== id), next])
 
     const key = weekKey()
-    const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, seen: [], tips: [] }
+    const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, seen: [], tips: [], digs: [] }
     const runId = cleanRun(body?.runId)
     const recipient = cleanAddress(body?.recipient)
+    const neighbor = cleanAddress(body?.neighbor)
 
-    if (score > 0 && runId && !week.seen.includes(runId)) {
+    if (runId && !week.seen.includes(runId)) {
       week.seen = [...week.seen, runId].slice(-400)
       
-      if (recipient && runId.startsWith('tip:')) {
+      if (recipient && runId.startsWith('tip:') && score > 0) {
         const recipientRow = data.rows.find((row) => row.address === recipient)
         if (recipientRow) {
           recipientRow.total = Math.max(0, (recipientRow.total || 0) + score)
@@ -145,11 +147,58 @@ export function createNightDesk(file) {
         }
       }
       
-      week.pot += score
-      week.runs += 1
-      if (score >= week.best) {
-        week.best = score
-        week.holder = address
+      if (neighbor && runId.startsWith('dig:') && address && neighbor !== address) {
+        week.digs = week.digs || []
+        const today = new Date().toISOString().slice(0, 10)
+        const alreadyDug = week.digs.some((dig) => {
+          const digDay = dig.at.slice(0, 10)
+          if (digDay !== today) return false
+          return (
+            (dig.starter === address && dig.neighbor === neighbor) ||
+            (dig.starter === neighbor && dig.neighbor === address)
+          )
+        })
+        
+        if (alreadyDug) {
+          return { error: 'You already dug with this neighbor today.' }
+        }
+        
+        const digYield = 30
+        const digCost = digYield * 2
+        if (week.pot < digCost) {
+          return { error: 'The pot cannot afford a dig right now.' }
+        }
+        
+        const neighborRow = data.rows.find((row) => row.address === neighbor)
+        if (!neighborRow) {
+          return { error: 'Neighbor not found on the board.' }
+        }
+        
+        week.pot -= digCost
+        
+        next.total += digYield
+        neighborRow.total += digYield
+        neighborRow.at = new Date().toISOString()
+        
+        data.rows = ranked([...data.rows.filter((row) => row.id !== id), next])
+        
+        week.digs.push({
+          starter: address,
+          neighbor,
+          amount: digYield,
+          runId,
+          at: new Date().toISOString(),
+        })
+        week.digs = week.digs.slice(-200)
+      }
+      
+      if (score > 0) {
+        week.pot += score
+        week.runs += 1
+        if (score >= week.best) {
+          week.best = score
+          week.holder = address
+        }
       }
     }
     data.weeks[key] = week

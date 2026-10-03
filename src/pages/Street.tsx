@@ -14,6 +14,7 @@ type Props = {
 
 type CheckInState = 'idle' | 'checking' | 'done' | 'error'
 type TipState = 'idle' | 'tipping' | 'done' | 'error'
+type DigState = 'idle' | 'digging' | 'done' | 'error' | 'already-dug' | 'no-pot'
 
 type FloatingScore = {
   id: string
@@ -38,9 +39,12 @@ export function Street({ onNavigate }: Props) {
   const [save, setSave] = useState<NightSave>(() => readNightSave())
   const [checkInState, setCheckInState] = useState<CheckInState>('idle')
   const [tipState, setTipState] = useState<TipState>('idle')
+  const [digState, setDigState] = useState<DigState>('idle')
   const [lastCheckIn, setLastCheckIn] = useState<string | null>(null)
   const [lastTip, setLastTip] = useState<string | null>(null)
+  const [lastDig, setLastDig] = useState<string | null>(null)
   const [tippingNeighborId, setTippingNeighborId] = useState<string | null>(null)
+  const [diggingNeighborId, setDiggingNeighborId] = useState<string | null>(null)
   const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([])
   const [blockPulse, setBlockPulse] = useState(false)
   const [recentActivity, setRecentActivity] = useState<Activity[]>([])
@@ -213,6 +217,66 @@ export function Street({ onNavigate }: Props) {
     }
   }
 
+  const handleDig = async (neighborAddress: string | null, neighborIndex: number) => {
+    if (!isConnected || digState === 'digging' || !neighborAddress) return
+
+    setDigState('digging')
+    setDiggingNeighborId(neighborAddress)
+    try {
+      const uniqueRunId = `dig:${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
+        .replace(/[^a-z0-9:_-]/gi, '')
+        .slice(0, 80)
+
+      const updated = readNightSave()
+      const currentBest = updated.best?.gate ?? 0
+
+      const result = await pushNightRun({
+        address: address ?? null,
+        total: updated.total,
+        best: currentBest,
+        score: 0,
+        runId: uniqueRunId,
+        neighbor: neighborAddress,
+      })
+
+      if (result) {
+        setPot(result.jackpot)
+        setNeighbors(result.board.slice(0, 8))
+        const myNewTotal = result.board.find((row) => 
+          row.address?.toLowerCase() === address?.toLowerCase()
+        )?.total ?? updated.total
+        setSave({ ...updated, total: myNewTotal })
+        setLastDig(new Date().toLocaleString('en-US', { timeStyle: 'short' }))
+        setDigState('done')
+        addFloatingScore(30, neighborIndex)
+        triggerBlockPulse()
+        setTimeout(() => {
+          setDigState('idle')
+          setDiggingNeighborId(null)
+        }, 3000)
+      } else {
+        setDigState('error')
+        setTimeout(() => {
+          setDigState('idle')
+          setDiggingNeighborId(null)
+        }, 3000)
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : ''
+      if (message.includes('already dug')) {
+        setDigState('already-dug')
+      } else if (message.includes('cannot afford')) {
+        setDigState('no-pot')
+      } else {
+        setDigState('error')
+      }
+      setTimeout(() => {
+        setDigState('idle')
+        setDiggingNeighborId(null)
+      }, 3000)
+    }
+  }
+
   return (
     <div className="street-root">
       <header className="street-header">
@@ -234,11 +298,14 @@ export function Street({ onNavigate }: Props) {
               <strong>Tip neighbors</strong> to send them 50 points.
             </li>
             <li>
+              <strong>Dig with a neighbor</strong> to mine 30 points each from the pot. One dig per pair per day.
+            </li>
+            <li>
               <strong>Come back tomorrow.</strong> Your streak grows. The pot grows.
             </li>
           </ol>
           <p className="street-fine-print">
-            Points live on this desk, not the blockchain. Tips send desk points to another wallet, not tokens.
+            Points live on this desk, not the blockchain. Tips send desk points to another wallet, not tokens. Digs pull from the shared pot.
           </p>
         </section>
 
@@ -263,6 +330,7 @@ export function Street({ onNavigate }: Props) {
                     address &&
                     (neighbor.address?.toLowerCase() === address.toLowerCase() || neighbor.id === address.toLowerCase())
                   const canTip = isConnected && !isYou && neighbor.address
+                  const canDig = isConnected && !isYou && neighbor.address
                   return (
                     <div key={neighbor.id} className={`street-neighbor street-neighbor-${index + 1}`}>
                       <span className="street-neighbor-dot" />
@@ -278,6 +346,16 @@ export function Street({ onNavigate }: Props) {
                           disabled={tipState === 'tipping'}
                         >
                           {tippingNeighborId === neighbor.address && tipState === 'tipping' ? '...' : 'Tip 50'}
+                        </button>
+                      )}
+                      {canDig && (
+                        <button
+                          type="button"
+                          className="street-neighbor-dig"
+                          onClick={() => handleDig(neighbor.address, index)}
+                          disabled={digState === 'digging'}
+                        >
+                          {diggingNeighborId === neighbor.address && digState === 'digging' ? '...' : 'Dig'}
                         </button>
                       )}
                     </div>
@@ -329,8 +407,14 @@ export function Street({ onNavigate }: Props) {
                 )}
                 {tipState === 'error' && <p className="street-error">Tip failed. Try again.</p>}
                 {tipState === 'done' && lastTip && <p className="street-success">Sent 50 points at {lastTip}.</p>}
+                {digState === 'error' && <p className="street-error">Dig failed. Try again.</p>}
+                {digState === 'already-dug' && <p className="street-error">You already dug with this neighbor today.</p>}
+                {digState === 'no-pot' && <p className="street-error">The pot cannot afford a dig right now.</p>}
+                {digState === 'done' && lastDig && (
+                  <p className="street-success">Dug at {lastDig}. You and your neighbor each got 30 points from the pot.</p>
+                )}
                 <p className="street-note">
-                  Click a neighbor's "Tip 50" button to send them points. Your check-in is saved with your wallet.
+                  Tip to send points. Dig with a neighbor to mine from the pot together—both get 30 points.
                 </p>
               </>
             )}

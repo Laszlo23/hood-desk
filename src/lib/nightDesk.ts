@@ -71,6 +71,7 @@ export async function pushNightRun(input: {
   score?: number
   runId?: string
   recipient?: string | null
+  neighbor?: string | null
 }): Promise<NightDesk | null> {
   try {
     const res = await fetch('/api/night', {
@@ -84,14 +85,22 @@ export async function pushNightRun(input: {
         score: input.score ?? 0,
         runId: input.runId ?? '',
         recipient: input.recipient ?? null,
+        neighbor: input.neighbor ?? null,
       }),
     })
-    if (!res.ok) return null
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      if (body.error) {
+        throw new Error(body.error)
+      }
+      return null
+    }
     const data = asDesk(await res.json())
     if (!data) return null
     emit(data)
     return data
-  } catch {
+  } catch (err) {
+    if (err instanceof Error) throw err
     return null
   }
 }

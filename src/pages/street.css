@@ -249,6 +249,30 @@
   cursor: not-allowed;
 }
 
+.street-neighbor-dig {
+  font: inherit;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  background: #14120f;
+  color: #ccff00;
+  border: 1px solid #ccff00;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 #000;
+  margin-top: 2px;
+}
+
+.street-neighbor-dig:hover:not(:disabled) {
+  background: #ccff00;
+  color: #10140f;
+}
+
+.street-neighbor-dig:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .street-neighbor-1 {
   top: 15%;
   left: 12%;
@@ -714,6 +738,11 @@
   }
 
   .street-neighbor-tip {
+    font-size: 7px;
+    padding: 2px 6px;
+  }
+
+  .street-neighbor-dig {
     font-size: 7px;
     padding: 2px 6px;
   }

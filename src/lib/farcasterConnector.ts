@@ -15,13 +15,13 @@ export function farcasterConnector() {
     async setup() {
       provider = sdk.wallet.ethProvider
     },
-    async connect({ chainId } = {}) {
+    async connect({ chainId, withCapabilities } = {}) {
       const prov = provider || sdk.wallet.ethProvider
       provider = prov
 
-      let accounts: readonly Address[] = []
+      let addressList: readonly Address[] = []
       try {
-        accounts = (await prov.request({
+        addressList = (await prov.request({
           method: 'eth_requestAccounts',
         })) as Address[]
       } catch (error) {
@@ -55,18 +55,22 @@ export function farcasterConnector() {
       prov.on?.('chainChanged', chainChangedHandler)
       prov.on?.('disconnect', disconnectHandler)
 
+      const accounts = withCapabilities
+        ? addressList.map((address) => ({ address, capabilities: {} }))
+        : addressList
+
       if (chainId && currentChainId !== chainId) {
         try {
           const chain = await this.switchChain?.({ chainId })
           if (chain) {
-            return { accounts, chainId: chain.id }
+            return { accounts, chainId: chain.id } as any
           }
         } catch {
           // If switch fails, continue with current chain
         }
       }
 
-      return { accounts, chainId: currentChainId }
+      return { accounts, chainId: currentChainId } as any
     },
     async disconnect() {
       const prov = provider || sdk.wallet.ethProvider

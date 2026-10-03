@@ -24,6 +24,7 @@ import { CommunityTrade } from './pages/CommunityTrade'
 import { Lore } from './pages/Lore'
 import { Legal } from './pages/Legal'
 import { NightGame } from './pages/NightGame'
+import { Street } from './pages/Street'
 import { LoreBackdrop } from './components/LoreBackdrop'
 import { SiteFooter } from './components/SiteFooter'
 
@@ -74,6 +75,10 @@ export default function App() {
 
   if (view === 'dark') {
     return <NightGame onNavigate={navigate} />
+  }
+
+  if (view === 'street') {
+    return <Street onNavigate={navigate} />
   }
 
   return (

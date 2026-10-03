@@ -957,6 +957,18 @@
   animation: pulse 2s ease-in-out infinite;
 }
 
+.street-tx-link {
+  color: #ccff00;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.street-tx-link:hover {
+  border-bottom-color: #ccff00;
+}
+
 @keyframes pulse {
   0%, 100% {
     opacity: 0.7;

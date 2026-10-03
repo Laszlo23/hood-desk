@@ -1,0 +1,14 @@
+# Foundry
+cache/
+out/
+broadcast/
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

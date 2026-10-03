@@ -181,10 +181,12 @@ export function createNightDesk(file) {
     data.rows = ranked([...data.rows.filter((row) => row.id !== id), next])
 
     const key = weekKey()
-    const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, seen: [], tips: [], digs: [] }
+    const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, seen: [], tips: [], digs: [], lastCheckInDay: null }
     const runId = cleanRun(body?.runId)
     const recipient = cleanAddress(body?.recipient)
     const neighbor = cleanAddress(body?.neighbor)
+    
+    let earlyBirdBonus = 0
 
     if (runId && !week.seen.includes(runId)) {
       week.seen = [...week.seen, runId].slice(-400)
@@ -254,6 +256,14 @@ export function createNightDesk(file) {
       }
       
       if (score > 0 && runId.startsWith('homecoming:')) {
+        const today = viennaDate()
+        
+        if (week.lastCheckInDay !== today) {
+          earlyBirdBonus = 20
+          next.total += earlyBirdBonus
+          week.lastCheckInDay = today
+        }
+        
         week.pot += score
         week.runs += 1
         if (score >= week.best) {
@@ -263,10 +273,14 @@ export function createNightDesk(file) {
       }
     }
     data.weeks[key] = week
+    data.rows = ranked([...data.rows.filter((row) => row.id !== id), next])
     save(file, data)
     const result = { board: ranked(data.rows), jackpot: publicWeek(data, key) }
     if (address) {
       result.personal = personalStats(data, address)
+    }
+    if (earlyBirdBonus > 0) {
+      result.earlyBird = true
     }
     return result
   }

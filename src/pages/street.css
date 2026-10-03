@@ -65,12 +65,66 @@
 }
 
 .street-intro h2 {
-  margin: 0 0 16px;
+  margin: 0 0 12px;
   color: #ccff00;
   font-size: 16px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   font-weight: 700;
+}
+
+.street-pitch {
+  margin: 0 0 20px;
+  color: #d7e2c8;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
+}
+
+.street-loop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 0 20px;
+  padding: 20px;
+  background: #14120f;
+  border: 1px solid #2a3324;
+}
+
+.street-loop-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.street-loop-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #ccff00;
+  color: #10140f;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.street-loop-text {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9aa892;
+  text-align: center;
+  max-width: 80px;
+}
+
+.street-loop-arrow {
+  color: #ccff00;
+  font-size: 20px;
+  margin: 0 4px;
 }
 
 .street-steps {
@@ -509,6 +563,35 @@
   padding: 6px 8px;
   background: #10140f;
   border-left: 2px solid #2a3324;
+  transition: all 0.3s ease;
+}
+
+.street-ledger-item-you {
+  background: #1a1408;
+  border-left: 2px solid #ccff00;
+  animation: ledgerGlow 2s ease-in-out infinite;
+}
+
+@keyframes ledgerGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(204, 255, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 8px rgba(204, 255, 0, 0.3);
+  }
+}
+
+.street-ledger-you-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 6px;
+  background: #ccff00;
+  color: #10140f;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 2px;
 }
 
 .street-ledger-time {
@@ -670,12 +753,63 @@
   text-shadow: 0 0 20px rgba(204, 255, 0, 0.5);
 }
 
-.street-total,
 .street-pot-label {
   margin: 4px 0;
   font-size: 12px;
   letter-spacing: 0.08em;
   color: #9aa892;
+}
+
+.street-block-boss {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 12px;
+  background: linear-gradient(135deg, #1a1408 0%, #14120f 100%);
+  border: 2px solid #f0c14a;
+  box-shadow: 0 0 12px rgba(240, 193, 74, 0.2);
+}
+
+.street-boss-crown {
+  font-size: 32px;
+  line-height: 1;
+  animation: crownFloat 2s ease-in-out infinite;
+}
+
+@keyframes crownFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.street-boss-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.street-boss-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #f0c14a;
+  font-weight: 700;
+}
+
+.street-boss-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #d7e2c8;
+}
+
+.street-boss-score {
+  font-size: 11px;
+  color: #9aa892;
+  letter-spacing: 0.04em;
 }
 
 .street-pot-stats {
@@ -770,6 +904,24 @@
 
   .street-intro h2 {
     font-size: 14px;
+  }
+
+  .street-pitch {
+    font-size: 13px;
+  }
+
+  .street-loop {
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .street-loop-arrow {
+    transform: rotate(90deg);
+  }
+
+  .street-loop-text {
+    max-width: 120px;
   }
 
   .street-steps li {

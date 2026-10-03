@@ -35,6 +35,7 @@ export function Street({ onNavigate }: Props) {
   const [lastCheckIn, setLastCheckIn] = useState<string | null>(null)
   const [lastTip, setLastTip] = useState<string | null>(null)
   const [lastDig, setLastDig] = useState<string | null>(null)
+  const [earlyBird, setEarlyBird] = useState(false)
   const [tippingNeighborId, setTippingNeighborId] = useState<string | null>(null)
   const [diggingNeighborId, setDiggingNeighborId] = useState<string | null>(null)
   const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([])
@@ -131,7 +132,15 @@ export function Street({ onNavigate }: Props) {
         setSave({ ...updated, total: newTotal })
         setLastCheckIn(new Date().toLocaleString('en-US', { timeStyle: 'short' }))
         setCheckInState('done')
-        addFloatingScore(homecomingScore)
+        
+        if (result.earlyBird) {
+          setEarlyBird(true)
+          addFloatingScore(homecomingScore + 20)
+          setTimeout(() => setEarlyBird(false), 5000)
+        } else {
+          addFloatingScore(homecomingScore)
+        }
+        
         triggerBlockPulse()
         setTimeout(() => setCheckInState('idle'), 3000)
       } else {
@@ -268,23 +277,28 @@ export function Street({ onNavigate }: Props) {
 
       <main className="street-main">
         <section className="street-intro">
-          <h2>How it works</h2>
-          <ol className="street-steps">
-            <li>
-              <strong>Check in</strong> once a day. You get 100 points.
-            </li>
-            <li>
-              <strong>Tip neighbors</strong> to send them 50 points.
-            </li>
-            <li>
-              <strong>Dig with a neighbor</strong> to mine 30 points each from the pot. One dig per pair per day.
-            </li>
-            <li>
-              <strong>Come back tomorrow.</strong> Your streak grows. The pot grows.
-            </li>
-          </ol>
+          <h2>Hood Street</h2>
+          <p className="street-pitch">
+            Check in once a day. Build your streak. The first person to check in each day gets a bonus.
+          </p>
+          <div className="street-loop">
+            <div className="street-loop-step">
+              <span className="street-loop-number">1</span>
+              <span className="street-loop-text">Check in today</span>
+            </div>
+            <div className="street-loop-arrow">→</div>
+            <div className="street-loop-step">
+              <span className="street-loop-number">2</span>
+              <span className="street-loop-text">See it on the ledger</span>
+            </div>
+            <div className="street-loop-arrow">→</div>
+            <div className="street-loop-step">
+              <span className="street-loop-number">3</span>
+              <span className="street-loop-text">Come back tomorrow</span>
+            </div>
+          </div>
           <p className="street-fine-print">
-            Points live on this desk, not the blockchain. Tips send desk points to another wallet, not tokens. Digs pull from the shared pot.
+            Points are desk points, not blockchain tokens. Tips send points to another wallet. Digs pull from the shared pot.
           </p>
         </section>
 
@@ -382,7 +396,11 @@ export function Street({ onNavigate }: Props) {
                 </div>
                 {checkInState === 'error' && <p className="street-error">Check-in failed. Try again.</p>}
                 {checkInState === 'done' && lastCheckIn && (
-                  <p className="street-success">Checked in at {lastCheckIn}. You got 100 points.</p>
+                  <p className="street-success">
+                    {earlyBird 
+                      ? `🌅 First check-in of the day! You got 120 points (100 + 20 early bird bonus).`
+                      : `Checked in at ${lastCheckIn}. You got 100 points.`}
+                  </p>
                 )}
                 {tipState === 'error' && <p className="street-error">Tip failed. Try again.</p>}
                 {tipState === 'done' && lastTip && <p className="street-success">Sent 50 points at {lastTip}.</p>}
@@ -410,21 +428,35 @@ export function Street({ onNavigate }: Props) {
                     hour: 'numeric', 
                     minute: '2-digit' 
                   })
+                  const isPersonal = address && (
+                    move.from === address || 
+                    move.to === address || 
+                    move.starter === address || 
+                    move.neighbor === address
+                  )
                   if (move.type === 'tip') {
                     return (
-                      <div key={`${move.at}-${index}`} className="street-ledger-item">
+                      <div 
+                        key={`${move.at}-${index}`} 
+                        className={`street-ledger-item ${isPersonal ? 'street-ledger-item-you' : ''}`}
+                      >
                         <span className="street-ledger-time">{time}</span>
                         <span className="street-ledger-text">
                           {shortDeskAddress(move.from!)} tipped {shortDeskAddress(move.to!)} {move.amount} pts
+                          {isPersonal && <span className="street-ledger-you-badge">you</span>}
                         </span>
                       </div>
                     )
                   } else {
                     return (
-                      <div key={`${move.at}-${index}`} className="street-ledger-item">
+                      <div 
+                        key={`${move.at}-${index}`} 
+                        className={`street-ledger-item ${isPersonal ? 'street-ledger-item-you' : ''}`}
+                      >
                         <span className="street-ledger-time">{time}</span>
                         <span className="street-ledger-text">
                           {shortDeskAddress(move.starter!)} & {shortDeskAddress(move.neighbor!)} dug {move.amount} pts each
+                          {isPersonal && <span className="street-ledger-you-badge">you</span>}
                         </span>
                       </div>
                     )
@@ -497,19 +529,23 @@ export function Street({ onNavigate }: Props) {
               <>
                 <p className="street-pot-amount">{pot.pot.toLocaleString('en-US')} points</p>
                 <p className="street-pot-label">{pot.label}</p>
+                {pot.holder && pot.best > 0 && (
+                  <div className="street-block-boss">
+                    <span className="street-boss-crown">👑</span>
+                    <div className="street-boss-info">
+                      <span className="street-boss-label">Block Boss</span>
+                      <span className="street-boss-name">{shortDeskAddress(pot.holder)}</span>
+                      <span className="street-boss-score">{pot.best.toLocaleString('en-US')} pts this week</span>
+                    </div>
+                  </div>
+                )}
                 <div className="street-pot-stats">
                   <span className="street-pot-stat">
-                    <span className="street-pot-stat-label">Runs</span>
+                    <span className="street-pot-stat-label">Check-ins</span>
                     <span className="street-pot-stat-value">{pot.runs}</span>
                   </span>
-                  {pot.best > 0 && (
-                    <span className="street-pot-stat">
-                      <span className="street-pot-stat-label">Best</span>
-                      <span className="street-pot-stat-value">{pot.best.toLocaleString('en-US')}</span>
-                    </span>
-                  )}
                 </div>
-                <p className="street-pot-cta">Come back tomorrow to grow the pot</p>
+                <p className="street-pot-cta">Come back tomorrow to grow your streak</p>
               </>
             ) : (
               <p className="street-muted">Loading pot...</p>

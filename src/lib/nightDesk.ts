@@ -35,6 +35,7 @@ export type NightDesk = {
   board: BoardRow[]
   jackpot: Jackpot
   personal?: PersonalStats | null
+  earlyBird?: boolean
 }
 
 const listeners = new Set<() => void>()

@@ -3,6 +3,7 @@ import { TopNav } from './components/TopNav'
 import { WeeklyBanner } from './components/WeeklyBanner'
 import { hashForView, routeFromHash, type ViewId } from './lib/nav'
 import { usePageSeo } from './lib/seo'
+import { isFarcasterContext } from './lib/farcaster'
 import { Account } from './pages/Account'
 import { CardPage } from './pages/Card'
 import { Blog } from './pages/Blog'
@@ -30,9 +31,19 @@ import { SiteFooter } from './components/SiteFooter'
 
 export default function App() {
   const initial = typeof window !== 'undefined' ? routeFromHash(window.location.hash) : { view: 'landing' as ViewId }
+  
   const [view, setView] = useState<ViewId>(initial.view)
   const [projectId, setProjectId] = useState<string | undefined>(initial.projectId)
   const [blogSlug, setBlogSlug] = useState<string | undefined>(initial.blogSlug)
+
+  useEffect(() => {
+    isFarcasterContext().then((isInMiniApp) => {
+      if (isInMiniApp && view === 'landing') {
+        setView('street')
+        window.location.hash = '#/street'
+      }
+    })
+  }, [])
 
   useEffect(() => {
     const onHash = () => {

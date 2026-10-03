@@ -24,6 +24,7 @@ export function Street({ onNavigate }: Props) {
   const [tipState, setTipState] = useState<TipState>('idle')
   const [lastCheckIn, setLastCheckIn] = useState<string | null>(null)
   const [lastTip, setLastTip] = useState<string | null>(null)
+  const [tippingNeighborId, setTippingNeighborId] = useState<string | null>(null)
 
   useEffect(() => {
     let live = true
@@ -84,10 +85,11 @@ export function Street({ onNavigate }: Props) {
     }
   }
 
-  const handleTip = async () => {
-    if (!isConnected || tipState === 'tipping') return
+  const handleTip = async (recipientAddress: string | null) => {
+    if (!isConnected || tipState === 'tipping' || !recipientAddress) return
 
     setTipState('tipping')
+    setTippingNeighborId(recipientAddress)
     try {
       const tipAmount = 50
       const uniqueRunId = `tip:${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
@@ -103,6 +105,7 @@ export function Street({ onNavigate }: Props) {
         best: currentBest,
         score: tipAmount,
         runId: uniqueRunId,
+        recipient: recipientAddress,
       })
 
       if (result) {
@@ -110,14 +113,23 @@ export function Street({ onNavigate }: Props) {
         setNeighbors(result.board.slice(0, 8))
         setLastTip(new Date().toLocaleString('en-US', { timeStyle: 'short' }))
         setTipState('done')
-        setTimeout(() => setTipState('idle'), 3000)
+        setTimeout(() => {
+          setTipState('idle')
+          setTippingNeighborId(null)
+        }, 3000)
       } else {
         setTipState('error')
-        setTimeout(() => setTipState('idle'), 3000)
+        setTimeout(() => {
+          setTipState('idle')
+          setTippingNeighborId(null)
+        }, 3000)
       }
     } catch {
       setTipState('error')
-      setTimeout(() => setTipState('idle'), 3000)
+      setTimeout(() => {
+        setTipState('idle')
+        setTippingNeighborId(null)
+      }, 3000)
     }
   }
 
@@ -152,6 +164,7 @@ export function Street({ onNavigate }: Props) {
                   const isYou =
                     address &&
                     (neighbor.address?.toLowerCase() === address.toLowerCase() || neighbor.id === address.toLowerCase())
+                  const canTip = isConnected && !isYou && neighbor.address
                   return (
                     <div key={neighbor.id} className={`street-neighbor street-neighbor-${index + 1}`}>
                       <span className="street-neighbor-dot" />
@@ -159,6 +172,16 @@ export function Street({ onNavigate }: Props) {
                         {isYou ? 'You' : neighbor.address ? shortDeskAddress(neighbor.address) : 'Anon'}
                       </span>
                       <span className="street-neighbor-pts">{neighbor.total.toLocaleString('en-US')}</span>
+                      {canTip && (
+                        <button
+                          type="button"
+                          className="street-neighbor-tip"
+                          onClick={() => handleTip(neighbor.address)}
+                          disabled={tipState === 'tipping'}
+                        >
+                          {tippingNeighborId === neighbor.address && tipState === 'tipping' ? '...' : 'Tip'}
+                        </button>
+                      )}
                     </div>
                   )
                 })}
@@ -170,7 +193,7 @@ export function Street({ onNavigate }: Props) {
             {!isConnected ? (
               <div className="street-state">
                 <p className="street-warning">
-                  Connect your wallet to check in and tip. Reown may not have allowlisted this domain yet — if Connect fails, that's why.
+                  Connect your wallet to check in and tip neighbors. Reown may not have allowlisted this domain yet — if Connect fails, that's why.
                 </p>
               </div>
             ) : (
@@ -188,14 +211,6 @@ export function Street({ onNavigate }: Props) {
                         ? '✓ Checked in'
                         : "I'm on the block"}
                   </button>
-                  <button
-                    type="button"
-                    className="street-tip"
-                    onClick={handleTip}
-                    disabled={tipState === 'tipping'}
-                  >
-                    {tipState === 'tipping' ? 'Tipping...' : tipState === 'done' ? '✓ Tipped' : 'Tip the pot'}
-                  </button>
                 </div>
                 {checkInState === 'error' && (
                   <p className="street-error">Check-in failed. Try again.</p>
@@ -204,9 +219,9 @@ export function Street({ onNavigate }: Props) {
                   <p className="street-success">Checked in at {lastCheckIn}</p>
                 )}
                 {tipState === 'error' && <p className="street-error">Tip failed. Try again.</p>}
-                {tipState === 'done' && lastTip && <p className="street-success">Tipped at {lastTip}</p>}
+                {tipState === 'done' && lastTip && <p className="street-success">Tipped at {lastTip} (+50 pts to neighbor)</p>}
                 <p className="street-note">
-                  Check-in: wallet-signed homecoming. Tip: adds 50 points to the night pot (not yet person-to-person or on-chain).
+                  Check-in: wallet-signed homecoming (+100 pts). Tip: sends 50 points to a neighbor (database transfer, not yet on-chain).
                 </p>
               </>
             )}

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi'
 import { fetchNightDesk, pushNightRun, type Jackpot, type PersonalStats } from '../lib/nightDesk'
 import { readNightSave, type NightSave } from '../game/nightMarks'
 import { NightBoard } from '../components/NightBoard'
@@ -7,6 +7,7 @@ import { shortDeskAddress } from '../lib/deskCard'
 import { isFarcasterContext, sdk } from '../lib/farcaster'
 import type { BoardRow } from '../lib/nightBoard'
 import type { ViewId } from '../lib/nav'
+import { CHECKIN_CONTRACT_ABI, CHECKIN_CONTRACT_ADDRESS } from '../lib/checkInContract'
 import './street.css'
 
 type Props = {
@@ -45,6 +46,21 @@ export function Street({ onNavigate }: Props) {
   const [blockPulse, setBlockPulse] = useState(false)
   const blockRef = useRef<HTMLDivElement>(null)
 
+  const { writeContract, data: txHash, error: writeError, isPending: isWritePending } = useWriteContract()
+  const { isLoading: isTxPending, isSuccess: isTxSuccess } = useWaitForTransactionReceipt({
+    hash: txHash,
+  })
+
+  const { data: canCheckInOnChain } = useReadContract({
+    address: CHECKIN_CONTRACT_ADDRESS ?? undefined,
+    abi: CHECKIN_CONTRACT_ABI,
+    functionName: 'canCheckIn',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: Boolean(CHECKIN_CONTRACT_ADDRESS && address),
+    },
+  })
+
   useEffect(() => {
     isFarcasterContext().then(setInFarcaster)
   }, [])
@@ -71,6 +87,87 @@ export function Street({ onNavigate }: Props) {
       live = false
     }
   }, [isConnected, address])
+
+  useEffect(() => {
+    if (isTxSuccess && address) {
+      const homecomingScore = 100
+      const uniqueRunId = `homecoming:${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
+        .replace(/[^a-z0-9:_-]/gi, '')
+        .slice(0, 80)
+
+      const updated = readNightSave()
+      const newTotal = updated.total + homecomingScore
+      const currentBest = updated.best?.gate ?? 0
+
+      pushNightRun({
+        address,
+        total: newTotal,
+        best: currentBest,
+        score: homecomingScore,
+        runId: uniqueRunId,
+      })
+        .then((result) => {
+          if (result) {
+            setPot(result.jackpot)
+            setNeighbors(result.board.slice(0, 8))
+            setPersonal(result.personal ?? null)
+            
+            const myNewTotal = result.board.find((row) => 
+              row.address?.toLowerCase() === address.toLowerCase()
+            )?.total ?? updated.total
+            setSave({ ...updated, total: myNewTotal })
+            
+            setLastCheckIn(new Date().toLocaleString('en-US', { timeStyle: 'short' }))
+            setCheckInState('done')
+            
+            if (result.earlyBird) {
+              setEarlyBird(true)
+              addFloatingScore(homecomingScore + 20)
+              setTimeout(() => setEarlyBird(false), 5000)
+            } else {
+              addFloatingScore(homecomingScore)
+            }
+            
+            triggerBlockPulse()
+            setTimeout(() => setCheckInState('idle'), 3000)
+          } else {
+            setCheckInState('error')
+            setCheckInError('Check-in succeeded on-chain, but ledger update failed.')
+            setTimeout(() => {
+              setCheckInState('idle')
+              setCheckInError(null)
+            }, 3000)
+          }
+        })
+        .catch((err: unknown) => {
+          const message = err instanceof Error ? err.message : 'Ledger update failed.'
+          setCheckInState('error')
+          setCheckInError(`Check-in succeeded on-chain, but ${message}`)
+          setTimeout(() => {
+            setCheckInState('idle')
+            setCheckInError(null)
+          }, 3000)
+        })
+    }
+  }, [isTxSuccess, address])
+
+  useEffect(() => {
+    if (writeError) {
+      const message = writeError.message || 'Transaction failed.'
+      setCheckInState('error')
+      setCheckInError(message)
+      setTimeout(() => {
+        setCheckInState('idle')
+        setCheckInError(null)
+      }, 3000)
+    }
+  }, [writeError])
+
+  useEffect(() => {
+    if (isWritePending || isTxPending) {
+      setCheckInState('checking')
+    }
+  }, [isWritePending, isTxPending])
 
   const addFloatingScore = (amount: number, fromNeighborIndex?: number) => {
     const blockEl = blockRef.current
@@ -148,6 +245,26 @@ export function Street({ onNavigate }: Props) {
     setCheckInState('checking')
     setCheckInError(null)
     try {
+      if (CHECKIN_CONTRACT_ADDRESS && address) {
+        if (canCheckInOnChain === false) {
+          setCheckInState('error')
+          setCheckInError('You already checked in today on-chain.')
+          setTimeout(() => {
+            setCheckInState('idle')
+            setCheckInError(null)
+          }, 3000)
+          return
+        }
+
+        writeContract({
+          address: CHECKIN_CONTRACT_ADDRESS,
+          abi: CHECKIN_CONTRACT_ABI,
+          functionName: 'checkIn',
+        })
+
+        return
+      }
+
       const homecomingScore = 100
       const uniqueRunId = `homecoming:${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
         .replace(/[^a-z0-9:_-]/gi, '')
@@ -439,13 +556,17 @@ export function Street({ onNavigate }: Props) {
                     type="button"
                     className="street-checkin"
                     onClick={handleCheckIn}
-                    disabled={checkInState === 'checking'}
+                    disabled={checkInState === 'checking' || isWritePending || isTxPending}
                   >
-                    {checkInState === 'checking'
-                      ? 'Checking in...'
-                      : checkInState === 'done'
-                        ? '✓ Checked in'
-                        : 'Check in'}
+                    {isWritePending
+                      ? 'Sign transaction...'
+                      : isTxPending
+                        ? 'Waiting for confirmation...'
+                        : checkInState === 'checking'
+                          ? 'Checking in...'
+                          : checkInState === 'done'
+                            ? '✓ Checked in'
+                            : 'Check in'}
                   </button>
                   {inFarcaster && checkInState === 'done' && (
                     <button
@@ -461,8 +582,20 @@ export function Street({ onNavigate }: Props) {
                 {checkInState === 'done' && lastCheckIn && (
                   <p className="street-success">
                     {earlyBird 
-                      ? `🌅 First check-in of the day! You got 120 points (100 + 20 early bird bonus).`
-                      : `Checked in at ${lastCheckIn}. You got 100 points.`}
+                      ? `🌅 First check-in of the day! You got 120 points (100 + 20 early bird bonus).${CHECKIN_CONTRACT_ADDRESS ? ' On-chain check-in recorded.' : ''}`
+                      : `Checked in at ${lastCheckIn}. You got 100 points.${CHECKIN_CONTRACT_ADDRESS ? ' On-chain check-in recorded.' : ''}`}
+                  </p>
+                )}
+                {txHash && (
+                  <p className="street-note">
+                    <a 
+                      href={`https://robinhoodchain.blockscout.com/tx/${txHash}`} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="street-tx-link"
+                    >
+                      View transaction ↗
+                    </a>
                   </p>
                 )}
                 {tipState === 'error' && <p className="street-error">Tip failed. Try again.</p>}

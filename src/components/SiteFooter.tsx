@@ -14,14 +14,20 @@ const DOORS: { id: ViewId; label: string }[] = [
   { id: 'hood', label: '$HOOD' },
 ]
 
+const LEGAL: { id: ViewId; label: string }[] = [
+  { id: 'terms', label: 'Terms' },
+  { id: 'privacy', label: 'Privacy' },
+  { id: 'disclaimer', label: 'Disclaimer' },
+]
+
 export function SiteFooter({ onNavigate }: Props) {
   return (
     <footer className="site-footer">
       <div className="site-footer-brand">
-        <HoodMark size={44} variant="logo" alt="Hood Desk" />
+        <HoodMark size={44} variant="logo" alt="Night Ledger" />
         <div>
-          <strong>Hood Desk</strong>
-          <p>A free app. The coin, the pool, and the ledger do the work. The story and the game are for fun.</p>
+          <strong>Night Ledger</strong>
+          <p>A member’s book. Hood Street is their street. DogiHood is their dogs. $HOOD is the coin minted here.</p>
         </div>
       </div>
 
@@ -45,6 +51,21 @@ export function SiteFooter({ onNavigate }: Props) {
             }}
           >
             {door.label}
+          </a>
+        ))}
+      </nav>
+
+      <nav className="site-footer-legal" aria-label="Legal">
+        {LEGAL.map((item) => (
+          <a
+            key={item.id}
+            href={hashForView(item.id)}
+            onClick={(e) => {
+              e.preventDefault()
+              onNavigate(item.id)
+            }}
+          >
+            {item.label}
           </a>
         ))}
       </nav>

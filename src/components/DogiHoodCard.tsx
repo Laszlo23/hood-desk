@@ -68,7 +68,7 @@ export function DogiHoodCard({
             })
           }}
         />
-        <span className="dogihood-pack-badge">Pack pride</span>
+        <span className="dogihood-pack-badge">Their dogs</span>
       </div>
 
       <div className="dogihood-body">
@@ -84,7 +84,7 @@ export function DogiHoodCard({
         <p className="muted dogihood-tagline">{DOGIHOOD.tagline}</p>
         {variant !== 'compact' && (
           <p className="tiny muted dogihood-copy">
-            Featured NFT pride on Hood Desk — HOOD fox stays the logo; DogiHood is the pack on-chain.
+            DogiHood is the official collection at dogihood.com. This desk holds some. The dogs are not this project.
           </p>
         )}
 

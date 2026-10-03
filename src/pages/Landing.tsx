@@ -17,21 +17,21 @@ export function Landing({ onNavigate }: Props) {
     <section className="page landing-page">
       <div className="hero card">
         <div className="hero-top">
-          <HoodMark size={112} variant="logo" className="hero-logo" alt="Hood Desk" />
+          <HoodMark size={112} variant="logo" className="hero-logo" alt="Night Ledger" />
           <div className="hero-copy">
             <p className="eyebrow">Robinhood Chain</p>
-            <h1 className="hero-title">Hood Desk</h1>
+            <h1 className="hero-title">Night Ledger</h1>
             <p className="hero-tagline">
-              A launchpad for people who make things. The coin, the pool, and the ledger stay public. A collection you press lives on this desk.
+              A member’s book. $HOOD is the coin this desk minted. Hood Street is their street. DogiHood is their dogs.
             </p>
             <p className="muted">
-              Your wallet signs a swap. This desk writes it down. OpenSea does not host the collections pressed here.
+              Your wallet signs a swap. This page writes it down. The official dogs are at dogihood.com.
             </p>
             <HoodAgentBadge className="landing-hood-badge" />
           </div>
         </div>
 
-        <section className="project-facts" aria-label="What Hood Desk is">
+        <section className="project-facts" aria-label="What Night Ledger is">
           <button type="button" className="project-fact" onClick={() => onNavigate('hood')}>
             <span>The coin</span>
             <strong>$HOOD</strong>
@@ -116,14 +116,14 @@ export function Landing({ onNavigate }: Props) {
           </button>
         </div>
         <p className="muted lore-legend-copy">
-          The legend is the name of the app. Each step opens a real page: the coin, the pool, the ledger, the marks.
+          The Robin Hood story is a name we borrowed. Each step opens a real page on this book. Hood Street kept the street.
         </p>
         <StoryWalk onNavigate={onNavigate} />
       </section>
 
       <div className="featured-nft-strip" aria-label="Featured NFTs">
         <div className="row-between" style={{ alignItems: 'baseline' }}>
-          <p className="rail-label">Featured pack · DogiHood · CCFF00</p>
+          <p className="rail-label">Their projects · DogiHood · Hood Street</p>
           <button type="button" className="btn btn-ghost btn-sm" onClick={() => onNavigate('nfts')}>
             Stories + gallery →
           </button>
@@ -139,7 +139,7 @@ export function Landing({ onNavigate }: Props) {
               <img src={CCFF00_STORY.coverImage} alt="" loading="lazy" />
             </div>
             <div>
-              <p className="eyebrow">HoodStreet · Proof of Neon</p>
+              <p className="eyebrow">Hood Street · their membership</p>
               <h3 className="section-title" style={{ margin: '4px 0 6px' }}>
                 {CCFF00_STORY.name}
               </h3>
@@ -194,7 +194,7 @@ export function Landing({ onNavigate }: Props) {
         </article>
         <article className="card mini-card">
           <h3>Marks</h3>
-          <p className="muted">DogiHood and CCFF00 are Hood Street. Seeder and Inner Circle are this desk.</p>
+          <p className="muted">DogiHood is dogihood.com. CCFF00 is Hood Street. Seeder and Inner Circle are this book.</p>
           <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('nfts')}>
             Open marks
           </button>

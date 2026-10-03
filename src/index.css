@@ -3173,7 +3173,7 @@ a:hover {
   opacity: 0.92;
 }
 
-@media (max-width: 1079px) {
+@media (max-width: 380px) {
   .brand-desk {
     display: none;
   }
@@ -6447,14 +6447,16 @@ a.nft-gallery-tile:hover {
 }
 
 .site-footer-social,
-.site-footer-doors {
+.site-footer-doors,
+.site-footer-legal {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 18px;
 }
 
 .site-footer-social a,
-.site-footer-doors a {
+.site-footer-doors a,
+.site-footer-legal a {
   color: var(--text);
   text-decoration: none;
   font-size: 0.92rem;
@@ -6471,8 +6473,51 @@ a.nft-gallery-tile:hover {
 }
 
 .site-footer-social a:hover,
-.site-footer-doors a:hover {
+.site-footer-doors a:hover,
+.site-footer-legal a:hover {
   color: var(--accent);
+}
+
+.site-footer-legal a {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.legal-page {
+  max-width: 68ch;
+}
+
+.legal-page h1 {
+  font-family: Palatino, 'Palatino Linotype', 'Iowan Old Style', Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+.legal-copy h2 {
+  margin: 1.6rem 0 0.35rem;
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+.legal-copy p,
+.legal-copy li {
+  color: var(--text-dim);
+  line-height: 1.55;
+}
+
+.legal-copy ul {
+  margin: 0.4rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.legal-copy a {
+  color: var(--accent);
+}
+
+.legal-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
 }
 
 .site-footer-meta {
@@ -7133,8 +7178,13 @@ a.nft-gallery-tile:hover {
   }
 
   .top-bar .brand-sub {
-    white-space: nowrap;
-    font-size: 0.7rem;
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .top-bar .nav-cta {
+    display: none;
   }
 }
 

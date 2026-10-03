@@ -22,6 +22,7 @@ import { Terminal } from './pages/Terminal'
 import { Trade } from './pages/Trade'
 import { CommunityTrade } from './pages/CommunityTrade'
 import { Lore } from './pages/Lore'
+import { Legal } from './pages/Legal'
 import { NightGame } from './pages/NightGame'
 import { LoreBackdrop } from './components/LoreBackdrop'
 import { SiteFooter } from './components/SiteFooter'
@@ -109,6 +110,9 @@ export default function App() {
           {view === 'card' && <CardPage onNavigate={navigate} />}
           {view === 'nfts' && <Nfts onNavigate={navigate} />}
           {view === 'lore' && <Lore onNavigate={navigate} />}
+          {(view === 'terms' || view === 'privacy' || view === 'disclaimer') && (
+            <Legal page={view} onNavigate={navigate} />
+          )}
         </main>
         <SiteFooter onNavigate={navigate} />
       </div>

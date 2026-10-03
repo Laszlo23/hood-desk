@@ -9,10 +9,10 @@ import type { ViewId } from '../lib/nav'
 type Props = { onNavigate: (id: ViewId) => void }
 
 const STEPS = [
-  { k: '1', title: 'Show up', image: '/lore/hood-show.jpg', line: 'Come home in Stay dark. A new day grows the streak. A missed day starts it over.' },
-  { k: '2', title: 'The pay', image: '/lore/hood-pay.jpg', line: 'Day 2 adds 80 desk points. It climbs by 40 a day, and stops at 280.' },
-  { k: '3', title: 'The week', image: '/lore/hood-week.jpg', line: 'Every homecoming adds to the public pot. The best run holds it.' },
-  { k: '4', title: 'Again', image: '/lore/hood-again.jpg', line: 'The points are the prize for showing up. They are not HOOD and they are not ETH.' },
+  { k: '1', title: 'Show up', image: '/lore/hood-show.webp', line: 'Come home in Stay dark. A new day grows the streak. A missed day starts it over.' },
+  { k: '2', title: 'The pay', image: '/lore/hood-pay.webp', line: 'Day 2 adds 80 desk points. It climbs by 40 a day, and stops at 280.' },
+  { k: '3', title: 'The week', image: '/lore/hood-week.webp', line: 'Every homecoming adds to the public pot. The best run holds it.' },
+  { k: '4', title: 'Again', image: '/lore/hood-again.webp', line: 'The points are the prize for showing up. They are not HOOD and they are not ETH.' },
 ]
 
 export function WoodWheel({ onNavigate }: Props) {
@@ -68,7 +68,7 @@ export function WoodWheel({ onNavigate }: Props) {
       <ol className="wood-loop">
         {STEPS.map((step) => (
           <li key={step.k}>
-            <img src={step.image} alt="" />
+            <img src={step.image} alt="" width={800} height={450} loading="lazy" decoding="async" />
             <b>
               {step.k} {step.title}
             </b>

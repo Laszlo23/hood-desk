@@ -10,16 +10,18 @@ type Props = {
 export function HoodSeal({
   size = 48,
   className = '',
-  alt = 'Hood Desk seal',
+  alt = 'Night Ledger seal',
   decorative,
 }: Props) {
   return (
     <img
-      src="/lore/hood-seal.jpg"
+      src="/lore/hood-seal.webp"
       width={size}
       height={size}
       alt={decorative ? '' : alt}
       aria-hidden={decorative || undefined}
+      loading="lazy"
+      decoding="async"
       draggable={false}
       className={`hood-seal${className ? ` ${className}` : ''}`}
       style={{ width: size, height: size }}

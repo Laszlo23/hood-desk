@@ -20,8 +20,8 @@ const SEEDED: string[] = [
   'Only swap an amount you can afford to lose. The pool is thin.',
   'Ask answers questions. It does not place the order.',
   'Mint once. No tax. The fee stays in the position.',
-  'GM Hood Street — fox on duty. FID 873944 · @0xleonardo.',
-  'DogiHood pack pride — pixel Shibas on RH 4663. OpenSea · Dogiflow+ vibes on the desk.',
+  'A member’s book. Hood Street is their street. DogiHood is their dogs.',
+  'The official dogs are at dogihood.com. This book holds some. It does not own the collection.',
 ]
 
 /** ISO week key for Europe/Vienna (approx via local Vienna date). */

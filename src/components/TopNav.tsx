@@ -377,17 +377,17 @@ export function TopNav({ view, onNavigate }: Props) {
             type="button"
             className="brand row-gap brand-btn"
             onClick={() => go('landing')}
-            aria-label="Hood Desk home"
+            aria-label="Night Ledger home"
           >
             <span className="brand-mark-wrap">
-              <HoodMark size={44} variant="logo" className="brand-mark-img" alt="Hood Desk" />
+              <HoodMark size={44} variant="logo" className="brand-mark-img" alt="Night Ledger" />
             </span>
             <span className="brand-wordmark">
               <strong className="brand-name">
-                <span className="brand-hood">HOOD</span>
-                <span className="brand-desk"> Desk</span>
+                <span className="brand-hood">Night</span>
+                <span className="brand-desk"> Ledger</span>
               </strong>
-              <span className="brand-sub">From the wood</span>
+              <span className="brand-sub">A member’s book</span>
             </span>
           </button>
 

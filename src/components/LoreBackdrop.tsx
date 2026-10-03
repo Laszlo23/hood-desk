@@ -6,9 +6,9 @@ type Props = {
 }
 
 const SRC: Record<Variant, string> = {
-  forest: '/lore/hood-forest.jpg',
-  council: '/lore/hood-council.jpg',
-  mist: '/lore/hood-forest.jpg',
+  forest: '/lore/hood-forest.webp',
+  council: '/lore/hood-council.webp',
+  mist: '/lore/hood-forest.webp',
 }
 
 /**

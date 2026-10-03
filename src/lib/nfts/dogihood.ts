@@ -26,8 +26,8 @@ export const DOGIHOOD_CHAIN_ID = 4663 as const
 
 export const DOGIHOOD_OPENSEA = 'https://opensea.io/collection/dogihood'
 
-/** Official DogiHood site (DNS live; TLS may still be settling). */
-export const DOGIHOOD_SITE = 'https://doghood.aibusiness.fun'
+/** Official DogiHood site. This desk is a holder, not the project. */
+export const DOGIHOOD_SITE = 'https://dogihood.com/'
 
 export const DOGIHOOD_SAMPLE_TOKEN_ID = 445n
 
@@ -65,15 +65,15 @@ export const DOGIHOOD: DogiHoodCollection = {
   id: 'dogihood',
   name: 'DogiHood',
   symbol: 'DOGI',
-  tagline: 'Pixel Shibas on Robinhood Chain',
+  tagline: 'Their dogs. 5,000 pixel doges. Mint complete.',
   description:
-    'DogiHood is a pack of pixel Shibas roaming Robinhood Chain. No promises — clean pixel art, good vibes, dogs on-chain. Mint your Shiba, join the pack, enjoy the ride.',
+    'DogiHood is the official collection at dogihood.com. 5,000 pixel doges on Robinhood Chain. Their line is “No promises. Just fun.” This desk holds some and can read a wallet. The dogs are not this project.',
   openseaUrl: DOGIHOOD_OPENSEA,
   siteUrl: DOGIHOOD_SITE,
   contract: DOGIHOOD_NFT_ADDRESS,
   chainId: DOGIHOOD_CHAIN_ID,
   standard: 'ERC-721',
-  badges: ['Pack pride', 'Dogiflow+'],
+  badges: ['Their collection', 'Holder'],
   sampleTokenId: Number(DOGIHOOD_SAMPLE_TOKEN_ID),
   sampleImage: DOGIHOOD_SAMPLE_IMAGE,
   localImage: DOGIHOOD_LOCAL_IMAGE,

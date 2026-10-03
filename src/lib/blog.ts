@@ -157,39 +157,37 @@ Hood Bucks are free play money. They say they have no cash value. Spots lock to 
 
 CCFF00 holders were on that allowlist. A community post from the Hood Street space put secondary volume near $700 in the first stretch and a floor that jumped off free. By the time this note was written, OpenSea’s floor title was about 0.0014 ETH. Treat both as timestamps. The useful part is the shape of these launches: a CCFF00 Square is the membership that gets you into the next free mint, and the mint itself can be gone in minutes.
 
-If you still hold a Square, the wallet inside it is the thing Hood Desk binds to. VAMPS is a separate collection. We are not marking it verified, and we are not routing a trade through it.`,
+If you still hold a Square, the wallet inside it belongs to that Hood Street membership. VAMPS is their collection. This book does not mark it verified, and it does not route a trade through it.`,
     date: '2026-10-01T13:00:00.000Z',
-    updatedAt: '2026-10-01T13:00:00.000Z',
+    updatedAt: '2026-10-03T05:30:00.000Z',
   },
   {
     id: 'post_seed_hood_live',
     slug: 'hood-is-live',
     title: '$HOOD is live on Robinhood Chain',
-    body: `Hood Desk is on the server at https://doghood.aibusiness.fun.
+    body: `Night Ledger is the book at https://doghood.aibusiness.fun. That address is this desk. It is not the official DogiHood site.
 
-**$HOOD** is the companion token: \`0xC7749BCFDC8d06FC246be556f4EAD75Ac7E1320c\`. Fixed supply 1,000,000,000. Mint-once. No transfer tax. Source is an exact match on Sourcify.
+**$HOOD** is the coin minted here: \`0xC7749BCFDC8d06FC246be556f4EAD75Ac7E1320c\`. Fixed supply 1,000,000,000. Mint-once. No transfer tax. Source is an exact match on Sourcify.
 
-**NFT wallets.** DogiHood and CCFF00 use the HoodStreet ERC-6551 registry. Each NFT has its own wallet. Send $HOOD into that wallet and it moves with the NFT. CCFF00 Square #1 already holds 10,000 official $CCFF00. DogiHood wallets start empty — nothing is preloaded.
+**Their collections.** DogiHood lives at [dogihood.com](https://dogihood.com/). CCFF00 is Hood Street. This book can read a wallet. It does not own either project.
 
-**Plans.** Starter $4.99 / Desk $9.99 / Desk+ $19.99 per month. Checkout is live Stripe on the desk. Demo activate is still labeled, for when you want to look around without paying.
+**Plans.** Starter $4.99 / Desk $9.99 / Desk+ $19.99 per month. Checkout is live Stripe. A plan is a paid desk. It is not a yield.
 
-**Trade.** $HOOD/WETH is a Uniswap V3 pool. Market buy and sell sign in your wallet, and the chart reads those swaps. The pool is thin. Limit, stop, TWAP, DCA, auto-trade, and the rewards ledger stay on the desk.
-
-Hold the coin. Bind it to a Shiba. Subscribe if you want the desk.`,
+**Trade.** $HOOD/WETH is a Uniswap V3 pool. Market buy and sell sign in your wallet. The pool is thin. This book does not place the order.`,
     date: '2026-10-01T12:00:00.000Z',
-    updatedAt: '2026-10-01T12:00:00.000Z',
+    updatedAt: '2026-10-03T05:30:00.000Z',
   },
   {
     id: 'post_seed_build',
     slug: 'build-on-hood-street',
-    title: 'Build on Hood Street',
-    body: `Hood Desk is an AI-run trading desk on Robinhood Chain (4663). Create a project, fair-launch a token, and let the fox keep ops online.
+    title: 'Build on this book',
+    body: `Night Ledger is a member’s book on Robinhood Chain (4663). It is not Hood Street, and it is not an AI trading desk.
 
-A token is on the desk after you deploy it and paste the address. $HOOD swaps sign on Uniswap. There is no separate fee ledger.
+A token shows up here after you deploy it and paste the address. $HOOD swaps sign on Uniswap, in your wallet. There is no separate fee ledger.
 
-Ship fair. Stay neon. #CCFF00.`,
+Ship something real. One mint. No tax. No promise that the price goes up.`,
     date: '2026-09-22T10:00:00.000Z',
-    updatedAt: '2026-09-22T10:00:00.000Z',
+    updatedAt: '2026-10-03T05:30:00.000Z',
   },
   {
     id: 'post_seed_trade',
@@ -208,12 +206,14 @@ Open the desk, pick a path, keep the streak.`,
   {
     id: 'post_seed_dogihood',
     slug: 'dogihood-pack-pride',
-    title: 'DogiHood pack pride on Hood Desk',
-    body: `Featured NFT: **DogiHood** — pixel Shibas on Robinhood Chain (4663). Browse the pack on [OpenSea](https://opensea.io/collection/dogihood). Hood Desk keeps the HOOD fox as the agent mark; DogiHood is pack pride for holders.
+    title: 'DogiHood is their collection',
+    body: `DogiHood is not this book.
 
-No promises. Clean pixels. Dogs on-chain.`,
-    date: '2026-09-30T08:00:00.000Z',
-    updatedAt: '2026-09-30T08:00:00.000Z',
+The official site is [dogihood.com](https://dogihood.com/). Their line: no promises, just fun. It is a limited collection of 5,000 pixel doges on Robinhood Chain, and the mint is complete. OpenSea: [dogihood](https://opensea.io/collection/dogihood).
+
+This desk is a holder and a community member. A wallet check can see if you hold one. The dogs stay theirs. Hood Street stays theirs too. $HOOD is the coin minted on this desk.`,
+    date: '2026-10-03T05:20:00.000Z',
+    updatedAt: '2026-10-03T05:20:00.000Z',
   },
 ]
 
@@ -229,10 +229,22 @@ function readAll(): BlogPost[] {
       writeAll(SEED)
       return [...SEED]
     }
-    const have = new Set(parsed.map((p) => p.id))
-    const missing = SEED.filter((s) => !have.has(s.id))
-    if (missing.length === 0) return parsed
-    const merged = [...missing, ...parsed]
+    const byId = new Map(parsed.map((post) => [post.id, post]))
+    let changed = false
+    for (const seed of SEED) {
+      const current = byId.get(seed.id)
+      if (!current) {
+        byId.set(seed.id, seed)
+        changed = true
+        continue
+      }
+      if (current.updatedAt < seed.updatedAt) {
+        byId.set(seed.id, { ...seed })
+        changed = true
+      }
+    }
+    const merged = [...byId.values()]
+    if (!changed) return parsed
     writeAll(merged)
     return merged
   } catch {

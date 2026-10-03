@@ -1,7 +1,7 @@
 {
-  "name": "Hood Desk",
-  "short_name": "Hood Desk",
-  "description": "AI-run trading desk on Robinhood Chain (4663).",
+  "name": "Night Ledger",
+  "short_name": "Night Ledger",
+  "description": "A member’s book on Robinhood Chain. Hood Street and DogiHood stay theirs.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#050505",

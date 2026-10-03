@@ -19,6 +19,9 @@ export type ViewId =
   | 'community'
   | 'lore'
   | 'dark'
+  | 'terms'
+  | 'privacy'
+  | 'disclaimer'
 
 export const VIEWS: { id: ViewId; label: string; hash: string }[] = [
   { id: 'landing', label: 'Desk', hash: '#/' },
@@ -40,6 +43,9 @@ export const VIEWS: { id: ViewId; label: string; hash: string }[] = [
   { id: 'community', label: 'Pool', hash: '#/community' },
   { id: 'lore', label: 'Legend', hash: '#/lore' },
   { id: 'dark', label: 'The dark', hash: '#/dark' },
+  { id: 'terms', label: 'Terms', hash: '#/terms' },
+  { id: 'privacy', label: 'Privacy', hash: '#/privacy' },
+  { id: 'disclaimer', label: 'Disclaimer', hash: '#/disclaimer' },
 ]
 
 /** Primary top-bar links — 4 core items so the navbar stays scannable. */
@@ -213,6 +219,9 @@ export function routeFromHash(hash: string): RouteState {
   if (parts[0] === 'dark' || parts[0] === 'night' || parts[0] === 'game') {
     return { view: 'dark' }
   }
+  if (parts[0] === 'terms' || parts[0] === 'tos') return { view: 'terms' }
+  if (parts[0] === 'privacy') return { view: 'privacy' }
+  if (parts[0] === 'disclaimer' || parts[0] === 'risk') return { view: 'disclaimer' }
   if (parts[0] === 'projects' || parts[0] === 'project') {
     if (origParts[1]) {
       return { view: 'project', projectId: origParts[1] }

@@ -14,7 +14,7 @@ export function StoryWalk({ onNavigate, mode = 'path' }: Props) {
         {STORY.map((chapter, index) => (
           <article key={chapter.id} className="card story-page-chapter" id={`story-${chapter.id}`}>
             {chapter.image ? (
-              <img src={chapter.image} alt="" className="story-page-art" />
+              <img src={chapter.image} alt="" className="story-page-art" width={800} height={450} loading="lazy" decoding="async" />
             ) : null}
             <p className="eyebrow">
               {String(index + 1).padStart(2, '0')} · {chapter.title}
@@ -37,7 +37,11 @@ export function StoryWalk({ onNavigate, mode = 'path' }: Props) {
       {STORY.map((chapter, index) => (
         <li key={chapter.id}>
           <button type="button" className="story-step" onClick={() => onNavigate(chapter.door)}>
-            {chapter.image ? <img src={chapter.image} alt="" /> : <span className="story-mark" aria-hidden />}
+            {chapter.image ? (
+              <img src={chapter.image} alt="" width={800} height={450} loading="lazy" decoding="async" />
+            ) : (
+              <span className="story-mark" aria-hidden />
+            )}
             <span className="story-step-copy">
               <span className="story-kicker">
                 {String(index + 1).padStart(2, '0')} · {chapter.title}

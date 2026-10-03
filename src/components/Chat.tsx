@@ -99,8 +99,8 @@ export function Chat({ onReady }: Props) {
       <header className="chat-head row-gap">
         <HoodMark size={44} variant="photo" bounce className="chat-hood-mascot" />
         <div>
-          <h1>HOOD Desk</h1>
-          <p className="muted">Community agent · Hood Street · RH 4663</p>
+          <h1>Night Ledger</h1>
+          <p className="muted">A member’s agent. It does not speak for Hood Street or DogiHood.</p>
           <HoodAgentBadge compact className="chat-hood-badge" />
         </div>
       </header>

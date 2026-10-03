@@ -13,7 +13,7 @@ const SRC: Record<NonNullable<Props['variant']>, string> = {
   mark: '/brand/hood-mark.svg',
   logo: '/brand/hood-logo.svg',
   avatar: '/brand/hood-avatar.svg',
-  photo: '/brand/hood-agent.png',
+  photo: '/brand/hood-agent.webp',
 }
 
 /** HOOD agent brand mark — hooded trader-AI, neon visor + circuit collar. */

@@ -121,7 +121,7 @@ export function InnerCircleCard({
           </text>
           <rect x="160" y="320" width="80" height="2" fill="#CCFF00" />
           <text x="200" y="345" fontFamily="monospace" fontSize="9" fill="#555" textAnchor="middle">
-            🦊 Hood Street
+            Night Ledger
           </text>
         </svg>
         <span className="inner-circle-pack-badge">Soulbound</span>

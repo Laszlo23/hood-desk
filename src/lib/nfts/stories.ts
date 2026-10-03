@@ -222,18 +222,18 @@ export const DOGIHOOD_STORY: NftProjectStory = {
   name: DOGIHOOD.name,
   tagline: DOGIHOOD.tagline,
   story:
-    'DogiHood is Hood Desk’s flagship pack pride: pixel Shibas roaming Robinhood Chain. No promises — clean art, good vibes, dogs on-chain. Dogiflow+ labels the culture lane next to the HOOD agent fox. Sample token #445 stays the desk mascot NFT; holder checks use on-chain balanceOf when RPC answers.',
+    'DogiHood belongs to dogihood.com. It is a limited collection of 5,000 pixel doges on Robinhood Chain, and the mint is complete. This desk is a holder and a community member. Holder checks use on-chain balanceOf when the chain answers. The dogs are not this project.',
   confidence: 'confirmed',
   confidenceNote:
-    'Confirmed OpenSea collection + on-chain DogiHood / DOGI @ 0x9273…40fa. Featured as Dogiflow+ on this desk.',
-  badges: ['Flagship', 'Pack pride', 'Dogiflow+'],
+    'Official site dogihood.com. Contract DogiHood / DOGI @ 0x9273…40fa. Shown here as a collection this desk holds.',
+  badges: ['Their collection', 'Holder'],
   standard: DOGIHOOD.standard,
   chainId: DOGIHOOD.chainId,
   contract: DOGIHOOD_NFT_ADDRESS,
   sampleTokenId: DOGIHOOD.sampleTokenId,
   coverImage: '/nfts/dogihood-445.png',
   gallery: DOGIHOOD_GALLERY,
-  flagship: true,
+  flagship: false,
   links: [
     { label: 'OpenSea', href: DOGIHOOD_OPENSEA },
     { label: 'Sample #445', href: dogiHoodItemUrl(445) },

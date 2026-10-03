@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useAccount } from 'wagmi'
-import { fetchNightDesk, pushNightRun, type Jackpot } from '../lib/nightDesk'
+import { fetchNightDesk, pushNightRun, type Jackpot, type PersonalStats } from '../lib/nightDesk'
 import { readNightSave, type NightSave } from '../game/nightMarks'
 import { NightBoard } from '../components/NightBoard'
 import { shortDeskAddress } from '../lib/deskCard'
@@ -23,19 +23,11 @@ type FloatingScore = {
   y: number
 }
 
-type Activity = {
-  id: string
-  type: 'checkin' | 'tip'
-  address: string
-  target?: string
-  amount: number
-  time: string
-}
-
 export function Street({ onNavigate }: Props) {
   const { address, isConnected } = useAccount()
   const [pot, setPot] = useState<Jackpot | null>(null)
   const [neighbors, setNeighbors] = useState<BoardRow[]>([])
+  const [personal, setPersonal] = useState<PersonalStats | null>(null)
   const [save, setSave] = useState<NightSave>(() => readNightSave())
   const [checkInState, setCheckInState] = useState<CheckInState>('idle')
   const [tipState, setTipState] = useState<TipState>('idle')
@@ -47,28 +39,30 @@ export function Street({ onNavigate }: Props) {
   const [diggingNeighborId, setDiggingNeighborId] = useState<string | null>(null)
   const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([])
   const [blockPulse, setBlockPulse] = useState(false)
-  const [recentActivity, setRecentActivity] = useState<Activity[]>([])
   const blockRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     let live = true
-    fetchNightDesk()
+    const addr = isConnected && address ? address : null
+    fetchNightDesk(false, addr)
       .then((desk) => {
         if (live && desk) {
           setPot(desk.jackpot)
           setNeighbors(desk.board.slice(0, 8))
+          setPersonal(desk.personal ?? null)
         }
       })
       .catch(() => {
         if (live) {
           setPot(null)
           setNeighbors([])
+          setPersonal(null)
         }
       })
     return () => {
       live = false
     }
-  }, [])
+  }, [isConnected, address])
 
   const addFloatingScore = (amount: number, fromNeighborIndex?: number) => {
     const blockEl = blockRef.current
@@ -108,18 +102,6 @@ export function Street({ onNavigate }: Props) {
     setTimeout(() => setBlockPulse(false), 600)
   }
 
-  const addActivity = (type: 'checkin' | 'tip', addr: string, target?: string, amount: number = 100) => {
-    const activity: Activity = {
-      id: `${Date.now()}-${Math.random()}`,
-      type,
-      address: addr,
-      target,
-      amount,
-      time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-    }
-    setRecentActivity((prev) => [activity, ...prev.slice(0, 4)])
-  }
-
   const handleCheckIn = async () => {
     if (!isConnected || checkInState === 'checking') return
 
@@ -145,14 +127,12 @@ export function Street({ onNavigate }: Props) {
       if (result) {
         setPot(result.jackpot)
         setNeighbors(result.board.slice(0, 8))
+        setPersonal(result.personal ?? null)
         setSave({ ...updated, total: newTotal })
         setLastCheckIn(new Date().toLocaleString('en-US', { timeStyle: 'short' }))
         setCheckInState('done')
         addFloatingScore(homecomingScore)
         triggerBlockPulse()
-        if (address) {
-          addActivity('checkin', address, undefined, homecomingScore)
-        }
         setTimeout(() => setCheckInState('idle'), 3000)
       } else {
         setCheckInState('error')
@@ -190,13 +170,11 @@ export function Street({ onNavigate }: Props) {
       if (result) {
         setPot(result.jackpot)
         setNeighbors(result.board.slice(0, 8))
+        setPersonal(result.personal ?? null)
         setLastTip(new Date().toLocaleString('en-US', { timeStyle: 'short' }))
         setTipState('done')
         addFloatingScore(tipAmount, neighborIndex)
         triggerBlockPulse()
-        if (address) {
-          addActivity('tip', address, recipientAddress, tipAmount)
-        }
         setTimeout(() => {
           setTipState('idle')
           setTippingNeighborId(null)
@@ -242,6 +220,7 @@ export function Street({ onNavigate }: Props) {
       if (result) {
         setPot(result.jackpot)
         setNeighbors(result.board.slice(0, 8))
+        setPersonal(result.personal ?? null)
         const myNewTotal = result.board.find((row) => 
           row.address?.toLowerCase() === address?.toLowerCase()
         )?.total ?? updated.total
@@ -420,31 +399,71 @@ export function Street({ onNavigate }: Props) {
             )}
           </div>
 
-          {recentActivity.length > 0 && (
-            <div className="street-activity">
-              <h3>Your moves</h3>
-              <div className="street-activity-list">
-                {recentActivity.map((act) => (
-                  <div key={act.id} className="street-activity-item">
-                    <span className="street-activity-time">{act.time}</span>
-                    {act.type === 'checkin' ? (
-                      <span className="street-activity-text">
-                        {shortDeskAddress(act.address)} checked in (+{act.amount})
-                      </span>
-                    ) : (
-                      <span className="street-activity-text">
-                        {shortDeskAddress(act.address)} tipped {act.target ? shortDeskAddress(act.target) : 'someone'}{' '}
-                        {act.amount} pts
-                      </span>
-                    )}
-                  </div>
-                ))}
+          {pot && pot.moves && pot.moves.length > 0 && (
+            <div className="street-ledger">
+              <h3>Recent moves</h3>
+              <div className="street-ledger-list">
+                {pot.moves.slice(0, 10).map((move, index) => {
+                  const time = new Date(move.at).toLocaleString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    hour: 'numeric', 
+                    minute: '2-digit' 
+                  })
+                  if (move.type === 'tip') {
+                    return (
+                      <div key={`${move.at}-${index}`} className="street-ledger-item">
+                        <span className="street-ledger-time">{time}</span>
+                        <span className="street-ledger-text">
+                          {shortDeskAddress(move.from!)} tipped {shortDeskAddress(move.to!)} {move.amount} pts
+                        </span>
+                      </div>
+                    )
+                  } else {
+                    return (
+                      <div key={`${move.at}-${index}`} className="street-ledger-item">
+                        <span className="street-ledger-time">{time}</span>
+                        <span className="street-ledger-text">
+                          {shortDeskAddress(move.starter!)} & {shortDeskAddress(move.neighbor!)} dug {move.amount} pts each
+                        </span>
+                      </div>
+                    )
+                  }
+                })}
               </div>
             </div>
           )}
         </section>
 
         <section className="street-status">
+          {isConnected && personal && (
+            <div className="street-card street-card-personal">
+              <h2>Your record</h2>
+              <div className="street-personal-stats">
+                <div className="street-personal-stat">
+                  <span className="street-personal-label">Total points</span>
+                  <span className="street-personal-value">{personal.total.toLocaleString('en-US')}</span>
+                </div>
+                <div className="street-personal-stat">
+                  <span className="street-personal-label">Best run</span>
+                  <span className="street-personal-value">{personal.best.toLocaleString('en-US')}</span>
+                </div>
+                <div className="street-personal-stat">
+                  <span className="street-personal-label">Tips given</span>
+                  <span className="street-personal-value">{personal.tipsGiven}</span>
+                </div>
+                <div className="street-personal-stat">
+                  <span className="street-personal-label">Tips received</span>
+                  <span className="street-personal-value">{personal.tipsReceived}</span>
+                </div>
+                <div className="street-personal-stat">
+                  <span className="street-personal-label">Digs</span>
+                  <span className="street-personal-value">{personal.digs}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="street-card street-card-streak">
             <h2>Your streak</h2>
             {save.streak > 0 ? (

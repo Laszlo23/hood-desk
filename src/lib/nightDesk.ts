@@ -9,11 +9,32 @@ export type Jackpot = {
   holder: string | null
   runs: number
   label: string
+  tips: number
+  digs: number
+  moves: Array<{
+    type: 'tip' | 'dig'
+    from?: string
+    to?: string
+    starter?: string
+    neighbor?: string
+    amount: number
+    at: string
+  }>
+}
+
+export type PersonalStats = {
+  address: string
+  total: number
+  best: number
+  tipsGiven: number
+  tipsReceived: number
+  digs: number
 }
 
 export type NightDesk = {
   board: BoardRow[]
   jackpot: Jackpot
+  personal?: PersonalStats | null
 }
 
 const listeners = new Set<() => void>()
@@ -50,10 +71,11 @@ function asDesk(raw: unknown): NightDesk | null {
   return { board: body.board, jackpot: body.jackpot }
 }
 
-export async function fetchNightDesk(force = false): Promise<NightDesk | null> {
+export async function fetchNightDesk(force = false, address: string | null = null): Promise<NightDesk | null> {
   if (!force && cache && Date.now() - cache.at < 8000) return cache.data
   try {
-    const res = await fetch('/api/night')
+    const url = address ? `/api/night?address=${encodeURIComponent(address)}` : '/api/night'
+    const res = await fetch(url)
     if (!res.ok) return cache?.data ?? null
     const data = asDesk(await res.json())
     if (!data) return cache?.data ?? null

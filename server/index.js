@@ -317,8 +317,10 @@ app.post('/api/book', (req, res) => {
   res.json({ ok: true, ...saved })
 })
 
-app.get('/api/night', (_req, res) => {
-  res.json({ ok: true, ...nightDesk.snapshot() })
+app.get('/api/night', (req, res) => {
+  const rawAddress = String(req.query?.address || '').trim().toLowerCase()
+  const address = /^0x[a-f0-9]{40}$/.test(rawAddress) ? rawAddress : null
+  res.json({ ok: true, ...nightDesk.snapshot(address) })
 })
 
 app.post('/api/night', (req, res) => {

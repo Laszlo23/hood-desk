@@ -9,23 +9,50 @@ export type Jackpot = {
   holder: string | null
   runs: number
   label: string
+  tips: number
+  digs: number
+  moves: Array<{
+    type: 'tip' | 'dig' | 'checkin'
+    from?: string
+    to?: string
+    starter?: string
+    neighbor?: string
+    amount: number
+    at: string
+  }>
+}
+
+export type PersonalStats = {
+  address: string
+  total: number
+  best: number
+  tipsGiven: number
+  tipsReceived: number
+  digs: number
+  place: number | null
+  rival: {
+    address: string
+    interactions: number
+  } | null
 }
 
 export type NightDesk = {
   board: BoardRow[]
   jackpot: Jackpot
+  personal?: PersonalStats | null
+  earlyBird?: boolean
 }
 
 const listeners = new Set<() => void>()
-let cache: { at: number; data: NightDesk } | null = null
+let cache: { at: number; data: NightDesk; address: string | null } | null = null
 
 export function onNightDesk(listen: () => void) {
   listeners.add(listen)
   return () => listeners.delete(listen)
 }
 
-function emit(data: NightDesk) {
-  cache = { at: Date.now(), data }
+function emit(data: NightDesk, address: string | null = null) {
+  cache = { at: Date.now(), data, address }
   for (const listen of listeners) listen()
 }
 
@@ -45,19 +72,28 @@ export function deskId(): string {
 
 function asDesk(raw: unknown): NightDesk | null {
   if (!raw || typeof raw !== 'object') return null
-  const body = raw as { board?: BoardRow[]; jackpot?: Jackpot }
+  const body = raw as { board?: BoardRow[]; jackpot?: Jackpot; personal?: PersonalStats | null; earlyBird?: boolean }
   if (!Array.isArray(body.board) || !body.jackpot || typeof body.jackpot.pot !== 'number') return null
-  return { board: body.board, jackpot: body.jackpot }
+  return { 
+    board: body.board, 
+    jackpot: body.jackpot,
+    personal: body.personal ?? null,
+    earlyBird: body.earlyBird ?? false,
+  }
 }
 
-export async function fetchNightDesk(force = false): Promise<NightDesk | null> {
-  if (!force && cache && Date.now() - cache.at < 8000) return cache.data
+export async function fetchNightDesk(force = false, address: string | null = null): Promise<NightDesk | null> {
+  const normalizedAddress = address?.toLowerCase() ?? null
+  if (!force && cache && cache.address === normalizedAddress && Date.now() - cache.at < 8000) {
+    return cache.data
+  }
   try {
-    const res = await fetch('/api/night')
+    const url = address ? `/api/night?address=${encodeURIComponent(address)}` : '/api/night'
+    const res = await fetch(url)
     if (!res.ok) return cache?.data ?? null
     const data = asDesk(await res.json())
     if (!data) return cache?.data ?? null
-    emit(data)
+    emit(data, normalizedAddress)
     return data
   } catch {
     return cache?.data ?? null
@@ -97,7 +133,7 @@ export async function pushNightRun(input: {
     }
     const data = asDesk(await res.json())
     if (!data) return null
-    emit(data)
+    emit(data, input.address?.toLowerCase() ?? null)
     return data
   } catch (err) {
     if (err instanceof Error) throw err

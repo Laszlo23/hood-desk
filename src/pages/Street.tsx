@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useAccount } from 'wagmi'
-import { fetchNightDesk, pushNightRun, type Jackpot } from '../lib/nightDesk'
+import { fetchNightDesk, pushNightRun, type Jackpot, type PersonalStats } from '../lib/nightDesk'
 import { readNightSave, type NightSave } from '../game/nightMarks'
 import { NightBoard } from '../components/NightBoard'
 import { shortDeskAddress } from '../lib/deskCard'
@@ -23,19 +23,11 @@ type FloatingScore = {
   y: number
 }
 
-type Activity = {
-  id: string
-  type: 'checkin' | 'tip'
-  address: string
-  target?: string
-  amount: number
-  time: string
-}
-
 export function Street({ onNavigate }: Props) {
   const { address, isConnected } = useAccount()
   const [pot, setPot] = useState<Jackpot | null>(null)
   const [neighbors, setNeighbors] = useState<BoardRow[]>([])
+  const [personal, setPersonal] = useState<PersonalStats | null>(null)
   const [save, setSave] = useState<NightSave>(() => readNightSave())
   const [checkInState, setCheckInState] = useState<CheckInState>('idle')
   const [tipState, setTipState] = useState<TipState>('idle')
@@ -43,32 +35,35 @@ export function Street({ onNavigate }: Props) {
   const [lastCheckIn, setLastCheckIn] = useState<string | null>(null)
   const [lastTip, setLastTip] = useState<string | null>(null)
   const [lastDig, setLastDig] = useState<string | null>(null)
+  const [earlyBird, setEarlyBird] = useState(false)
   const [tippingNeighborId, setTippingNeighborId] = useState<string | null>(null)
   const [diggingNeighborId, setDiggingNeighborId] = useState<string | null>(null)
   const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([])
   const [blockPulse, setBlockPulse] = useState(false)
-  const [recentActivity, setRecentActivity] = useState<Activity[]>([])
   const blockRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     let live = true
-    fetchNightDesk()
+    const addr = isConnected && address ? address : null
+    fetchNightDesk(false, addr)
       .then((desk) => {
         if (live && desk) {
           setPot(desk.jackpot)
           setNeighbors(desk.board.slice(0, 8))
+          setPersonal(desk.personal ?? null)
         }
       })
       .catch(() => {
         if (live) {
           setPot(null)
           setNeighbors([])
+          setPersonal(null)
         }
       })
     return () => {
       live = false
     }
-  }, [])
+  }, [isConnected, address])
 
   const addFloatingScore = (amount: number, fromNeighborIndex?: number) => {
     const blockEl = blockRef.current
@@ -108,18 +103,6 @@ export function Street({ onNavigate }: Props) {
     setTimeout(() => setBlockPulse(false), 600)
   }
 
-  const addActivity = (type: 'checkin' | 'tip', addr: string, target?: string, amount: number = 100) => {
-    const activity: Activity = {
-      id: `${Date.now()}-${Math.random()}`,
-      type,
-      address: addr,
-      target,
-      amount,
-      time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-    }
-    setRecentActivity((prev) => [activity, ...prev.slice(0, 4)])
-  }
-
   const handleCheckIn = async () => {
     if (!isConnected || checkInState === 'checking') return
 
@@ -145,14 +128,25 @@ export function Street({ onNavigate }: Props) {
       if (result) {
         setPot(result.jackpot)
         setNeighbors(result.board.slice(0, 8))
-        setSave({ ...updated, total: newTotal })
+        setPersonal(result.personal ?? null)
+        
+        const myNewTotal = result.board.find((row) => 
+          row.address?.toLowerCase() === address?.toLowerCase()
+        )?.total ?? updated.total
+        setSave({ ...updated, total: myNewTotal })
+        
         setLastCheckIn(new Date().toLocaleString('en-US', { timeStyle: 'short' }))
         setCheckInState('done')
-        addFloatingScore(homecomingScore)
-        triggerBlockPulse()
-        if (address) {
-          addActivity('checkin', address, undefined, homecomingScore)
+        
+        if (result.earlyBird) {
+          setEarlyBird(true)
+          addFloatingScore(homecomingScore + 20)
+          setTimeout(() => setEarlyBird(false), 5000)
+        } else {
+          addFloatingScore(homecomingScore)
         }
+        
+        triggerBlockPulse()
         setTimeout(() => setCheckInState('idle'), 3000)
       } else {
         setCheckInState('error')
@@ -190,13 +184,11 @@ export function Street({ onNavigate }: Props) {
       if (result) {
         setPot(result.jackpot)
         setNeighbors(result.board.slice(0, 8))
+        setPersonal(result.personal ?? null)
         setLastTip(new Date().toLocaleString('en-US', { timeStyle: 'short' }))
         setTipState('done')
         addFloatingScore(tipAmount, neighborIndex)
         triggerBlockPulse()
-        if (address) {
-          addActivity('tip', address, recipientAddress, tipAmount)
-        }
         setTimeout(() => {
           setTipState('idle')
           setTippingNeighborId(null)
@@ -242,6 +234,7 @@ export function Street({ onNavigate }: Props) {
       if (result) {
         setPot(result.jackpot)
         setNeighbors(result.board.slice(0, 8))
+        setPersonal(result.personal ?? null)
         const myNewTotal = result.board.find((row) => 
           row.address?.toLowerCase() === address?.toLowerCase()
         )?.total ?? updated.total
@@ -289,23 +282,28 @@ export function Street({ onNavigate }: Props) {
 
       <main className="street-main">
         <section className="street-intro">
-          <h2>How it works</h2>
-          <ol className="street-steps">
-            <li>
-              <strong>Check in</strong> once a day. You get 100 points.
-            </li>
-            <li>
-              <strong>Tip neighbors</strong> to send them 50 points.
-            </li>
-            <li>
-              <strong>Dig with a neighbor</strong> to mine 30 points each from the pot. One dig per pair per day.
-            </li>
-            <li>
-              <strong>Come back tomorrow.</strong> Your streak grows. The pot grows.
-            </li>
-          </ol>
+          <h2>Hood Street</h2>
+          <p className="street-pitch">
+            Check in once a day. Build your streak. The first person to check in each day gets a bonus.
+          </p>
+          <div className="street-loop">
+            <div className="street-loop-step">
+              <span className="street-loop-number">1</span>
+              <span className="street-loop-text">Check in today</span>
+            </div>
+            <div className="street-loop-arrow">→</div>
+            <div className="street-loop-step">
+              <span className="street-loop-number">2</span>
+              <span className="street-loop-text">See it on the ledger</span>
+            </div>
+            <div className="street-loop-arrow">→</div>
+            <div className="street-loop-step">
+              <span className="street-loop-number">3</span>
+              <span className="street-loop-text">Come back tomorrow</span>
+            </div>
+          </div>
           <p className="street-fine-print">
-            Points live on this desk, not the blockchain. Tips send desk points to another wallet, not tokens. Digs pull from the shared pot.
+            Points are desk points, not blockchain tokens. Tips send points to another wallet. Digs pull from the shared pot.
           </p>
         </section>
 
@@ -403,7 +401,11 @@ export function Street({ onNavigate }: Props) {
                 </div>
                 {checkInState === 'error' && <p className="street-error">Check-in failed. Try again.</p>}
                 {checkInState === 'done' && lastCheckIn && (
-                  <p className="street-success">Checked in at {lastCheckIn}. You got 100 points.</p>
+                  <p className="street-success">
+                    {earlyBird 
+                      ? `🌅 First check-in of the day! You got 120 points (100 + 20 early bird bonus).`
+                      : `Checked in at ${lastCheckIn}. You got 100 points.`}
+                  </p>
                 )}
                 {tipState === 'error' && <p className="street-error">Tip failed. Try again.</p>}
                 {tipState === 'done' && lastTip && <p className="street-success">Sent 50 points at {lastTip}.</p>}
@@ -420,31 +422,122 @@ export function Street({ onNavigate }: Props) {
             )}
           </div>
 
-          {recentActivity.length > 0 && (
-            <div className="street-activity">
-              <h3>Your moves</h3>
-              <div className="street-activity-list">
-                {recentActivity.map((act) => (
-                  <div key={act.id} className="street-activity-item">
-                    <span className="street-activity-time">{act.time}</span>
-                    {act.type === 'checkin' ? (
-                      <span className="street-activity-text">
-                        {shortDeskAddress(act.address)} checked in (+{act.amount})
-                      </span>
-                    ) : (
-                      <span className="street-activity-text">
-                        {shortDeskAddress(act.address)} tipped {act.target ? shortDeskAddress(act.target) : 'someone'}{' '}
-                        {act.amount} pts
-                      </span>
-                    )}
-                  </div>
-                ))}
+          {pot && pot.moves && pot.moves.length > 0 && (
+            <div className="street-ledger">
+              <h3>Recent moves</h3>
+              <div className="street-ledger-list">
+                {pot.moves.slice(0, 10).map((move, index) => {
+                  const time = new Date(move.at).toLocaleString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric', 
+                    hour: 'numeric', 
+                    minute: '2-digit' 
+                  })
+                  const normalizedAddress = address?.toLowerCase()
+                  const isPersonal = normalizedAddress && (
+                    move.from?.toLowerCase() === normalizedAddress || 
+                    move.to?.toLowerCase() === normalizedAddress || 
+                    move.starter?.toLowerCase() === normalizedAddress || 
+                    move.neighbor?.toLowerCase() === normalizedAddress
+                  )
+                  
+                  if (move.type === 'checkin') {
+                    return (
+                      <div 
+                        key={`${move.at}-${index}`} 
+                        className={`street-ledger-item ${isPersonal ? 'street-ledger-item-you' : ''}`}
+                      >
+                        <span className="street-ledger-time">{time}</span>
+                        <span className="street-ledger-text">
+                          {shortDeskAddress(move.from!)} checked in (+{move.amount})
+                          {isPersonal && <span className="street-ledger-you-badge">you</span>}
+                        </span>
+                      </div>
+                    )
+                  } else if (move.type === 'tip') {
+                    return (
+                      <div 
+                        key={`${move.at}-${index}`} 
+                        className={`street-ledger-item ${isPersonal ? 'street-ledger-item-you' : ''}`}
+                      >
+                        <span className="street-ledger-time">{time}</span>
+                        <span className="street-ledger-text">
+                          {shortDeskAddress(move.from!)} tipped {shortDeskAddress(move.to!)} {move.amount} pts
+                          {isPersonal && <span className="street-ledger-you-badge">you</span>}
+                        </span>
+                      </div>
+                    )
+                  } else {
+                    return (
+                      <div 
+                        key={`${move.at}-${index}`} 
+                        className={`street-ledger-item ${isPersonal ? 'street-ledger-item-you' : ''}`}
+                      >
+                        <span className="street-ledger-time">{time}</span>
+                        <span className="street-ledger-text">
+                          {shortDeskAddress(move.starter!)} & {shortDeskAddress(move.neighbor!)} dug {move.amount} pts each
+                          {isPersonal && <span className="street-ledger-you-badge">you</span>}
+                        </span>
+                      </div>
+                    )
+                  }
+                })}
               </div>
             </div>
           )}
         </section>
 
         <section className="street-status">
+          {isConnected && personal && (
+            <div className="street-card street-card-personal">
+              <h2>Your record</h2>
+              <div className="street-personal-stats">
+                {personal.place !== null && (
+                  <div className="street-personal-stat street-personal-stat-place">
+                    <span className="street-personal-label">Place on block</span>
+                    <span className="street-personal-value street-personal-place">
+                      {personal.place === 1 ? '🥇 1st' : 
+                       personal.place === 2 ? '🥈 2nd' : 
+                       personal.place === 3 ? '🥉 3rd' : 
+                       `${personal.place}th`}
+                    </span>
+                  </div>
+                )}
+                <div className="street-personal-stat">
+                  <span className="street-personal-label">Total points</span>
+                  <span className="street-personal-value">{personal.total.toLocaleString('en-US')}</span>
+                </div>
+                <div className="street-personal-stat">
+                  <span className="street-personal-label">Best run</span>
+                  <span className="street-personal-value">{personal.best.toLocaleString('en-US')}</span>
+                </div>
+                <div className="street-personal-stat">
+                  <span className="street-personal-label">Tips given</span>
+                  <span className="street-personal-value">{personal.tipsGiven}</span>
+                </div>
+                <div className="street-personal-stat">
+                  <span className="street-personal-label">Tips received</span>
+                  <span className="street-personal-value">{personal.tipsReceived}</span>
+                </div>
+                <div className="street-personal-stat">
+                  <span className="street-personal-label">Digs</span>
+                  <span className="street-personal-value">{personal.digs}</span>
+                </div>
+              </div>
+              {personal.rival && (
+                <div className="street-rival">
+                  <span className="street-rival-icon">⚔️</span>
+                  <span className="street-rival-text">
+                    Rivalry with {shortDeskAddress(personal.rival.address)} — {personal.rival.interactions} moves
+                  </span>
+                </div>
+              )}
+              {personal.place === null && personal.total === 0 && (
+                <p className="street-not-on-board">Not on the board yet. Check in to get started.</p>
+              )}
+            </div>
+          )}
+
           <div className="street-card street-card-streak">
             <h2>Your streak</h2>
             {save.streak > 0 ? (
@@ -452,6 +545,16 @@ export function Street({ onNavigate }: Props) {
                 <p className="street-streak-count">
                   <span className="street-streak-number">{save.streak}</span> days
                 </p>
+                {(save.streak === 7 || save.streak === 14 || save.streak === 21) && (
+                  <div className="street-week-goal">
+                    <span className="street-week-goal-icon">🎯</span>
+                    <span className="street-week-goal-text">
+                      {save.streak === 7 ? 'One week complete!' : 
+                       save.streak === 14 ? 'Two weeks complete!' : 
+                       'Three weeks complete!'}
+                    </span>
+                  </div>
+                )}
                 <div className="street-streak-progress">
                   <div
                     className="street-streak-bar"
@@ -478,19 +581,23 @@ export function Street({ onNavigate }: Props) {
               <>
                 <p className="street-pot-amount">{pot.pot.toLocaleString('en-US')} points</p>
                 <p className="street-pot-label">{pot.label}</p>
+                {pot.holder && pot.best > 0 && (
+                  <div className="street-block-boss">
+                    <span className="street-boss-crown">👑</span>
+                    <div className="street-boss-info">
+                      <span className="street-boss-label">Block Boss</span>
+                      <span className="street-boss-name">{shortDeskAddress(pot.holder)}</span>
+                      <span className="street-boss-score">{pot.best.toLocaleString('en-US')} pts this week</span>
+                    </div>
+                  </div>
+                )}
                 <div className="street-pot-stats">
                   <span className="street-pot-stat">
-                    <span className="street-pot-stat-label">Runs</span>
+                    <span className="street-pot-stat-label">Check-ins</span>
                     <span className="street-pot-stat-value">{pot.runs}</span>
                   </span>
-                  {pot.best > 0 && (
-                    <span className="street-pot-stat">
-                      <span className="street-pot-stat-label">Best</span>
-                      <span className="street-pot-stat-value">{pot.best.toLocaleString('en-US')}</span>
-                    </span>
-                  )}
                 </div>
-                <p className="street-pot-cta">Come back tomorrow to grow the pot</p>
+                <p className="street-pot-cta">Come back tomorrow to grow your streak</p>
               </>
             ) : (
               <p className="street-muted">Loading pot...</p>

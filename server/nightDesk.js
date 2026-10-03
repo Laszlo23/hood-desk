@@ -5,18 +5,21 @@ const RUN_CAP = 50_000
 const TOTAL_CAP = 5_000_000
 const BOARD_CAP = 40
 
-function weekKey(date = new Date()) {
-  let day = ''
+function viennaDate(date = new Date()) {
   try {
-    day = new Intl.DateTimeFormat('en-CA', {
+    return new Intl.DateTimeFormat('en-CA', {
       timeZone: 'Europe/Vienna',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
     }).format(date)
   } catch {
-    day = date.toISOString().slice(0, 10)
+    return date.toISOString().slice(0, 10)
   }
+}
+
+function weekKey(date = new Date()) {
+  const day = viennaDate(date)
   const noon = new Date(`${day}T12:00:00Z`)
   const utc = new Date(Date.UTC(noon.getUTCFullYear(), noon.getUTCMonth(), noon.getUTCDate()))
   const weekday = utc.getUTCDay() || 7
@@ -74,16 +77,116 @@ function ranked(rows) {
 }
 
 function publicWeek(data, key) {
-  const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, tips: [], digs: [] }
+  const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, tips: [], digs: [], checkins: [] }
+  const tips = week.tips || []
+  const digs = week.digs || []
+  const checkins = week.checkins || []
+  
+  const recentMoves = []
+  
+  tips.slice(-20).forEach((tip) => {
+    recentMoves.push({
+      type: 'tip',
+      from: tip.from,
+      to: tip.to,
+      amount: tip.amount,
+      at: tip.at,
+    })
+  })
+  
+  digs.slice(-20).forEach((dig) => {
+    recentMoves.push({
+      type: 'dig',
+      starter: dig.starter,
+      neighbor: dig.neighbor,
+      amount: dig.amount,
+      at: dig.at,
+    })
+  })
+  
+  checkins.slice(-20).forEach((checkin) => {
+    recentMoves.push({
+      type: 'checkin',
+      from: checkin.from,
+      amount: checkin.amount,
+      at: checkin.at,
+    })
+  })
+  
+  recentMoves.sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
+  
   return {
     week: key,
     pot: week.pot || 0,
     best: week.best || 0,
     holder: week.holder || null,
     runs: week.runs || 0,
-    tips: week.tips?.length || 0,
-    digs: week.digs?.length || 0,
+    tips: tips.length,
+    digs: digs.length,
     label: key.replace('-W', ' · week '),
+    moves: recentMoves.slice(0, 30),
+  }
+}
+
+function personalStats(data, address) {
+  if (!address) return null
+  
+  const key = weekKey()
+  const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, seen: [], tips: [], digs: [] }
+  const tips = week.tips || []
+  const digs = week.digs || []
+  
+  const row = data.rows.find((r) => r.address === address)
+  const total = row?.total ?? 0
+  const best = row?.best ?? 0
+  
+  const board = ranked(data.rows)
+  const rank = board.findIndex((r) => r.address === address)
+  const place = rank >= 0 ? rank + 1 : null
+  
+  const tipsGiven = tips.filter((t) => t.from === address).length
+  const tipsReceived = tips.filter((t) => t.to === address).length
+  const digsCount = digs.filter((d) => d.starter === address || d.neighbor === address).length
+  
+  const interactions = new Map()
+  
+  tips.forEach((tip) => {
+    if (tip.from === address && tip.to) {
+      interactions.set(tip.to, (interactions.get(tip.to) || 0) + 1)
+    }
+    if (tip.to === address && tip.from) {
+      interactions.set(tip.from, (interactions.get(tip.from) || 0) + 1)
+    }
+  })
+  
+  digs.forEach((dig) => {
+    if (dig.starter === address && dig.neighbor) {
+      interactions.set(dig.neighbor, (interactions.get(dig.neighbor) || 0) + 1)
+    }
+    if (dig.neighbor === address && dig.starter) {
+      interactions.set(dig.starter, (interactions.get(dig.starter) || 0) + 1)
+    }
+  })
+  
+  let topRival = null
+  let topCount = 0
+  
+  interactions.forEach((count, addr) => {
+    if (count > topCount && count >= 2) {
+      topRival = addr
+      topCount = count
+    }
+  })
+  
+  return {
+    address,
+    total,
+    best,
+    tipsGiven,
+    tipsReceived,
+    digs: digsCount,
+    place,
+    rival: topRival ? { address: topRival, interactions: topCount } : null,
   }
 }
 
@@ -92,9 +195,13 @@ export function createNightDesk(file) {
     return load(file)
   }
 
-  function snapshot() {
+  function snapshot(address = null) {
     const data = read()
-    return { board: ranked(data.rows), jackpot: publicWeek(data, weekKey()) }
+    const result = { board: ranked(data.rows), jackpot: publicWeek(data, weekKey()) }
+    if (address) {
+      result.personal = personalStats(data, address)
+    }
+    return result
   }
 
   function submit(body) {
@@ -120,38 +227,44 @@ export function createNightDesk(file) {
     data.rows = ranked([...data.rows.filter((row) => row.id !== id), next])
 
     const key = weekKey()
-    const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, seen: [], tips: [], digs: [] }
+    const week = data.weeks[key] || { pot: 0, best: 0, holder: null, runs: 0, seen: [], tips: [], digs: [], checkins: [], lastCheckInDay: null }
     const runId = cleanRun(body?.runId)
     const recipient = cleanAddress(body?.recipient)
     const neighbor = cleanAddress(body?.neighbor)
+    
+    let earlyBirdBonus = 0
 
     if (runId && !week.seen.includes(runId)) {
       week.seen = [...week.seen, runId].slice(-400)
       
-      if (recipient && runId.startsWith('tip:') && score > 0) {
-        const recipientRow = data.rows.find((row) => row.address === recipient)
-        if (recipientRow) {
-          recipientRow.total = Math.max(0, (recipientRow.total || 0) + score)
-          recipientRow.at = new Date().toISOString()
-          data.rows = ranked(data.rows)
-          
-          week.tips = week.tips || []
-          week.tips.push({
-            from: address,
-            to: recipient,
-            amount: score,
-            runId,
-            at: new Date().toISOString(),
-          })
-          week.tips = week.tips.slice(-200)
+      if (runId.startsWith('tip:') && score > 0) {
+        if (recipient) {
+          const recipientRow = data.rows.find((row) => row.address === recipient)
+          if (recipientRow) {
+            recipientRow.total = Math.max(0, (recipientRow.total || 0) + score)
+            recipientRow.at = new Date().toISOString()
+            data.rows = ranked(data.rows)
+            
+            week.tips = week.tips || []
+            week.tips.push({
+              from: address,
+              to: recipient,
+              amount: score,
+              runId,
+              at: new Date().toISOString(),
+            })
+            week.tips = week.tips.slice(-200)
+          }
+        } else {
+          week.pot += score
         }
       }
       
       if (neighbor && runId.startsWith('dig:') && address && neighbor !== address) {
         week.digs = week.digs || []
-        const today = new Date().toISOString().slice(0, 10)
+        const today = viennaDate()
         const alreadyDug = week.digs.some((dig) => {
-          const digDay = dig.at.slice(0, 10)
+          const digDay = viennaDate(new Date(dig.at))
           if (digDay !== today) return false
           return (
             (dig.starter === address && dig.neighbor === neighbor) ||
@@ -192,9 +305,30 @@ export function createNightDesk(file) {
         week.digs = week.digs.slice(-200)
       }
       
-      if (score > 0) {
+      if (score > 0 && runId.startsWith('homecoming:')) {
+        const today = viennaDate()
+        let checkinAmount = score
+        
+        if (week.lastCheckInDay !== today && week.pot >= 20) {
+          earlyBirdBonus = 20
+          week.pot -= earlyBirdBonus
+          next.total += earlyBirdBonus
+          checkinAmount += earlyBirdBonus
+          week.lastCheckInDay = today
+        }
+        
         week.pot += score
         week.runs += 1
+        
+        week.checkins = week.checkins || []
+        week.checkins.push({
+          from: address,
+          amount: checkinAmount,
+          runId,
+          at: new Date().toISOString(),
+        })
+        week.checkins = week.checkins.slice(-200)
+        
         if (score >= week.best) {
           week.best = score
           week.holder = address
@@ -202,8 +336,16 @@ export function createNightDesk(file) {
       }
     }
     data.weeks[key] = week
+    data.rows = ranked([...data.rows.filter((row) => row.id !== id), next])
     save(file, data)
-    return { board: ranked(data.rows), jackpot: publicWeek(data, key) }
+    const result = { board: ranked(data.rows), jackpot: publicWeek(data, key) }
+    if (address) {
+      result.personal = personalStats(data, address)
+    }
+    if (earlyBirdBonus > 0) {
+      result.earlyBird = true
+    }
+    return result
   }
 
   return { snapshot, submit }

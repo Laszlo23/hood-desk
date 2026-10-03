@@ -307,6 +307,18 @@ export function createNightDesk(file) {
       
       if (score > 0 && runId.startsWith('homecoming:')) {
         const today = viennaDate()
+        
+        week.checkins = week.checkins || []
+        const alreadyCheckedIn = week.checkins.some((checkin) => {
+          if (!checkin.from || checkin.from !== address) return false
+          const checkinDay = viennaDate(new Date(checkin.at))
+          return checkinDay === today
+        })
+        
+        if (alreadyCheckedIn) {
+          return { error: 'You already checked in today.' }
+        }
+        
         let checkinAmount = score
         
         if (week.lastCheckInDay !== today && week.pot >= 20) {
@@ -320,7 +332,6 @@ export function createNightDesk(file) {
         week.pot += score
         week.runs += 1
         
-        week.checkins = week.checkins || []
         week.checkins.push({
           from: address,
           amount: checkinAmount,

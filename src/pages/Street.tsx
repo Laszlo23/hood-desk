@@ -3,6 +3,8 @@ import { useAccount } from 'wagmi'
 import { fetchNightDesk, pushNightRun, type Jackpot } from '../lib/nightDesk'
 import { readNightSave, type NightSave } from '../game/nightMarks'
 import { NightBoard } from '../components/NightBoard'
+import { shortDeskAddress } from '../lib/deskCard'
+import type { BoardRow } from '../lib/nightBoard'
 import type { ViewId } from '../lib/nav'
 import './street.css'
 
@@ -11,22 +13,32 @@ type Props = {
 }
 
 type CheckInState = 'idle' | 'checking' | 'done' | 'error'
+type TipState = 'idle' | 'tipping' | 'done' | 'error'
 
 export function Street({ onNavigate }: Props) {
   const { address, isConnected } = useAccount()
   const [pot, setPot] = useState<Jackpot | null>(null)
+  const [neighbors, setNeighbors] = useState<BoardRow[]>([])
   const [save, setSave] = useState<NightSave>(() => readNightSave())
   const [checkInState, setCheckInState] = useState<CheckInState>('idle')
+  const [tipState, setTipState] = useState<TipState>('idle')
   const [lastCheckIn, setLastCheckIn] = useState<string | null>(null)
+  const [lastTip, setLastTip] = useState<string | null>(null)
 
   useEffect(() => {
     let live = true
     fetchNightDesk()
       .then((desk) => {
-        if (live && desk) setPot(desk.jackpot)
+        if (live && desk) {
+          setPot(desk.jackpot)
+          setNeighbors(desk.board.slice(0, 8))
+        }
       })
       .catch(() => {
-        if (live) setPot(null)
+        if (live) {
+          setPot(null)
+          setNeighbors([])
+        }
       })
     return () => {
       live = false
@@ -57,6 +69,7 @@ export function Street({ onNavigate }: Props) {
 
       if (result) {
         setPot(result.jackpot)
+        setNeighbors(result.board.slice(0, 8))
         setSave({ ...updated, total: newTotal })
         setLastCheckIn(new Date().toLocaleString('en-US', { timeStyle: 'short' }))
         setCheckInState('done')
@@ -71,11 +84,48 @@ export function Street({ onNavigate }: Props) {
     }
   }
 
+  const handleTip = async () => {
+    if (!isConnected || tipState === 'tipping') return
+
+    setTipState('tipping')
+    try {
+      const tipAmount = 50
+      const uniqueRunId = `tip:${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
+        .replace(/[^a-z0-9:_-]/gi, '')
+        .slice(0, 80)
+
+      const updated = readNightSave()
+      const currentBest = updated.best?.gate ?? 0
+
+      const result = await pushNightRun({
+        address: address ?? null,
+        total: updated.total,
+        best: currentBest,
+        score: tipAmount,
+        runId: uniqueRunId,
+      })
+
+      if (result) {
+        setPot(result.jackpot)
+        setNeighbors(result.board.slice(0, 8))
+        setLastTip(new Date().toLocaleString('en-US', { timeStyle: 'short' }))
+        setTipState('done')
+        setTimeout(() => setTipState('idle'), 3000)
+      } else {
+        setTipState('error')
+        setTimeout(() => setTipState('idle'), 3000)
+      }
+    } catch {
+      setTipState('error')
+      setTimeout(() => setTipState('idle'), 3000)
+    }
+  }
+
   return (
     <div className="street-root">
       <header className="street-header">
         <h1>Hood Street</h1>
-        <p className="street-tagline">One block. One neighborhood. One real check-in.</p>
+        <p className="street-tagline">One block. One neighborhood. People on the block.</p>
         <button type="button" className="street-back" onClick={() => onNavigate('landing')}>
           ← Desk
         </button>
@@ -96,37 +146,67 @@ export function Street({ onNavigate }: Props) {
                 <span className="street-empty">Not connected</span>
               )}
             </div>
+            {neighbors.length > 0 && (
+              <div className="street-neighbors">
+                {neighbors.map((neighbor, index) => {
+                  const isYou =
+                    address &&
+                    (neighbor.address?.toLowerCase() === address.toLowerCase() || neighbor.id === address.toLowerCase())
+                  return (
+                    <div key={neighbor.id} className={`street-neighbor street-neighbor-${index + 1}`}>
+                      <span className="street-neighbor-dot" />
+                      <span className="street-neighbor-name">
+                        {isYou ? 'You' : neighbor.address ? shortDeskAddress(neighbor.address) : 'Anon'}
+                      </span>
+                      <span className="street-neighbor-pts">{neighbor.total.toLocaleString('en-US')}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
 
           <div className="street-actions">
             {!isConnected ? (
               <div className="street-state">
                 <p className="street-warning">
-                  Connect your wallet to check in. Reown may not have allowlisted this domain yet — if Connect fails, that's why.
+                  Connect your wallet to check in and tip. Reown may not have allowlisted this domain yet — if Connect fails, that's why.
                 </p>
               </div>
             ) : (
               <>
-                <button
-                  type="button"
-                  className="street-checkin"
-                  onClick={handleCheckIn}
-                  disabled={checkInState === 'checking'}
-                >
-                  {checkInState === 'checking'
-                    ? 'Checking in...'
-                    : checkInState === 'done'
-                      ? '✓ Checked in'
-                      : "I'm on the block"}
-                </button>
+                <div className="street-action-buttons">
+                  <button
+                    type="button"
+                    className="street-checkin"
+                    onClick={handleCheckIn}
+                    disabled={checkInState === 'checking'}
+                  >
+                    {checkInState === 'checking'
+                      ? 'Checking in...'
+                      : checkInState === 'done'
+                        ? '✓ Checked in'
+                        : "I'm on the block"}
+                  </button>
+                  <button
+                    type="button"
+                    className="street-tip"
+                    onClick={handleTip}
+                    disabled={tipState === 'tipping'}
+                  >
+                    {tipState === 'tipping' ? 'Tipping...' : tipState === 'done' ? '✓ Tipped' : 'Tip the pot'}
+                  </button>
+                </div>
                 {checkInState === 'error' && (
                   <p className="street-error">Check-in failed. Try again.</p>
                 )}
                 {checkInState === 'done' && lastCheckIn && (
-                  <p className="street-success">Last check-in: {lastCheckIn}</p>
+                  <p className="street-success">Checked in at {lastCheckIn}</p>
                 )}
+                {tipState === 'error' && <p className="street-error">Tip failed. Try again.</p>}
+                {tipState === 'done' && lastTip && <p className="street-success">Tipped at {lastTip}</p>}
                 <p className="street-note">
-                  This is a signed homecoming action. It hits the night pot path with a unique runId. Not yet geo-verified or on-chain.
+                  Check-in: wallet-signed homecoming. Tip: adds 50 points to the night pot (not yet person-to-person or on-chain).
                 </p>
               </>
             )}

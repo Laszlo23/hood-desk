@@ -70,6 +70,7 @@ export async function pushNightRun(input: {
   best: number
   score?: number
   runId?: string
+  recipient?: string | null
 }): Promise<NightDesk | null> {
   try {
     const res = await fetch('/api/night', {
@@ -82,6 +83,7 @@ export async function pushNightRun(input: {
         best: input.best,
         score: input.score ?? 0,
         runId: input.runId ?? '',
+        recipient: input.recipient ?? null,
       }),
     })
     if (!res.ok) return null

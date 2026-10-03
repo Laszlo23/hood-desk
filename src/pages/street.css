@@ -151,6 +151,30 @@
   font-size: 9px;
 }
 
+.street-neighbor-tip {
+  font: inherit;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  background: #14120f;
+  color: #ccff00;
+  border: 1px solid #ccff00;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 #000;
+  margin-top: 2px;
+}
+
+.street-neighbor-tip:hover:not(:disabled) {
+  background: #ccff00;
+  color: #10140f;
+}
+
+.street-neighbor-tip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .street-neighbor-1 {
   top: 15%;
   left: 12%;
@@ -232,8 +256,7 @@
   justify-content: center;
 }
 
-.street-checkin,
-.street-tip {
+.street-checkin {
   font: inherit;
   font-size: 14px;
   letter-spacing: 0.12em;
@@ -248,21 +271,13 @@
   min-width: 180px;
 }
 
-.street-tip {
-  background: #14120f;
-  color: #ccff00;
-  border-color: #ccff00;
-}
-
-.street-checkin:hover:not(:disabled),
-.street-tip:hover:not(:disabled) {
+.street-checkin:hover:not(:disabled) {
   background: #d7ff1a;
   border-color: #d7ff1a;
   color: #10140f;
 }
 
-.street-checkin:disabled,
-.street-tip:disabled {
+.street-checkin:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -400,8 +415,7 @@
     width: 100%;
   }
 
-  .street-checkin,
-  .street-tip {
+  .street-checkin {
     width: 100%;
     min-width: 0;
   }
@@ -416,5 +430,10 @@
 
   .street-neighbor-pts {
     font-size: 8px;
+  }
+
+  .street-neighbor-tip {
+    font-size: 7px;
+    padding: 2px 6px;
   }
 }

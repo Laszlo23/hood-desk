@@ -114,6 +114,83 @@
   gap: 12px;
 }
 
+.street-neighbors {
+  position: absolute;
+  inset: 0;
+}
+
+.street-neighbor {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #d7e2c8;
+}
+
+.street-neighbor-dot {
+  width: 8px;
+  height: 8px;
+  background: #ccff00;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #ccff00;
+}
+
+.street-neighbor-name {
+  background: #10140f;
+  padding: 2px 6px;
+  border: 1px solid #2a3324;
+  white-space: nowrap;
+}
+
+.street-neighbor-pts {
+  color: #9aa892;
+  font-size: 9px;
+}
+
+.street-neighbor-1 {
+  top: 15%;
+  left: 12%;
+}
+
+.street-neighbor-2 {
+  top: 18%;
+  right: 15%;
+}
+
+.street-neighbor-3 {
+  top: 38%;
+  left: 8%;
+}
+
+.street-neighbor-4 {
+  top: 42%;
+  right: 10%;
+}
+
+.street-neighbor-5 {
+  bottom: 35%;
+  left: 15%;
+}
+
+.street-neighbor-6 {
+  bottom: 38%;
+  right: 12%;
+}
+
+.street-neighbor-7 {
+  bottom: 15%;
+  left: 18%;
+}
+
+.street-neighbor-8 {
+  bottom: 12%;
+  right: 20%;
+}
+
 .street-block-label {
   font-size: 18px;
   letter-spacing: 0.16em;
@@ -148,7 +225,15 @@
   align-items: center;
 }
 
-.street-checkin {
+.street-action-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.street-checkin,
+.street-tip {
   font: inherit;
   font-size: 14px;
   letter-spacing: 0.12em;
@@ -160,15 +245,24 @@
   cursor: pointer;
   box-shadow: 4px 4px 0 #000;
   font-weight: 700;
-  min-width: 200px;
+  min-width: 180px;
 }
 
-.street-checkin:hover:not(:disabled) {
+.street-tip {
+  background: #14120f;
+  color: #ccff00;
+  border-color: #ccff00;
+}
+
+.street-checkin:hover:not(:disabled),
+.street-tip:hover:not(:disabled) {
   background: #d7ff1a;
   border-color: #d7ff1a;
+  color: #10140f;
 }
 
-.street-checkin:disabled {
+.street-checkin:disabled,
+.street-tip:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -299,5 +393,28 @@
 
   .street-board {
     padding: 16px;
+  }
+
+  .street-action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .street-checkin,
+  .street-tip {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .street-neighbor {
+    font-size: 9px;
+  }
+
+  .street-neighbor-name {
+    padding: 1px 4px;
+  }
+
+  .street-neighbor-pts {
+    font-size: 8px;
   }
 }

@@ -26,7 +26,7 @@ type FloatingScore = {
 
 export function Street({ onNavigate }: Props) {
   const { address, isConnected } = useAccount()
-  const inFarcaster = isFarcasterContext()
+  const [inFarcaster, setInFarcaster] = useState<boolean>(false)
   const [pot, setPot] = useState<Jackpot | null>(null)
   const [neighbors, setNeighbors] = useState<BoardRow[]>([])
   const [personal, setPersonal] = useState<PersonalStats | null>(null)
@@ -44,6 +44,10 @@ export function Street({ onNavigate }: Props) {
   const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([])
   const [blockPulse, setBlockPulse] = useState(false)
   const blockRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    isFarcasterContext().then(setInFarcaster)
+  }, [])
 
   useEffect(() => {
     let live = true
@@ -130,7 +134,9 @@ export function Street({ onNavigate }: Props) {
     message += `\nCheck in once a day, build your streak 📍`
 
     try {
-      await sdk.actions.openUrl('https://warpcast.com/~/compose?text=' + encodeURIComponent(message) + '&embeds[]=https://doghood.aibusiness.fun')
+      await sdk.actions.composeCast({
+        text: message,
+      })
     } catch (err) {
       console.error('Share failed:', err)
     }

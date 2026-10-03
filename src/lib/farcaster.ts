@@ -1,28 +1,28 @@
-import sdk from '@farcaster/frame-sdk'
+import sdk from '@farcaster/miniapp-sdk'
 
 let initialized = false
-let readyCalled = false
+let isInMiniAppCached: boolean | null = null
 
-export function initFarcasterSDK(): void {
+export async function initFarcasterSDK(): Promise<void> {
   if (initialized) return
   initialized = true
 
-  sdk.actions.ready()
-  readyCalled = true
-}
+  const inMiniApp = await sdk.isInMiniApp()
+  isInMiniAppCached = inMiniApp
 
-export function isFarcasterContext(): boolean {
-  if (typeof window === 'undefined') return false
-  
-  try {
-    return sdk.context !== null
-  } catch {
-    return false
+  if (inMiniApp) {
+    await sdk.actions.ready()
   }
 }
 
-export function isReadyCalled(): boolean {
-  return readyCalled
+export async function isFarcasterContext(): Promise<boolean> {
+  if (isInMiniAppCached !== null) {
+    return isInMiniAppCached
+  }
+  
+  const inMiniApp = await sdk.isInMiniApp()
+  isInMiniAppCached = inMiniApp
+  return inMiniApp
 }
 
 export { sdk }

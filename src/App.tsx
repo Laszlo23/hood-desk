@@ -30,14 +30,20 @@ import { LoreBackdrop } from './components/LoreBackdrop'
 import { SiteFooter } from './components/SiteFooter'
 
 export default function App() {
-  const inFarcaster = isFarcasterContext()
   const initial = typeof window !== 'undefined' ? routeFromHash(window.location.hash) : { view: 'landing' as ViewId }
   
-  const initialView = inFarcaster && initial.view === 'landing' ? 'street' : initial.view
-  
-  const [view, setView] = useState<ViewId>(initialView)
+  const [view, setView] = useState<ViewId>(initial.view)
   const [projectId, setProjectId] = useState<string | undefined>(initial.projectId)
   const [blogSlug, setBlogSlug] = useState<string | undefined>(initial.blogSlug)
+
+  useEffect(() => {
+    isFarcasterContext().then((isInMiniApp) => {
+      if (isInMiniApp && view === 'landing') {
+        setView('street')
+        window.location.hash = '#/street'
+      }
+    })
+  }, [])
 
   useEffect(() => {
     const onHash = () => {
@@ -49,13 +55,6 @@ export default function App() {
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
-  
-  useEffect(() => {
-    if (inFarcaster && view === 'landing') {
-      setView('street')
-      window.location.hash = '#/street'
-    }
-  }, [inFarcaster, view])
 
   const navigate = useCallback((id: ViewId, idOrProject?: string) => {
     const next = hashForView(id, idOrProject)

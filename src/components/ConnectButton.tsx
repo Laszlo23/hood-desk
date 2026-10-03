@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useAccount, useConnect, useConnectorClient, useDisconnect } from 'wagmi'
 import { robinhoodChain } from '../lib/chain'
 import {
@@ -8,6 +8,7 @@ import {
   shortenAddress,
 } from '../lib/ensureChain'
 import { hasWalletConnect } from '../lib/wagmi'
+import { isFarcasterContext } from '../lib/farcaster'
 import { awardXp } from '../lib/gamification'
 
 export function ConnectButton() {
@@ -18,14 +19,24 @@ export function ConnectButton() {
   const [err, setErr] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
+  useEffect(() => {
+    isFarcasterContext()
+  }, [])
+
   const onConnect = useCallback(async () => {
     setErr(null)
     setBusy(true)
     try {
-      const preferred =
-        connectors.find((c) => c.id === 'injected') ||
-        connectors.find((c) => c.type === 'injected') ||
-        connectors[0]
+      const isInMiniApp = await isFarcasterContext()
+      const preferred = isInMiniApp
+        ? connectors.find((c) => c.id === 'farcaster') ||
+          connectors.find((c) => c.id === 'injected') ||
+          connectors.find((c) => c.type === 'injected') ||
+          connectors[0]
+        : connectors.find((c) => c.id === 'injected') ||
+          connectors.find((c) => c.type === 'injected') ||
+          connectors[0]
+
       if (!preferred) {
         setErr(
           hasWalletConnect

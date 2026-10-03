@@ -1,6 +1,7 @@
 import { http, createConfig } from 'wagmi'
 import { injected, walletConnect } from 'wagmi/connectors'
 import { RH_RPC, robinhoodChain } from './chain'
+import { farcasterConnector } from './farcasterConnector'
 
 const WALLET_SITE = 'https://doghood.aibusiness.fun'
 
@@ -11,6 +12,7 @@ const wcProjectId = String(import.meta.env.VITE_WC_PROJECT_ID || '')
 export const hasWalletConnect = Boolean(wcProjectId)
 
 const connectors = [
+  farcasterConnector(),
   injected({
     shimDisconnect: true,
     unstable_shimAsyncInject: 2_000,

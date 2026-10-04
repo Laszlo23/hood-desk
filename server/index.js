@@ -13,6 +13,8 @@
  *   GET  /api/hoodstreet/neon/:tokenId/activity           → get Neon activity
  *   GET  /api/hoodstreet/neon/:tokenId/token/:tokenAddr   → get specific token balance
  *
+ *   GET  /api/night-tools/status                          → get badge status for wallet
+ *
  * Env (see ../.env.example):
  *   STRIPE_SECRET_KEY
  *   STRIPE_WEBHOOK_SECRET (optional for local)
@@ -105,6 +107,33 @@ app.get('/api/health', (_req, res) => {
     note: SECRET
       ? 'Stripe secret loaded'
       : 'Add STRIPE_SECRET_KEY to .env (never commit secrets)',
+  })
+})
+
+/**
+ * Night Tools badge status — check which 1/1 badges a wallet has earned
+ * GET /api/night-tools/status?address=0x...
+ * 
+ * Returns: { lantern: boolean, pick: boolean, vein: boolean }
+ * 
+ * TODO: Connect to actual night ledger for real badge tracking
+ * For now, returns false for all badges (unclaimed)
+ */
+app.get('/api/night-tools/status', (req, res) => {
+  const address = String(req.query.address || '').trim().toLowerCase()
+  
+  if (!ethAddress(address)) {
+    return publicError(req, res, 400, 'Invalid address')
+  }
+
+  // TODO: Replace with actual ledger check
+  // For now, all badges are unclaimed
+  res.json({
+    ok: true,
+    address,
+    lantern: false,
+    pick: false,
+    vein: false,
   })
 })
 

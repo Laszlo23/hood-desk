@@ -6,7 +6,7 @@ Three unique **1/1 soulbound cosmetic NFT badges** for Hood Street:
 
 1. **Lantern** - First wallet with 7-day Vienna check-in streak
 2. **Pick** - First wallet to dig with a neighbor  
-3. **Vein** - First check-in each Vienna night (requires Lantern)
+3. **Vein** - Single first wallet that checks in AND already holds Lantern (only one ever)
 
 ## Key Design Decisions
 

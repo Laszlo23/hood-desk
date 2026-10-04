@@ -14,7 +14,7 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
  * Three unique 1/1 badges (token IDs are fixed):
  * - Lantern (tokenId 0): First wallet to achieve seven real Vienna-day check-ins in a row finds it
  * - Pick (tokenId 1): First wallet to complete a dig with a real neighbor finds it
- * - Vein (tokenId 2): At most one per Vienna night, first check-in of the day IF that wallet already found the Lantern
+ * - Vein (tokenId 2): Single first wallet that checks in on a Vienna day AND already holds the Lantern (only one Vein ever)
  *
  * Each badge can only be claimed once by the first eligible wallet. Once found, the green hood wax seal
  * appears on that badge. Unfound badges are shown without the seal.
@@ -224,7 +224,7 @@ contract NightTools is ERC721, Ownable2Step {
         } else if (tokenId == PICK_ID) {
             return "1/1 cosmetic badge earned on Hood Street. Found by the first wallet to complete a dig with a real neighbor. Non-transferable, no promises, no roadmap. Culture first.";
         } else {
-            return "1/1 cosmetic badge earned on Hood Street. At most one per Vienna night, awarded to the first check-in of the day if that wallet already found the Lantern. Non-transferable, no promises, no roadmap. Culture first.";
+            return "1/1 cosmetic badge earned on Hood Street. Found by the single first wallet that checked in on a Vienna day and already held the Lantern. Only one Vein will ever exist. Non-transferable, no promises, no roadmap. Culture first.";
         }
     }
 }

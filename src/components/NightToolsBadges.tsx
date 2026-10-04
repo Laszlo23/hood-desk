@@ -98,7 +98,7 @@ function Badge({ type, earned, loading }: BadgeProps) {
     },
     vein: {
       name: 'Vein',
-      description: 'First check-in each Vienna night (requires Lantern)',
+      description: 'Single first wallet that checks in with Lantern (only one ever)',
       image: '/images/night-tools/vein.jpg',
     },
   }

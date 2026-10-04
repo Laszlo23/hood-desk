@@ -40,7 +40,7 @@ contract DeployNightTools is Script {
         console.log("Three 1/1 badges:");
         console.log("- Lantern (ID 0): First wallet with 7-day Vienna check-in streak");
         console.log("- Pick (ID 1): First wallet to dig with a neighbor");
-        console.log("- Vein (ID 2): First check-in each Vienna night (requires Lantern)");
+        console.log("- Vein (ID 2): Single first wallet that checks in AND already holds Lantern (only one ever)");
         console.log("");
         console.log("NOTE: Deploy is manual. No automated deployment in this PR.");
     }

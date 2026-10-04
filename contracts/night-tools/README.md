@@ -12,7 +12,7 @@ Night Tools are cosmetic badges earned through real activity on Hood Street. Eac
 |-------|----------|------------------|--------|
 | **Lantern** | 0 | First wallet to achieve seven real Vienna-day check-ins in a row | 1/1 |
 | **Pick** | 1 | First wallet to complete a dig with a real neighbor | 1/1 |
-| **Vein** | 2 | At most one per Vienna night, awarded to the first check-in of the day IF that wallet already found the Lantern | 1/1 |
+| **Vein** | 2 | Single first wallet that checks in on a Vienna day AND already holds the Lantern (only one Vein ever) | 1/1 |
 
 ### Visual Design
 

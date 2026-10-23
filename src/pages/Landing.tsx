@@ -6,13 +6,40 @@ import { CCFF00_STORY, CCFF00_OPENSEA, ccff00ItemUrl, shortAddr } from '../lib/n
 import { StatusStrip } from '../components/status/StatusStrip'
 import { FeaturedTxRow } from '../components/status/FeaturedTxRow'
 import { skillCount } from '../lib/agent/skills'
+import { listBlogPosts } from '../lib/blog'
 import { StoryWalk } from '../components/StoryWalk'
 import { WoodWheel } from '../components/WoodWheel'
 import type { ViewId } from '../lib/nav'
 
 type Props = { onNavigate: (id: ViewId, projectId?: string) => void }
 
+const DOORS: { id: ViewId; label: string }[] = [
+  { id: 'street', label: 'Hood Street' },
+  { id: 'dark', label: 'The dark' },
+  { id: 'nfts', label: 'Marks' },
+  { id: 'terminal', label: 'Ask' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'community', label: 'Pool' },
+  { id: 'trade', label: 'Trade' },
+  { id: 'rewards', label: 'Ledger' },
+  { id: 'lore', label: 'Legend' },
+  { id: 'subscribe', label: 'Subscribe' },
+]
+
+function DeskDoors({ onNavigate }: Props) {
+  return (
+    <nav className="desk-doors" aria-label="The whole desk">
+      {DOORS.map((door) => (
+        <button key={door.id} type="button" onClick={() => onNavigate(door.id)}>
+          {door.label}
+        </button>
+      ))}
+    </nav>
+  )
+}
+
 export function Landing({ onNavigate }: Props) {
+  const latestNote = listBlogPosts()[0]
   return (
     <section className="page landing-page">
       <div className="hero card">
@@ -78,18 +105,19 @@ export function Landing({ onNavigate }: Props) {
           </button>
         </div>
 
-        <button
-          type="button"
-          className="notes-callout"
-          onClick={() => onNavigate('blog', 'street-hood-shipment-3-oct')}
-        >
-          <span className="eyebrow">The notes</span>
-          <strong>A Street Hood shipment just landed</strong>
-          <p>
-            The board says 94 guaranteed and 97 first-come spots are still open. The mint page still
-            says soon. Read the note.
-          </p>
-        </button>
+        <DeskDoors onNavigate={onNavigate} />
+
+        {latestNote && (
+          <button
+            type="button"
+            className="notes-callout"
+            onClick={() => onNavigate('blog', latestNote.slug)}
+          >
+            <span className="eyebrow">Left on the desk</span>
+            <strong>{latestNote.title}</strong>
+            <p>The newest note. The mint page that still says soon is the old one.</p>
+          </button>
+        )}
 
         <StatusStrip onNavigate={onNavigate} />
         <FeaturedTxRow compact className="landing-featured-tx" />

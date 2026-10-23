@@ -31,6 +31,46 @@ function slugify(title: string): string {
 
 const SEED: BlogPost[] = [
   {
+    id: 'post_seed_minted_oct11',
+    slug: 'street-hood-minted-out-9-oct',
+    title: 'Street Hood minted out on 9 Oct',
+    body: `Read on 11 Oct 2026 from [streethoodmini.com](https://streethoodmini.com/), its [FAQ](https://streethoodmini.com/faq), [OpenSea](https://opensea.io/collection/streethoodminis), and the public [@StreetHoodMini](https://x.com/StreetHoodMini) profile. The older [hoodstreetmini.com](https://hoodstreetmini.com/) page still says the mint is soon. The live site does not.
+
+**The mint.** The live site and the FAQ say all 4,269 Street Hood Minis minted out on Robinhood Chain on Friday 9 Oct. OpenSea shows the collection at 4,269 of 4,269, with 0.0006 ETH on the page. Whitelist and guaranteed spots are closed. The site tells anyone who missed it to pick one up on OpenSea. Holders can check in on that site once a day for 1,000 Hood Bucks per Mini they hold. Hood Bucks are still play money with no cash value.
+
+**What minted for gas.** The [terms](https://streethoodmini.com/terms), last updated 7 Oct, say VIP, guaranteed, and first-come spots minted free and the holder paid only network gas. The public phase is priced separately, and the account is the one that sets that price. The profile posted that the mint menu changed: merge 3 guaranteed spots for a VIP and mint free, and hold a [@CircleApes](https://x.com/CircleApes) for VIP. The same terms say that 3-for-1 trade is closed, and every wallet that made it got its 3 guaranteed spots back. Circle Apes holders get 1 VIP spot per ape held at the VIP snapshot.
+
+**The board on the live site, same moment.** 2,664 collectors have claimed. 4,525 whitelist spots were taken: 1,858 guaranteed and 2,667 first-come, across 1,554 wallets. 10.4 million Hood Bucks are in play. Hood Games shows 117,900 hands and 830 players. 908 tribute holders are paid across 18 partner collections. 200 memes are free to post. The page counts 58 one-of-ones and 294 traits. The mint line on that page reads VIP, guaranteed, first-come, gas only.
+
+**Since the last note.** The profile said a Fear and Loathing one-of-one was added, a tribute bonus of 4,269 Hood Bucks for people who claimed while holding a tribute, and that phase 2 of the community collabs was starting. Hold 3 or more SKNOTS from [@RealCashpig](https://x.com/RealCashpig) and the account said you were on the guaranteed list. The account also marked 4,000 followers, and named Circle Apes as a collection that entered the block.
+
+**The room.** Hood Morning is on the public list from 4 Oct through 9 Oct, hosted by [@RoaringPiggy](https://x.com/RoaringPiggy). The one this desk can open is [Hood Morning on 9 Oct](https://x.com/i/spaces/1kKzDPmOXjaJv), 14:31 to 16:08, with 438 participants on the dashboard. PIXELORD was in that room. The same search lists an upcoming Sunday Funday space, HoodStreet Media, Robinhood NFTs, hosted by RoaringPiggy. This note is not a transcript of a space we did not hear.
+
+The last count before the mint is still [the evening of 3 Oct](https://doghood.aibusiness.fun/#/blog/street-hood-evening-3-oct). This desk does not sell Minis and does not run the space.`,
+    date: '2026-10-11T02:30:00.000Z',
+    updatedAt: '2026-10-11T02:30:00.000Z',
+  },
+  {
+    id: 'post_seed_media_eve_oct3',
+    slug: 'street-hood-evening-3-oct',
+    title: 'Street Hood this evening: more time to stack, mint date waits on 2,135',
+    body: `Read on the evening of 3 Oct 2026 from the public [@StreetHoodMini](https://x.com/StreetHoodMini) profile and the live board on [hoodstreetmini.com](https://hoodstreetmini.com/).
+
+**The newest line from the account.** The latest post says they are giving the community more time to stack Hood Bucks, with more collaborations and more ways to earn. A mint date gets announced when half the GTD pool is claimed. They put that line at 2,135. Until then the mint page still says soon.
+
+**The claim desk.** The post just before that says the claim steps changed. If someone else already claimed your X username on the site, you submit a report and follow the new prompt. If you already claimed, you leave it as it is.
+
+**What landed before that.** The same profile said 100 guaranteed spots and 100 first-come spots were added, and that phase 1 of the community collabs was paid. The page still calls the collection Street Hood Minis, the name they took up out of respect for Hood Street.
+
+**The board, same moment.** 2,220 collectors have claimed. 2,489 whitelist spots are taken: 901 guaranteed and 1,588 first-come, across 841 wallets. 7.00 million Hood Bucks are in play. Hood Games shows 87,300 hands and 669 players. 795 tribute holders are paid across 18 partner collections. 186 memes are free to post. Hood Bucks are play money with no cash value. 901 guaranteed claimed is still short of the 2,135 they named.
+
+**The room.** Two HoodStreet Media spaces have a public page that ended today. [Champs Mint Live](https://x.com/i/spaces/1nxeLMvoXDPJX) was hosted by [@RealCashpig](https://x.com/RealCashpig) and ran 24 hours and 3 minutes. Street Hood Mini, RoaringPiggy, Robin Rabbits, and TheArtistNeo were in that room. [Robinhood NFTs news, Alpha and more](https://x.com/i/spaces/1MJgNbwgqwPGL) ran 06:00 to 10:33, hosted by @vibesforreal1, with Robin Rabbits and Kia as co-hosts. The public dashboard counted 748 live participants there. This note is not a transcript of a space we did not hear.
+
+The morning count is still [the jumbotron](https://doghood.aibusiness.fun/#/blog/street-hood-shipment-3-oct). This desk does not sell Minis and does not run the space.`,
+    date: '2026-10-03T21:00:00.000Z',
+    updatedAt: '2026-10-03T21:00:00.000Z',
+  },
+  {
     id: 'post_seed_ship_oct3',
     slug: 'street-hood-shipment-3-oct',
     title: 'The jumbotron: a Street Hood shipment just landed',

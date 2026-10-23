@@ -11,6 +11,11 @@ const DOORS: { id: ViewId; label: string }[] = [
   { id: 'blog', label: 'Notes' },
   { id: 'lore', label: 'Legend' },
   { id: 'hood', label: '$HOOD' },
+  { id: 'street', label: 'Hood Street' },
+  { id: 'nfts', label: 'Marks' },
+  { id: 'terminal', label: 'Ask' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'subscribe', label: 'Subscribe' },
 ]
 
 const LEGAL: { id: ViewId; label: string }[] = [

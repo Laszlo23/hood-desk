@@ -100,6 +100,7 @@ export const STREET_GROUPS: StreetGroup[] = [
       { id: 'ops', label: 'Ops', hint: 'How the desk stays up', hash: '#/ops' },
       { id: 'revenue', label: 'Revenue', hint: 'Plans, and what is actually paid', hash: '#/revenue' },
       { id: 'account', label: 'Account', hint: 'This wallet', hash: '#/account' },
+      { id: 'subscribe', label: 'Subscribe', hint: 'Starter, Desk, Desk+', hash: '#/subscribe' },
     ],
   },
 ]
@@ -150,6 +151,7 @@ export const DRAWER_SECTIONS: DrawerSection[] = [
       { id: 'lore', label: 'Legend', hash: '#/lore', icon: 'lore' },
       { id: 'dark', label: 'The dark', hash: '#/dark', icon: 'dark' },
       { id: 'account', label: 'Account', hash: '#/account', icon: 'account' },
+      { id: 'subscribe', label: 'Subscribe', hash: '#/subscribe', icon: 'revenue' },
     ],
   },
   {

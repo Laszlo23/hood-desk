@@ -3,6 +3,7 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadCont
 import { fetchNightDesk, pushNightRun, type Jackpot, type PersonalStats } from '../lib/nightDesk'
 import { readNightSave, type NightSave } from '../game/nightMarks'
 import { NightBoard } from '../components/NightBoard'
+import { NightToolsBadges } from '../components/NightToolsBadges'
 import { shortDeskAddress } from '../lib/deskCard'
 import { isFarcasterContext, sdk } from '../lib/farcaster'
 import type { BoardRow } from '../lib/nightBoard'
@@ -726,6 +727,7 @@ export function Street({ onNavigate }: Props) {
               {personal.place === null && personal.total === 0 && (
                 <p className="street-not-on-board">Not on the board yet. Check in to get started.</p>
               )}
+              <NightToolsBadges address={address ?? null} />
             </div>
           )}
 

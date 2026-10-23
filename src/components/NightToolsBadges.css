@@ -1,0 +1,132 @@
+.night-tools-badges {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(204, 255, 0, 0.1);
+}
+
+.night-tools-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ccff00;
+  margin: 0 0 0.25rem 0;
+}
+
+.night-tools-subtitle {
+  font-size: 0.875rem;
+  color: #888;
+  margin: 0 0 1rem 0;
+}
+
+.night-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.night-tool-badge {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(204, 255, 0, 0.2);
+  border-radius: 6px;
+  padding: 1rem;
+  transition: all 0.2s ease;
+}
+
+.night-tool-badge.earned {
+  border-color: rgba(204, 255, 0, 0.6);
+  box-shadow: 0 0 12px rgba(204, 255, 0, 0.3);
+}
+
+.night-tool-badge.unearned {
+  opacity: 0.5;
+}
+
+.night-tool-badge.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.night-tool-badge:hover {
+  border-color: rgba(204, 255, 0, 0.4);
+}
+
+.night-tool-badge.earned:hover {
+  border-color: rgba(204, 255, 0, 0.8);
+  box-shadow: 0 0 16px rgba(204, 255, 0, 0.4);
+}
+
+.badge-image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+  background: #000;
+}
+
+.badge-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.badge-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: grayscale(1);
+}
+
+.badge-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.badge-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ccff00;
+}
+
+.badge-supply {
+  font-size: 0.75rem;
+  color: #888;
+  font-family: monospace;
+  background: rgba(204, 255, 0, 0.1);
+  padding: 0.125rem 0.5rem;
+  border-radius: 3px;
+}
+
+.badge-description {
+  font-size: 0.8125rem;
+  color: #aaa;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+}
+
+.badge-status {
+  display: inline-block;
+  font-size: 0.75rem;
+  color: #666;
+  font-style: italic;
+}
+
+.night-tools-note {
+  font-size: 0.75rem;
+  color: #666;
+  margin: 1rem 0 0 0;
+  text-align: center;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .night-tools-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -214,7 +214,7 @@ export function Landing({ onNavigate }: Props) {
         <article className="card mini-card">
           <h3>Notes</h3>
           <p className="muted">
-            The shipment on the Street Hood board, and the thank-you to Cashpig and RoaringPiggy.
+            Street Hood minted out on 9 Oct. 4,269 of 4,269. The thank-you to Cashpig and RoaringPiggy is still in the book.
           </p>
           <button type="button" className="btn btn-quiet mt" onClick={() => onNavigate('blog')}>
             Read the notes
